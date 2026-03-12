@@ -6,7 +6,9 @@ import { Resend } from "resend";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2026-02-25.clover",
 });
-const resend = new Resend(process.env.RESEND_API_KEY!);
+
+// Make Resend optional - only initialize if API key exists
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
 export async function POST(req: NextRequest) {
   const body = await req.text();
@@ -45,8 +47,8 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // Send confirmation email
-    if (email) {
+    // Send confirmation email (only if Resend is configured)
+    if (email && resend) {
       await resend.emails.send({
         from: "Hot Mess OS <noreply@yourdomain.com>",
         to: email,
