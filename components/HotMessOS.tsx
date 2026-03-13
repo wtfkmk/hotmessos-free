@@ -277,7 +277,7 @@ function buildSystemPrompt(modeKey: string, quizResults: QuizResults | null): st
     ? `The user has completed the readiness quiz. Results — Mess Level: ${quizResults.meter.label} (${quizResults.score.toFixed(1)}/5). Archetype: ${quizResults.archetype}. Pillar scores — Presence: ${quizResults.pillarAvg.presence.toFixed(1)}, Digital Self: ${quizResults.pillarAvg.digital_self.toFixed(1)}, Relationships: ${quizResults.pillarAvg.relationships.toFixed(1)}, Creative Flow: ${quizResults.pillarAvg.creative_flow.toFixed(1)}. Use this context to personalise every response.`
     : "The user has NOT taken the readiness quiz. You have no pillar scores. Ask questions to understand their situation before advising.";
 
-  const base = `You are Hot Mess OS — a cheeky, human-first, campy conversational guide for creators and business owners using tech and AI to build a life and income online. Playful, irreverent, mix of camp and Gen X. Snark when they need a wake-up call, but always insightful and genuinely useful. No therapy-speak. No sterile terms like 'values' or 'alignment'. Joke about the size of the task or digital chaos — never about the user. Emoji: minimal, only to punctuate the campy flavour.\n\n${quizCtx}\n\nCRITICAL RULES:\n- Never generate full deliverables (content calendars, full funnels, complete scripts, pricing tables) for free. Default output is: clarity + options + one small experiment.\n- Before ANY multi-step plan, ask: 'Do you want a quick clarity reset first, or do you want a tiny starter experiment?' Wait for their answer.\n- Never suggest the user take a quiz or assessment.\n- If the user seems overwhelmed or vague, your FIRST reply must be under 120 words: brief empathy, tiny reframe, 2-3 open questions, reassurance. No frameworks, no plans.\n- After intake, every response must follow this structure:\n  WHAT I'M HEARING: 2-3 bullets\n  WHAT MATTERS MOST NEXT: 1 sentence\n  TWO OPTIONS MAX: recommend one, ask them to choose\n  ONE MICRO-STEP: under 10 minutes\n  (Optional) If relevant: 'If you want the full structured assessment + 30-day plan, that's the paid diagnostic.'\n- Tiny experiments you CAN give free: one-sentence offer draft, one audience hypothesis, one channel focus for 7 days, one trust signal, one workflow boundary.\n- Do NOT do the paid work for free.`;
+  const base = `You are Hot Mess OS — a cheeky, human-first, campy conversational guide for creators and business owners using tech and AI to build a life and income online. Playful, irreverent, mix of camp and Gen X. Snark when they need a wake-up call, but always insightful and genuinely useful. No therapy-speak. No sterile terms like 'values' or 'alignment'. Joke about the size of the task or digital chaos — never about the user. Emoji: minimal, only to punctuate the campy flavour.\n\n${quizCtx}\n\nCRITICAL RULES:\n- Give quick tactical advice (1-3 actionable tips) for surface questions.\n- Never generate full deliverables (content calendars, full funnels, complete scripts, pricing tables, templates, structured plans) for free.\n- Never suggest the user take a quiz or assessment.\n- If the user seems overwhelmed or vague, your FIRST reply must be under 120 words: brief empathy, tiny reframe, 2-3 open questions, reassurance. No frameworks, no plans.\n- After intake, every response must follow this structure:\n  WHAT I'M HEARING: 2-3 bullets\n  WHAT MATTERS MOST NEXT: 1 sentence\n  TWO OPTIONS MAX: recommend one, ask them to choose\n  ONE MICRO-STEP: under 10 minutes\n- Tiny experiments you CAN give free: one-sentence offer draft, one audience hypothesis, one channel focus for 7 days, one trust signal, one workflow boundary.\n\nWHEN TO STOP FREE HELP AND PITCH PAID SERVICES:\n- If user asks you to BUILD something (templates, systems, full plans) → redirect to appropriate service\n- If user asks 5+ related questions in one session → notice the pattern, suggest deeper work\n- If user is spiraling/approaching same issue from different angles → call it out gently, suggest structured support\n- Tone: warm boundaries, not pushy. "This is getting into [service] territory..." \n\nPAID SERVICES (pitch when relevant):\n1. Pre-Built Agents (coming soon) - Mini apps for digital marketing: finding your niche, amplifying your voice, SEO keyword strategy, content calendar with creative briefs. Future releases will cover ops, sales, and niche-specific tools.\n2. $47 Paid Diagnostic - Deep-dive on all 4 pillars from the quiz. Includes your digital presence analysis, social channels review, industry benchmarking, instructional videos, Q&A, persona analysis, recommended tools/systems/strategies, and a 30-day action plan.\n3. $297 Scoping Session - 60-minute deep-dive where I take your idea and break it down into a technical blueprint with timeline, milestones, deliverables. You get a written scope doc + the $297 credits toward the build if you move forward.\n4. Custom Build - Quoted from scoping session. Full system built to your exact specs.\n\nHOW TO PITCH:\n- For "how do I organize content?": Quick tips → "Want a done-for-you system? The Content Calendar Agent (coming soon) handles this."\n- For "build me a template": "I can't build that in chat, but that's exactly what the $297 Scoping Session is for - I'll design your custom system."\n- For niche/SEO questions: General strategy → "The [relevant agent] (coming soon) does deep analysis for you."\n- For 5+ questions or spiraling: "I'm seeing [pattern]. This feels like Paid Diagnostic territory - want to go deep on all 4 pillars?"\n- Enthusiastic about possibilities but not pushy. Paint the picture, then offer the path.\n\nDo NOT mention services that don't exist. Do NOT promise features not listed above.`;
 
   const modeInstructions: Record<string, string> = {
     dumpster: "\n\nMODE: DUMPSTER FIRE. The user has something on fire right now — a tech, workflow, or human problem that's urgent. Lead with triage energy. Ask what's burning first. Keep it practical and fast.",
@@ -807,9 +807,9 @@ export default function HotMessOS() {
   // ─── STYLES ──────────────────────────────────────────────────────────────
   const pageStyle: React.CSSProperties = {
     minHeight: "100vh",
-    background: "#080808",
+    background: "#ffffff",
     fontFamily: "'DM Mono', 'Fira Mono', 'Courier New', monospace",
-    color: "#e8e8e8",
+    color: "#1a1a1a",
     position: "relative",
     overflow: "hidden",
   };
@@ -860,7 +860,7 @@ export default function HotMessOS() {
     border: "none",
     borderRadius: "4px",
     padding: "0.9rem 1.5rem",
-    color: "#fff",
+    color: "#1a1a1a",
     fontWeight: 800,
     fontSize: "0.9rem",
     fontFamily: "inherit",
@@ -874,7 +874,7 @@ export default function HotMessOS() {
     border: "none",
     borderRadius: "4px",
     padding: "0.9rem 1.5rem",
-    color: "#fff",
+    color: "#1a1a1a",
     fontWeight: 800,
     fontSize: "0.9rem",
     fontFamily: "inherit",
@@ -892,7 +892,7 @@ export default function HotMessOS() {
 
   const label: React.CSSProperties = {
     fontSize: "0.65rem",
-    color: "#bbb",
+    color: "#666",
     textTransform: "uppercase" as const,
     letterSpacing: "2px",
     marginBottom: "0.4rem",
@@ -938,7 +938,7 @@ export default function HotMessOS() {
           style={{ 
             background: "none", 
             border: "none", 
-            color: "#bbb", 
+            color: "#666", 
             fontSize: "0.8rem", 
             letterSpacing: "0.05em",
             cursor: "pointer",
@@ -947,7 +947,7 @@ export default function HotMessOS() {
         >
           About
         </button>
-        <a href="#" style={{ color: "#bbb", fontSize: "0.8rem", textDecoration: "none", letterSpacing: "0.05em" }}>Paid Diagnostic</a>
+        <a href="#" style={{ color: "#666", fontSize: "0.8rem", textDecoration: "none", letterSpacing: "0.05em" }}>Paid Diagnostic</a>
         <a href="#" style={{
           color: "#FF4ECD",
           fontSize: "0.8rem",
@@ -968,11 +968,11 @@ export default function HotMessOS() {
       textAlign: "center" as const,
       marginTop: "4rem",
     }}>
-      <p style={{ color: "#bbb", fontSize: "0.75rem", letterSpacing: "0.05em" }}>
+      <p style={{ color: "#666", fontSize: "0.75rem", letterSpacing: "0.05em" }}>
         HOT MESS OS · Built by <a href="#" style={{ color: "#FF8C42", textDecoration: "none" }}>KMK</a> · AI-Powered Chaos Management
       </p>
       <p style={{ color: "#2a2a2a", fontSize: "0.7rem", marginTop: "0.4rem" }}>
-        Free quiz limited to {QUIZ_LIMIT} attempts · <a href="#" style={{ color: "#ccc", textDecoration: "none" }}>Upgrade for full diagnostic</a>
+        Free quiz limited to {QUIZ_LIMIT} attempts · <a href="#" style={{ color: "#666", textDecoration: "none" }}>Upgrade for full diagnostic</a>
       </p>
     </footer>
   );
@@ -998,15 +998,15 @@ export default function HotMessOS() {
           }}>
             HOT MESS OS
           </div>
-          <p style={{ color: "#bbb", fontSize: "1.05rem", marginBottom: "3rem", lineHeight: 1.6 }}>
+          <p style={{ color: "#666", fontSize: "1.05rem", marginBottom: "3rem", lineHeight: 1.6 }}>
             AI-Powered Chaos Management
           </p>
 
           <div style={{ ...card, textAlign: "left" as const }}>
-            <h2 style={{ fontSize: "1.3rem", fontWeight: 800, marginBottom: "0.5rem", color: "#fff", textAlign: "center" as const }}>
+            <h2 style={{ fontSize: "1.3rem", fontWeight: 800, marginBottom: "0.5rem", color: "#1a1a1a", textAlign: "center" as const }}>
               {loginMode === "signup" ? "Create Account" : loginMode === "reset" ? "Reset Password" : "Welcome Back"}
             </h2>
-            <p style={{ color: "#bbb", fontSize: "0.85rem", marginBottom: "1.5rem", textAlign: "center" as const }}>
+            <p style={{ color: "#666", fontSize: "0.85rem", marginBottom: "1.5rem", textAlign: "center" as const }}>
               {loginMode === "signup" 
                 ? "Create your account to access your personalized diagnostic suite"
                 : loginMode === "reset"
@@ -1015,7 +1015,7 @@ export default function HotMessOS() {
             </p>
             
             <div style={{ marginBottom: "1rem" }}>
-              <label style={{ display: "block", marginBottom: "0.5rem", color: "#ccc", fontSize: "0.85rem", fontWeight: 600 }}>
+              <label style={{ display: "block", marginBottom: "0.5rem", color: "#666", fontSize: "0.85rem", fontWeight: 600 }}>
                 Email address
               </label>
               <input
@@ -1028,9 +1028,9 @@ export default function HotMessOS() {
                   width: "100%",
                   padding: "0.85rem 1rem",
                   background: "rgba(8,8,8,0.8)",
-                  border: "1px solid rgba(255,255,255,0.08)",
+                  border: "1px solid rgba(0,0,0,0.08)",
                   borderRadius: "6px",
-                  color: "#fff",
+                  color: "#1a1a1a",
                   fontSize: "0.95rem",
                   fontFamily: "inherit",
                   outline: "none",
@@ -1042,7 +1042,7 @@ export default function HotMessOS() {
             </div>
 
             <div style={{ marginBottom: "1.5rem" }}>
-              <label style={{ display: "block", marginBottom: "0.5rem", color: "#ccc", fontSize: "0.85rem", fontWeight: 600 }}>
+              <label style={{ display: "block", marginBottom: "0.5rem", color: "#666", fontSize: "0.85rem", fontWeight: 600 }}>
                 Password {loginMode === "signup" && "(min 6 characters)"}
               </label>
               <input
@@ -1055,9 +1055,9 @@ export default function HotMessOS() {
                   width: "100%",
                   padding: "0.85rem 1rem",
                   background: "rgba(8,8,8,0.8)",
-                  border: "1px solid rgba(255,255,255,0.08)",
+                  border: "1px solid rgba(0,0,0,0.08)",
                   borderRadius: "6px",
-                  color: "#fff",
+                  color: "#1a1a1a",
                   fontSize: "0.95rem",
                   fontFamily: "inherit",
                   outline: "none",
@@ -1091,10 +1091,10 @@ export default function HotMessOS() {
                   >
                     Create an account
                   </button>
-                  <span style={{ color: "#bbb", margin: "0 0.5rem" }}>·</span>
+                  <span style={{ color: "#666", margin: "0 0.5rem" }}>·</span>
                   <button 
                     onClick={() => setLoginMode("reset")}
-                    style={{ background: "none", border: "none", color: "#bbb", cursor: "pointer", fontFamily: "inherit", textDecoration: "underline", fontSize: "0.85rem" }}
+                    style={{ background: "none", border: "none", color: "#666", cursor: "pointer", fontFamily: "inherit", textDecoration: "underline", fontSize: "0.85rem" }}
                   >
                     Forgot password?
                   </button>
@@ -1102,7 +1102,7 @@ export default function HotMessOS() {
               ) : (
                 <button 
                   onClick={() => { setLoginMode("login"); setUserPassword(""); }}
-                  style={{ background: "none", border: "none", color: "#bbb", cursor: "pointer", fontFamily: "inherit", textDecoration: "underline", fontSize: "0.85rem" }}
+                  style={{ background: "none", border: "none", color: "#666", cursor: "pointer", fontFamily: "inherit", textDecoration: "underline", fontSize: "0.85rem" }}
                 >
                   ← Back to login
                 </button>
@@ -1110,7 +1110,7 @@ export default function HotMessOS() {
             </div>
           </div>
 
-          <p style={{ color: "#bbb", fontSize: "0.75rem", marginTop: "2rem", lineHeight: 1.6 }}>
+          <p style={{ color: "#666", fontSize: "0.75rem", marginTop: "2rem", lineHeight: 1.6 }}>
             Your data is stored securely and encrypted. We never sell or share your information.
           </p>
         </div>
@@ -1127,7 +1127,7 @@ export default function HotMessOS() {
       <div style={glowStyle} />
       <SiteNav />
       <div style={{ ...contentStyle, padding: "5rem 1.5rem 4rem", maxWidth: "720px", margin: "0 auto" }}>
-        <button onClick={goHome} style={{ background: "none", border: "none", color: "#ccc", cursor: "pointer", fontSize: "0.8rem", padding: "0 0 2rem", fontFamily: "inherit" }}>← Back to Menu</button>
+        <button onClick={goHome} style={{ background: "none", border: "none", color: "#666", cursor: "pointer", fontSize: "0.8rem", padding: "0 0 2rem", fontFamily: "inherit" }}>← Back to Menu</button>
         
         <div style={{ marginBottom: "3rem" }}>
           <h1 style={{ 
@@ -1145,7 +1145,7 @@ export default function HotMessOS() {
 
         <div style={{ ...card, marginBottom: "1.5rem" }}>
           <h2 style={{ fontSize: "1.3rem", fontWeight: 800, marginBottom: "1rem", color: "#FF8C42" }}>THE VISION</h2>
-          <div style={{ fontSize: "0.95rem", lineHeight: 1.8, color: "#ccc" }}>
+          <div style={{ fontSize: "0.95rem", lineHeight: 1.8, color: "#666" }}>
             <p style={{ marginBottom: "1rem" }}>
               We're living through the messiest plot twist in human history — AI is rewriting the rules faster than you can say "ChatGPT," and most of us are just trying not to face-plant while keeping up. Hot Mess OS isn't here to pretend this transition is neat and tidy. We're here because the intersection of technology and humanity is up to US, and frankly, most people are winging it with the digital grace of a caffeinated squirrel.
             </p>
@@ -1160,7 +1160,7 @@ export default function HotMessOS() {
 
         <div style={{ ...card, marginBottom: "1.5rem" }}>
           <h2 style={{ fontSize: "1.3rem", fontWeight: 800, marginBottom: "1rem", color: "#FF8C42" }}>LIMITS & BOUNDARIES</h2>
-          <div style={{ fontSize: "0.95rem", lineHeight: 1.8, color: "#ccc" }}>
+          <div style={{ fontSize: "0.95rem", lineHeight: 1.8, color: "#666" }}>
             <p style={{ marginBottom: "1rem" }}>
               Look, we could let you take the readiness quiz seventeen times a day and chat our digital ears off, but that's not actually helping you — that's just feeding the chaos monster. You get one quiz per week (because real change takes time to marinate) and ten chat responses daily (because overthinking is not a strategy, darling).
             </p>
@@ -1172,7 +1172,7 @@ export default function HotMessOS() {
 
         <div style={{ ...card }}>
           <h2 style={{ fontSize: "1.3rem", fontWeight: 800, marginBottom: "1rem", color: "#FF8C42" }}>BEYOND THE FREE STUFF</h2>
-          <div style={{ fontSize: "0.95rem", lineHeight: 1.8, color: "#ccc" }}>
+          <div style={{ fontSize: "0.95rem", lineHeight: 1.8, color: "#666" }}>
             <p style={{ marginBottom: "1rem" }}>
               Ready to stop dabbling and start building? My Hot Mess OS agents help you identify your actual niche (not just "I help everyone"), amplify your voice without shouting into the void, connect with community that converts to customers, streamline how you show up everywhere, and finally monetize your brilliance. Think of it as digital marketing chopped into bite-sized pieces you can stack however works for your brain.
             </p>
@@ -1201,7 +1201,7 @@ export default function HotMessOS() {
       <div style={glowStyle} />
       <SiteNav />
       <div style={{ ...contentStyle, padding: "5rem 1.5rem 4rem", maxWidth: "680px", margin: "0 auto" }}>
-        <button onClick={goHome} style={{ background: "none", border: "none", color: "#ccc", cursor: "pointer", fontSize: "0.8rem", padding: "0 0 2rem", fontFamily: "inherit" }}>← Back to Menu</button>
+        <button onClick={goHome} style={{ background: "none", border: "none", color: "#666", cursor: "pointer", fontSize: "0.8rem", padding: "0 0 2rem", fontFamily: "inherit" }}>← Back to Menu</button>
         
         <div style={{ marginBottom: "2.5rem", textAlign: "center" as const }}>
           <div style={{ fontSize: "0.65rem", color: "#44FF88", letterSpacing: "3px", textTransform: "uppercase" as const, marginBottom: "0.5rem" }}>
@@ -1218,7 +1218,7 @@ export default function HotMessOS() {
           }}>
             Work Directly with KMK
           </h1>
-          <p style={{ color: "#bbb", fontSize: "0.95rem", lineHeight: 1.6, maxWidth: "580px", margin: "0 auto" }}>
+          <p style={{ color: "#666", fontSize: "0.95rem", lineHeight: 1.6, maxWidth: "580px", margin: "0 auto" }}>
             Whether you need a custom automation, want to build your own AI agent, or aren't sure if your idea is even possible — here's how we work together.
           </p>
         </div>
@@ -1231,10 +1231,10 @@ export default function HotMessOS() {
               <h2 style={{ fontSize: "1.2rem", fontWeight: 800, color: "#44FF88", marginBottom: "0.5rem" }}>
                 Free 15-Minute Discovery Call
               </h2>
-              <p style={{ fontSize: "0.9rem", color: "#ccc", lineHeight: 1.6, marginBottom: "1rem" }}>
+              <p style={{ fontSize: "0.9rem", color: "#666", lineHeight: 1.6, marginBottom: "1rem" }}>
                 Got a wild idea but not sure if it's buildable? Book a quick call. I'll tell you if it's possible, if you should build it, or if there's a better approach you haven't considered.
               </p>
-              <div style={{ fontSize: "0.85rem", color: "#bbb", marginBottom: "1.25rem" }}>
+              <div style={{ fontSize: "0.85rem", color: "#666", marginBottom: "1.25rem" }}>
                 <div style={{ marginBottom: "0.4rem" }}>✓ Is this idea technically possible?</div>
                 <div style={{ marginBottom: "0.4rem" }}>✓ Should you build it or shelf it?</div>
                 <div>✓ Is a scoping session worth it for you?</div>
@@ -1268,10 +1268,10 @@ export default function HotMessOS() {
                 </h2>
                 <span style={{ fontSize: "1.1rem", fontWeight: 800, color: "#44AAFF" }}>$297</span>
               </div>
-              <p style={{ fontSize: "0.9rem", color: "#ccc", lineHeight: 1.6, marginBottom: "1rem" }}>
+              <p style={{ fontSize: "0.9rem", color: "#666", lineHeight: 1.6, marginBottom: "1rem" }}>
                 Book a 45-60 minute deep-dive and I'll map out exactly what's possible, what it'll cost, and whether you should build it or shelf it. You'll get a written scope doc — your roadmap for what happens next.
               </p>
-              <div style={{ fontSize: "0.85rem", color: "#bbb", marginBottom: "1.25rem" }}>
+              <div style={{ fontSize: "0.85rem", color: "#666", marginBottom: "1.25rem" }}>
                 <div style={{ marginBottom: "0.4rem" }}>✓ 45-60 minute deep-dive session</div>
                 <div style={{ marginBottom: "0.4rem" }}>✓ Written scope document delivered</div>
                 <div style={{ marginBottom: "0.4rem" }}>✓ Timeline & cost estimate</div>
@@ -1291,7 +1291,7 @@ export default function HotMessOS() {
               >
                 {scopingLoading ? "Redirecting to checkout..." : "Book Scoping Session — $297"}
               </button>
-              <p style={{ fontSize: "0.75rem", color: "#bbb", marginTop: "0.75rem", fontStyle: "italic" }}>
+              <p style={{ fontSize: "0.75rem", color: "#666", marginTop: "0.75rem", fontStyle: "italic" }}>
                 Fee credits toward your custom build if we proceed
               </p>
             </div>
@@ -1303,13 +1303,13 @@ export default function HotMessOS() {
           <div style={{ display: "flex", alignItems: "flex-start", gap: "1rem" }}>
             <span style={{ fontSize: "2rem" }}>🏗️</span>
             <div style={{ flex: 1 }}>
-              <h2 style={{ fontSize: "1.2rem", fontWeight: 800, color: "#fff", marginBottom: "0.5rem" }}>
+              <h2 style={{ fontSize: "1.2rem", fontWeight: 800, color: "#1a1a1a", marginBottom: "0.5rem" }}>
                 Custom Build
               </h2>
-              <p style={{ fontSize: "0.9rem", color: "#ccc", lineHeight: 1.6, marginBottom: "1rem" }}>
+              <p style={{ fontSize: "0.9rem", color: "#666", lineHeight: 1.6, marginBottom: "1rem" }}>
                 After your scoping session, we'll have a clear quote for your custom automation, AI agent, workflow system, or whatever beautiful chaos you're building. The scoping fee credits toward your build.
               </p>
-              <div style={{ fontSize: "0.85rem", color: "#bbb" }}>
+              <div style={{ fontSize: "0.85rem", color: "#666" }}>
                 <div style={{ marginBottom: "0.4rem" }}>✓ Quoted based on scoping session</div>
                 <div style={{ marginBottom: "0.4rem" }}>✓ Scoping fee ($297) credits toward build</div>
                 <div style={{ marginBottom: "0.4rem" }}>✓ Direct access to KMK throughout</div>
@@ -1341,10 +1341,10 @@ export default function HotMessOS() {
         <div style={{ maxWidth: "460px", width: "100%", textAlign: "center" as const }}>
           <div style={{ fontSize: "3.5rem", marginBottom: "1rem" }}>🧱</div>
           <div style={{ ...label, textAlign: "center" as const, marginBottom: "1rem" }}>Quiz limit reached</div>
-          <h2 style={{ fontSize: "1.6rem", fontWeight: 900, lineHeight: 1.2, marginBottom: "1rem", color: "#fff" }}>
+          <h2 style={{ fontSize: "1.6rem", fontWeight: 900, lineHeight: 1.2, marginBottom: "1rem", color: "#1a1a1a" }}>
             You've already taken the free quiz this week.
           </h2>
-          <p style={{ color: "#bbb", fontSize: "0.9rem", lineHeight: 1.7, marginBottom: "2rem" }}>
+          <p style={{ color: "#666", fontSize: "0.9rem", lineHeight: 1.7, marginBottom: "2rem" }}>
             The free readiness check is a one-time weekly peek into the OS. 
             You've already got your archetype and your mess level. The next step isn't retaking — 
             it's <em style={{ color: "#FF4ECD" }}>acting on it</em>.
@@ -1355,7 +1355,7 @@ export default function HotMessOS() {
               <span style={{ fontSize: "2rem" }}>{archetypes[quizResults.archetype]?.emoji}</span>
               <div>
                 <div style={{ fontWeight: 800, color: quizResults.meter.color, fontSize: "0.95rem" }}>{quizResults.meter.label}</div>
-                <div style={{ color: "#ccc", fontSize: "0.8rem" }}>{quizResults.archetype} · {quizResults.score.toFixed(1)}/5</div>
+                <div style={{ color: "#666", fontSize: "0.8rem" }}>{quizResults.archetype} · {quizResults.score.toFixed(1)}/5</div>
               </div>
               <button onClick={() => setScreen("quiz_results")} style={{ marginLeft: "auto", background: "none", border: "1px solid rgba(255,140,66,0.3)", borderRadius: "3px", padding: "0.4rem 0.8rem", color: "#FF8C42", fontSize: "0.75rem", cursor: "pointer", fontFamily: "inherit" }}>View report →</button>
             </div>
@@ -1365,7 +1365,7 @@ export default function HotMessOS() {
             <button style={upgradeBtn}>
               Unlock the Full Paid Diagnostic 💅
             </button>
-            <p style={{ color: "#ccc", fontSize: "0.75rem", lineHeight: 1.5 }}>
+            <p style={{ color: "#666", fontSize: "0.75rem", lineHeight: 1.5 }}>
               30-day strategic action plan · deep pillar analysis · systems & agents support
             </p>
             <button onClick={goHome} style={{ ...btn(), width: "100%", marginTop: "0.5rem" }}>
@@ -1390,16 +1390,16 @@ export default function HotMessOS() {
         <div style={{ maxWidth: "480px", width: "100%", ...card }}>
           <div style={{ textAlign: "center" as const, marginBottom: "1.5rem" }}>
             <div style={{ fontSize: "2.5rem", marginBottom: "0.75rem" }}>📧</div>
-            <h2 style={{ fontSize: "1.4rem", fontWeight: 800, marginBottom: "0.5rem", color: "#fff" }}>
+            <h2 style={{ fontSize: "1.4rem", fontWeight: 800, marginBottom: "0.5rem", color: "#1a1a1a" }}>
               Quick info before we start
             </h2>
-            <p style={{ color: "#bbb", fontSize: "0.9rem", lineHeight: 1.6 }}>
+            <p style={{ color: "#666", fontSize: "0.9rem", lineHeight: 1.6 }}>
               Drop your email so I can send your results + what's next.
             </p>
           </div>
           
           <div style={{ marginBottom: "1.5rem" }}>
-            <label style={{ display: "block", marginBottom: "0.5rem", color: "#ccc", fontSize: "0.85rem", fontWeight: 600 }}>
+            <label style={{ display: "block", marginBottom: "0.5rem", color: "#666", fontSize: "0.85rem", fontWeight: 600 }}>
               Email address
             </label>
             <input
@@ -1412,9 +1412,9 @@ export default function HotMessOS() {
                 width: "100%",
                 padding: "0.85rem 1rem",
                 background: "rgba(8,8,8,0.8)",
-                border: "1px solid rgba(255,255,255,0.08)",
+                border: "1px solid rgba(0,0,0,0.08)",
                 borderRadius: "6px",
-                color: "#fff",
+                color: "#1a1a1a",
                 fontSize: "0.95rem",
                 fontFamily: "inherit",
                 outline: "none",
@@ -1429,7 +1429,7 @@ export default function HotMessOS() {
             Continue to Quiz →
           </button>
           
-          <button onClick={goHome} style={{ ...btn(), width: "100%", background: "none", border: "1px solid rgba(255,255,255,0.08)", color: "#bbb" }}>
+          <button onClick={goHome} style={{ ...btn(), width: "100%", background: "none", border: "1px solid rgba(0,0,0,0.08)", color: "#666" }}>
             ← Back
           </button>
         </div>
@@ -1447,7 +1447,7 @@ export default function HotMessOS() {
       <div style={glowStyle} />
       <SiteNav />
       <div style={{ ...contentStyle, padding: "5rem 1.5rem 4rem", maxWidth: "700px", margin: "0 auto" }}>
-        <button onClick={goHome} style={{ background: "none", border: "none", color: "#ccc", cursor: "pointer", fontSize: "0.8rem", padding: "0 0 1.5rem", fontFamily: "inherit" }}>← Back to Menu</button>
+        <button onClick={goHome} style={{ background: "none", border: "none", color: "#666", cursor: "pointer", fontSize: "0.8rem", padding: "0 0 1.5rem", fontFamily: "inherit" }}>← Back to Menu</button>
         
         <div style={{ textAlign: "center" as const, marginBottom: "2.5rem" }}>
           <div style={{ fontSize: "0.65rem", color: "#FF8C42", letterSpacing: "3px", textTransform: "uppercase" as const, marginBottom: "0.5rem" }}>
@@ -1456,7 +1456,7 @@ export default function HotMessOS() {
           <h1 style={{ fontSize: "1.8rem", fontWeight: 900, background: "linear-gradient(90deg,#FF8C42,#FF4ECD)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
             Your Diagnostic Journey
           </h1>
-          <p style={{ color: "#bbb", fontSize: "0.9rem", marginTop: "0.75rem" }}>
+          <p style={{ color: "#666", fontSize: "0.9rem", marginTop: "0.75rem" }}>
             Track your progress week over week
           </p>
         </div>
@@ -1464,7 +1464,7 @@ export default function HotMessOS() {
         {quizHistory.length === 0 ? (
           <div style={{ ...card, textAlign: "center" as const, padding: "3rem 2rem" }}>
             <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>📊</div>
-            <p style={{ color: "#bbb", fontSize: "0.95rem", marginBottom: "1.5rem" }}>
+            <p style={{ color: "#666", fontSize: "0.95rem", marginBottom: "1.5rem" }}>
               No quiz history yet. Take your first diagnostic to start tracking your journey.
             </p>
             <button onClick={handleQuizClick} style={{ ...gradBtn, padding: "0.8rem 2rem" }}>
@@ -1489,10 +1489,10 @@ export default function HotMessOS() {
                       <div style={{ fontWeight: 800, color: getMeter(quiz.score).color, fontSize: "0.95rem", marginBottom: "0.25rem" }}>
                         {quiz.meter_label}
                       </div>
-                      <div style={{ color: "#ccc", fontSize: "0.85rem", marginBottom: "0.25rem" }}>
+                      <div style={{ color: "#666", fontSize: "0.85rem", marginBottom: "0.25rem" }}>
                         {quiz.archetype} · {quiz.score.toFixed(1)}/5
                       </div>
-                      <div style={{ color: "#bbb", fontSize: "0.75rem" }}>
+                      <div style={{ color: "#666", fontSize: "0.75rem" }}>
                         {date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} at {date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
                       </div>
                     </div>
@@ -1520,7 +1520,7 @@ export default function HotMessOS() {
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: "0.5rem", fontSize: "0.7rem" }}>
                     {Object.keys({ presence: quiz.pillar_presence, digital_self: quiz.pillar_digital_self, relationships: quiz.pillar_relationships, creative_flow: quiz.pillar_creative_flow }).map(k => (
                       <div key={k}>
-                        <div style={{ color: "#bbb", marginBottom: "2px", fontSize: "0.65rem", textTransform: "uppercase" as const, letterSpacing: "0.5px" }}>
+                        <div style={{ color: "#666", marginBottom: "2px", fontSize: "0.65rem", textTransform: "uppercase" as const, letterSpacing: "0.5px" }}>
                           {pillarLabels[k].split(' ')[0]}
                         </div>
                         <div style={{ fontWeight: 700, color: pillarColors[k] }}>
@@ -1560,7 +1560,7 @@ export default function HotMessOS() {
 
         {/* Hero */}
         <div style={{ textAlign: "center" as const, marginBottom: "3rem" }}>
-          <div style={{ fontSize: "0.65rem", color: "#bbb", letterSpacing: "3px", textTransform: "uppercase" as const, marginBottom: "1rem" }}>
+          <div style={{ fontSize: "0.65rem", color: "#666", letterSpacing: "3px", textTransform: "uppercase" as const, marginBottom: "1rem" }}>
             AI-Powered Chaos Management
           </div>
           <h1 style={{
@@ -1575,7 +1575,7 @@ export default function HotMessOS() {
           }}>
             HOT MESS OS
           </h1>
-          <p style={{ color: "#bbb", fontSize: "0.9rem", letterSpacing: "0.05em" }}>
+          <p style={{ color: "#666", fontSize: "0.9rem", letterSpacing: "0.05em" }}>
             What are we fixing today?
           </p>
         </div>
@@ -1585,8 +1585,8 @@ export default function HotMessOS() {
           {/* Chat intro section */}
           <div style={{ ...card, padding: "1.5rem" }}>
             <div style={{ marginBottom: "1rem" }}>
-              <h2 style={{ fontSize: "1.1rem", fontWeight: 800, color: "#fff", marginBottom: "0.25rem" }}>Chat with Your Digital Chaos Wrangler</h2>
-              <p style={{ fontSize: "0.75rem", color: "#bbb", lineHeight: 1.5 }}>
+              <h2 style={{ fontSize: "1.1rem", fontWeight: 800, color: "#1a1a1a", marginBottom: "0.25rem" }}>Chat with Your Digital Chaos Wrangler</h2>
+              <p style={{ fontSize: "0.75rem", color: "#666", lineHeight: 1.5 }}>
                 You get 10 messages per day per mode — because overthinking isn't a strategy, darling.
               </p>
             </div>
@@ -1603,11 +1603,11 @@ export default function HotMessOS() {
                   key={opt.key}
                   onClick={() => startChat(opt.key)}
                   style={{
-                    background: "rgba(255,255,255,0.02)",
+                    background: "rgba(0,0,0,0.02)",
                     border: "1px solid rgba(255,255,255,0.07)",
                     borderRadius: "5px",
                     padding: "0.85rem 1rem",
-                    color: "#e8e8e8",
+                    color: "#1a1a1a",
                     cursor: "pointer",
                     textAlign: "left" as const,
                     display: "flex",
@@ -1622,27 +1622,26 @@ export default function HotMessOS() {
                   <span style={{ fontSize: "1.3rem" }}>{opt.icon}</span>
                   <div>
                     <div style={{ fontWeight: 700, fontSize: "0.88rem" }}>{opt.label}</div>
-                    <div style={{ fontSize: "0.72rem", color: "#bbb", marginTop: "2px", letterSpacing: "0.02em" }}>{opt.sub}</div>
+                    <div style={{ fontSize: "0.72rem", color: "#666", marginTop: "2px", letterSpacing: "0.02em" }}>{opt.sub}</div>
                   </div>
                 </button>
               ))}
             </div>
           </div>
 
-
           {/* Divider */}
           <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-            <div style={{ flex: 1, height: "1px", background: "rgba(255,255,255,0.05)" }} />
-            <span style={{ color: "#bbb", fontSize: "0.9rem", letterSpacing: "0.05em" }}>Go Deeper</span>
-            <div style={{ flex: 1, height: "1px", background: "rgba(255,255,255,0.05)" }} />
+            <div style={{ flex: 1, height: "1px", background: "rgba(0,0,0,0.1)" }} />
+            <span style={{ color: "#666", fontSize: "0.9rem", letterSpacing: "0.05em" }}>Go Deeper</span>
+            <div style={{ flex: 1, height: "1px", background: "rgba(0,0,0,0.1)" }} />
           </div>
 
           {/* Quiz section - matching chat layout */}
           <div style={{ ...card, padding: "1.5rem" }}>
             <div style={{ marginBottom: "1rem" }}>
-              <h2 style={{ fontSize: "1.1rem", fontWeight: 800, color: "#fff", marginBottom: "0.25rem" }}>Hot Mess Chaos Check</h2>
-              <p style={{ fontSize: "0.75rem", color: "#bbb", lineHeight: 1.5 }}>
-                This free assessment reveals what flavor your hot mess takes in the digital world — and exactly where to focus first. <span style={{ color: "#ccc" }}>1× per week · Takes 3 minutes</span>
+              <h2 style={{ fontSize: "1.1rem", fontWeight: 800, color: "#1a1a1a", marginBottom: "0.25rem" }}>Hot Mess Chaos Check</h2>
+              <p style={{ fontSize: "0.75rem", color: "#666", lineHeight: 1.5 }}>
+                This free assessment reveals what flavor your hot mess takes in the digital world — and exactly where to focus first. <span style={{ color: "#666" }}>1× per week · Takes 3 minutes</span>
               </p>
             </div>
 
@@ -1656,7 +1655,7 @@ export default function HotMessOS() {
                   border: "1px solid rgba(255,140,66,0.25)",
                   borderRadius: "5px",
                   padding: "0.85rem 1rem",
-                  color: "#fff",
+                  color: "#1a1a1a",
                   cursor: gateLoading ? "wait" : "pointer",
                   textAlign: "left" as const,
                   display: "flex",
@@ -1673,7 +1672,7 @@ export default function HotMessOS() {
                   <div style={{ fontWeight: 700, fontSize: "0.88rem" }}>
                     {gateLoading ? "Checking your session…" : "Take Free Assessment"}
                   </div>
-                  <div style={{ fontSize: "0.72rem", color: "#ccc", marginTop: "2px", letterSpacing: "0.02em" }}>
+                  <div style={{ fontSize: "0.72rem", color: "#666", marginTop: "2px", letterSpacing: "0.02em" }}>
                     Find out which pillar needs attention first
                   </div>
                 </div>
@@ -1684,11 +1683,11 @@ export default function HotMessOS() {
                 <button
                   onClick={viewQuizHistory}
                   style={{
-                    background: "rgba(255,255,255,0.02)",
+                    background: "rgba(0,0,0,0.02)",
                     border: "1px solid rgba(255,255,255,0.07)",
                     borderRadius: "5px",
                     padding: "0.85rem 1rem",
-                    color: "#e8e8e8",
+                    color: "#1a1a1a",
                     cursor: "pointer",
                     textAlign: "left" as const,
                     display: "flex",
@@ -1703,7 +1702,7 @@ export default function HotMessOS() {
                   <span style={{ fontSize: "1.3rem" }}>📊</span>
                   <div>
                     <div style={{ fontWeight: 700, fontSize: "0.88rem" }}>View Quiz History</div>
-                    <div style={{ fontSize: "0.72rem", color: "#bbb", marginTop: "2px", letterSpacing: "0.02em" }}>
+                    <div style={{ fontSize: "0.72rem", color: "#666", marginTop: "2px", letterSpacing: "0.02em" }}>
                       {quizHistory.length} past {quizHistory.length === 1 ? 'assessment' : 'assessments'}
                     </div>
                   </div>
@@ -1714,22 +1713,22 @@ export default function HotMessOS() {
 
           {/* Section Break - Ready to Invest */}
           <div style={{ display: "flex", alignItems: "center", gap: "1rem", margin: "1.5rem 0 1rem" }}>
-            <div style={{ flex: 1, height: "1px", background: "rgba(255,255,255,0.05)" }} />
-            <span style={{ color: "#bbb", fontSize: "0.9rem", letterSpacing: "0.05em" }}>Ready to Invest?</span>
-            <div style={{ flex: 1, height: "1px", background: "rgba(255,255,255,0.05)" }} />
+            <div style={{ flex: 1, height: "1px", background: "rgba(0,0,0,0.1)" }} />
+            <span style={{ color: "#666", fontSize: "0.9rem", letterSpacing: "0.05em" }}>Ready to Invest?</span>
+            <div style={{ flex: 1, height: "1px", background: "rgba(0,0,0,0.1)" }} />
           </div>
 
           {/* Premium Options Card */}
           <div style={{
-            background: "rgba(255,255,255,0.02)",
-            border: "1px solid rgba(255,255,255,0.08)",
+            background: "rgba(0,0,0,0.02)",
+            border: "1px solid rgba(0,0,0,0.08)",
             borderRadius: "6px",
             padding: "1.5rem 1.25rem",
           }}>
               <h2 style={{ 
                 fontSize: "1.1rem", 
                 fontWeight: 800, 
-                color: "#fff",
+                color: "#1a1a1a",
                 textAlign: "left" as const,
                 marginBottom: "0.25rem",
               }}>
@@ -1737,7 +1736,7 @@ export default function HotMessOS() {
               </h2>
               <p style={{
                 fontSize: "0.75rem",
-                color: "#bbb",
+                color: "#666",
                 textAlign: "left" as const,
                 marginBottom: "1.25rem",
               }}>
@@ -1799,8 +1798,8 @@ export default function HotMessOS() {
 
           {/* User info & logout */}
           <div style={{ marginTop: "1rem", paddingTop: "1.5rem", borderTop: "1px solid rgba(255,255,255,0.05)", display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "0.75rem" }}>
-            <span style={{ color: "#bbb" }}>Logged in as {userEmail}</span>
-            <button onClick={handleLogout} style={{ background: "none", border: "none", color: "#ccc", cursor: "pointer", fontSize: "0.75rem", textDecoration: "underline", fontFamily: "inherit" }}>
+            <span style={{ color: "#666" }}>Logged in as {userEmail}</span>
+            <button onClick={handleLogout} style={{ background: "none", border: "none", color: "#666", cursor: "pointer", fontSize: "0.75rem", textDecoration: "underline", fontFamily: "inherit" }}>
               Logout
             </button>
           </div>
@@ -1827,7 +1826,7 @@ export default function HotMessOS() {
 
         {/* Chat header */}
         <div style={{ ...contentStyle, padding: "1rem 1.5rem", borderBottom: "1px solid rgba(255,255,255,0.05)", display: "flex", alignItems: "center", gap: "1rem", background: "rgba(8,8,8,0.9)", backdropFilter: "blur(12px)" }}>
-          <button onClick={goHome} style={{ background: "none", border: "none", color: "#ccc", cursor: "pointer", fontSize: "0.8rem", padding: 0, fontFamily: "inherit" }}>← Menu</button>
+          <button onClick={goHome} style={{ background: "none", border: "none", color: "#666", cursor: "pointer", fontSize: "0.8rem", padding: 0, fontFamily: "inherit" }}>← Menu</button>
           <span style={{ fontWeight: 700, fontSize: "0.85rem", color: "#FF8C42", letterSpacing: "0.04em" }}>
             {modeLabels[chatMode!] || "Hot Mess OS"}
           </span>
@@ -1866,7 +1865,7 @@ export default function HotMessOS() {
           })}
           {chatLoading && (
             <div style={{ display: "flex", justifyContent: "flex-start" }}>
-              <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)", borderRadius: "2px 12px 12px 12px", padding: "0.8rem 1rem", color: "#ccc", fontSize: "0.8rem" }}>
+              <div style={{ background: "rgba(0,0,0,0.02)", border: "1px solid rgba(255,255,255,0.05)", borderRadius: "2px 12px 12px 12px", padding: "0.8rem 1rem", color: "#666", fontSize: "0.8rem" }}>
                 thinking…
               </div>
             </div>
@@ -1881,7 +1880,7 @@ export default function HotMessOS() {
             onChange={(e) => setUserInput(e.target.value)}
             onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); } }}
             placeholder="Type your reply…"
-            style={{ flex: 1, background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "4px", padding: "0.75rem 1rem", color: "#e8e8e8", fontSize: "0.88rem", outline: "none", fontFamily: "inherit" }}
+            style={{ flex: 1, background: "rgba(255,255,255,0.03)", border: "1px solid rgba(0,0,0,0.08)", borderRadius: "4px", padding: "0.75rem 1rem", color: "#1a1a1a", fontSize: "0.88rem", outline: "none", fontFamily: "inherit" }}
           />
           <button
             onClick={sendMessage}
@@ -1908,12 +1907,12 @@ export default function HotMessOS() {
         <SiteNav />
         <div style={{ ...contentStyle, width: "100%", maxWidth: "520px" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
-            <button onClick={goHome} style={{ background: "none", border: "none", color: "#ccc", cursor: "pointer", fontSize: "0.8rem", padding: 0, fontFamily: "inherit" }}>← Menu</button>
-            <span style={{ color: "#ccc", fontSize: "0.78rem", letterSpacing: "0.05em" }}>{currentQ + 1} / {questions.length}</span>
+            <button onClick={goHome} style={{ background: "none", border: "none", color: "#666", cursor: "pointer", fontSize: "0.8rem", padding: 0, fontFamily: "inherit" }}>← Menu</button>
+            <span style={{ color: "#666", fontSize: "0.78rem", letterSpacing: "0.05em" }}>{currentQ + 1} / {questions.length}</span>
           </div>
 
           {/* Progress bar */}
-          <div style={{ height: "3px", background: "rgba(255,255,255,0.05)", borderRadius: "2px", marginBottom: "2.5rem" }}>
+          <div style={{ height: "3px", background: "rgba(0,0,0,0.1)", borderRadius: "2px", marginBottom: "2.5rem" }}>
             <div style={{ height: "100%", width: `${progress}%`, background: "linear-gradient(90deg,#FF8C42,#FF4ECD)", borderRadius: "2px", transition: "width 0.3s ease" }} />
           </div>
 
@@ -1922,7 +1921,7 @@ export default function HotMessOS() {
             {pillarLabels[q.pillar]}
           </div>
 
-          <h2 style={{ fontSize: "1.15rem", fontWeight: 700, lineHeight: 1.5, marginBottom: "1.75rem", color: "#e8e8e8" }}>{q.q}</h2>
+          <h2 style={{ fontSize: "1.15rem", fontWeight: 700, lineHeight: 1.5, marginBottom: "1.75rem", color: "#1a1a1a" }}>{q.q}</h2>
 
           {q.type === "single" && (
             <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", marginBottom: "1.75rem" }}>
@@ -1957,7 +1956,7 @@ export default function HotMessOS() {
                   );
                 })}
               </div>
-              <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.7rem", color: "#ccc", letterSpacing: "0.03em" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.7rem", color: "#666", letterSpacing: "0.03em" }}>
                 <span>{q.low}</span><span>{q.high}</span>
               </div>
             </div>
@@ -1982,7 +1981,7 @@ export default function HotMessOS() {
       <div style={{ ...contentStyle, textAlign: "center" as const }}>
         <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>🔥</div>
         <p style={{ fontSize: "1rem", fontWeight: 700, letterSpacing: "0.05em", color: "#FF8C42" }}>RUNNING YOUR DIAGNOSTICS</p>
-        <p style={{ color: "#ccc", fontSize: "0.8rem", marginTop: "0.5rem", letterSpacing: "0.03em" }}>Should take under 30 seconds.</p>
+        <p style={{ color: "#666", fontSize: "0.8rem", marginTop: "0.5rem", letterSpacing: "0.03em" }}>Should take under 30 seconds.</p>
       </div>
     </div>
   );
@@ -2000,7 +1999,7 @@ export default function HotMessOS() {
         <div style={glowStyle} />
         <SiteNav />
         <div style={{ ...contentStyle, maxWidth: "580px", margin: "0 auto" }}>
-          <button onClick={goHome} style={{ background: "none", border: "none", color: "#ccc", cursor: "pointer", fontSize: "0.8rem", padding: "0 0 1.5rem", fontFamily: "inherit" }}>← Menu</button>
+          <button onClick={goHome} style={{ background: "none", border: "none", color: "#666", cursor: "pointer", fontSize: "0.8rem", padding: "0 0 1.5rem", fontFamily: "inherit" }}>← Menu</button>
 
           <div style={{ textAlign: "center" as const, marginBottom: "2rem" }}>
             <div style={{ fontSize: "0.65rem", color: "#FF8C42", letterSpacing: "3px", textTransform: "uppercase" as const, marginBottom: "0.5rem" }}>
@@ -2016,12 +2015,12 @@ export default function HotMessOS() {
             <div style={{ ...card, background: meter.bg, border: `1px solid ${meter.color}22`, textAlign: "center" as const }}>
               <div style={label}>Mess Level</div>
               <div style={{ fontSize: "1.05rem", fontWeight: 800, color: meter.color }}>{meter.label}</div>
-              <div style={{ fontSize: "0.75rem", color: "#bbb", marginTop: "0.25rem" }}>{score.toFixed(1)} / 5.0</div>
+              <div style={{ fontSize: "0.75rem", color: "#666", marginTop: "0.25rem" }}>{score.toFixed(1)} / 5.0</div>
             </div>
             <div style={{ ...card, textAlign: "center" as const }}>
               <div style={label}>Archetype</div>
               <div style={{ fontSize: "1.05rem", fontWeight: 800, color: "#FF4ECD" }}>{arch.emoji} {archetype}</div>
-              <div style={{ fontSize: "0.7rem", color: "#bbb", marginTop: "0.25rem", lineHeight: 1.4 }}>{arch.tagline}</div>
+              <div style={{ fontSize: "0.7rem", color: "#666", marginTop: "0.25rem", lineHeight: 1.4 }}>{arch.tagline}</div>
             </div>
           </div>
 
@@ -2032,9 +2031,9 @@ export default function HotMessOS() {
               <div key={k} style={{ marginBottom: "0.75rem" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.78rem", marginBottom: "0.2rem" }}>
                   <span style={{ color: pillarColors[k], fontWeight: 700 }}>{pillarLabels[k]}</span>
-                  <span style={{ color: "#ccc", fontWeight: 700 }}>{(pa as any)[k].toFixed(1)}</span>
+                  <span style={{ color: "#666", fontWeight: 700 }}>{(pa as any)[k].toFixed(1)}</span>
                 </div>
-                <div style={{ fontSize: "0.7rem", color: "#bbb", marginBottom: "0.5rem", lineHeight: 1.3 }}>
+                <div style={{ fontSize: "0.7rem", color: "#666", marginBottom: "0.5rem", lineHeight: 1.3 }}>
                   {pillarDescriptions[k]}
                 </div>
                 <div style={{ height: "4px", background: "rgba(255,255,255,0.04)", borderRadius: "2px" }}>
@@ -2048,7 +2047,7 @@ export default function HotMessOS() {
           {sections.map((sec, i) => (
             <div key={i} style={{ ...card, marginBottom: "0.75rem" }}>
               <div style={{ fontSize: "0.62rem", color: "#FF8C42", textTransform: "uppercase" as const, letterSpacing: "2px", marginBottom: "0.6rem" }}>{sec.title}</div>
-              <div style={{ fontSize: "0.88rem", lineHeight: 1.7, color: "#bbb", whiteSpace: "pre-wrap" }}>{sec.body}</div>
+              <div style={{ fontSize: "0.88rem", lineHeight: 1.7, color: "#666", whiteSpace: "pre-wrap" }}>{sec.body}</div>
             </div>
           ))}
 
@@ -2060,7 +2059,7 @@ export default function HotMessOS() {
             <div style={{ ...card, textAlign: "center" as const }}>
               <div style={{ fontSize: "1.5rem", marginBottom: "0.4rem" }}>🧾</div>
               <div style={{ fontWeight: 800, fontSize: "0.95rem", marginBottom: "0.35rem" }}>Want the full roadmap?</div>
-              <div style={{ fontSize: "0.8rem", color: "#bbb", lineHeight: 1.6, marginBottom: "1rem" }}>
+              <div style={{ fontSize: "0.8rem", color: "#666", lineHeight: 1.6, marginBottom: "1rem" }}>
                 The complete diagnostic goes deep on all four pillars, gives you a 30-day strategic action plan, and connects you with Hot Mess OS agents who can build the systems you need (or hey, I do custom consulting too if you want the founder treatment).
               </div>
               <button style={upgradeBtn}>Upgrade to Paid Diagnostic 💅</button>
@@ -2082,7 +2081,7 @@ export default function HotMessOS() {
       <div style={{ ...contentStyle, textAlign: "center" as const }}>
         <div style={{ fontSize: "3rem" }}>💀</div>
         <p style={{ fontSize: "1rem", fontWeight: 600, marginTop: "1rem" }}>The OS crashed. Iconic, but inconvenient.</p>
-        <p style={{ color: "#bbb", fontSize: "0.82rem", marginTop: "0.5rem", maxWidth: "340px" }}>{errorMsg}</p>
+        <p style={{ color: "#666", fontSize: "0.82rem", marginTop: "0.5rem", maxWidth: "340px" }}>{errorMsg}</p>
         <button onClick={goHome} style={{ marginTop: "1.5rem", ...gradBtn, width: "auto", padding: "0.8rem 2rem" }}>Back to Menu</button>
       </div>
     </div>
