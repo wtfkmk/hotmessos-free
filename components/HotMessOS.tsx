@@ -707,7 +707,7 @@ export default function HotMessOS() {
       <!DOCTYPE html>
       <html>
       <head>
-        <title>Hot Mess OS - Readiness Report</title>
+        <title>Hot Mess Chaos Check - Results</title>
         <style>
           body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; padding: 40px; max-width: 700px; margin: 0 auto; color: #333; }
           h1 { font-size: 28px; margin-bottom: 10px; color: #FF8C42; }
@@ -723,7 +723,7 @@ export default function HotMessOS() {
         </style>
       </head>
       <body>
-        <h1>Hot Mess OS · Readiness Report</h1>
+        <h1>Hot Mess Chaos Check</h1>
         <div class="meta">Generated ${new Date().toLocaleDateString()} for ${userEmail}</div>
         
         <div class="card">
@@ -1181,7 +1181,7 @@ export default function HotMessOS() {
         <button onClick={goHome} style={{ background: "none", border: "none", color: "#666", cursor: "pointer", fontSize: "0.8rem", padding: "0 0 2rem", fontFamily: "inherit" }}>← Back to Menu</button>
         
         <div style={{ marginBottom: "2.5rem", textAlign: "center" as const }}>
-          <div style={{ fontSize: "0.65rem", color: "#44FF88", letterSpacing: "3px", textTransform: "uppercase" as const, marginBottom: "0.5rem" }}>
+          <div style={{ fontSize: "0.65rem", color: "#666", letterSpacing: "3px", textTransform: "uppercase" as const, marginBottom: "0.5rem" }}>
             Custom Solutions
           </div>
           <h1 style={{ 
@@ -1189,9 +1189,7 @@ export default function HotMessOS() {
             fontWeight: 900, 
             lineHeight: 1.1, 
             marginBottom: "0.75rem",
-            background: "linear-gradient(135deg, #44FF88 0%, #44AAFF 100%)",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent"
+            color: "#1a1a1a"
           }}>
             Work Directly with KMK
           </h1>
@@ -1462,16 +1460,29 @@ export default function HotMessOS() {
       <div style={{ ...contentStyle, padding: "5rem 1.5rem 4rem", maxWidth: "700px", margin: "0 auto" }}>
         <button onClick={goHome} style={{ background: "none", border: "none", color: "#666", cursor: "pointer", fontSize: "0.8rem", padding: "0 0 1.5rem", fontFamily: "inherit" }}>← Back to Menu</button>
         
-        <div style={{ textAlign: "center" as const, marginBottom: "2.5rem" }}>
-          <div style={{ fontSize: "0.65rem", color: "#FF8C42", letterSpacing: "3px", textTransform: "uppercase" as const, marginBottom: "0.5rem" }}>
-            Quiz History
+        <div style={{
+          background: "linear-gradient(135deg, #44AAFF 0%, #44FF88 100%)",
+          border: "2px solid rgba(68,170,255,0.3)",
+          borderRadius: "6px",
+          padding: "1.5rem",
+          marginBottom: "2.5rem",
+        }}>
+          <div style={{
+            background: "#ffffff",
+            borderRadius: "5px",
+            padding: "2rem",
+            textAlign: "center" as const,
+          }}>
+            <div style={{ fontSize: "0.65rem", color: "#FF8C42", letterSpacing: "3px", textTransform: "uppercase" as const, marginBottom: "0.5rem" }}>
+              Quiz History
+            </div>
+            <h1 style={{ fontSize: "1.8rem", fontWeight: 900, background: "linear-gradient(90deg,#FF8C42,#FF4ECD)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+              Your Diagnostic Journey
+            </h1>
+            <p style={{ color: "#666", fontSize: "0.9rem", marginTop: "0.75rem" }}>
+              Track your progress week over week
+            </p>
           </div>
-          <h1 style={{ fontSize: "1.8rem", fontWeight: 900, background: "linear-gradient(90deg,#FF8C42,#FF4ECD)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
-            Your Diagnostic Journey
-          </h1>
-          <p style={{ color: "#666", fontSize: "0.9rem", marginTop: "0.75rem" }}>
-            Track your progress week over week
-          </p>
         </div>
 
         {quizHistory.length === 0 ? (
@@ -2033,13 +2044,26 @@ export default function HotMessOS() {
         <div style={{ ...contentStyle, maxWidth: "580px", margin: "0 auto" }}>
           <button onClick={goHome} style={{ background: "none", border: "none", color: "#666", cursor: "pointer", fontSize: "0.8rem", padding: "0 0 1.5rem", fontFamily: "inherit" }}>← Menu</button>
 
-          <div style={{ textAlign: "center" as const, marginBottom: "2rem" }}>
-            <div style={{ fontSize: "0.65rem", color: "#FF8C42", letterSpacing: "3px", textTransform: "uppercase" as const, marginBottom: "0.5rem" }}>
-              Hot Mess OS · Readiness Report
+          <div style={{
+            background: "linear-gradient(135deg, #44AAFF 0%, #44FF88 100%)",
+            border: "2px solid rgba(68,170,255,0.3)",
+            borderRadius: "6px",
+            padding: "1.5rem",
+            marginBottom: "2rem",
+          }}>
+            <div style={{
+              background: "#ffffff",
+              borderRadius: "5px",
+              padding: "2rem",
+              textAlign: "center" as const,
+            }}>
+              <div style={{ fontSize: "0.65rem", color: "#FF8C42", letterSpacing: "3px", textTransform: "uppercase" as const, marginBottom: "0.5rem" }}>
+                Hot Mess Chaos Check
+              </div>
+              <h1 style={{ fontSize: "1.8rem", fontWeight: 900, background: "linear-gradient(90deg,#FF8C42,#FF4ECD)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+                Your diagnosis is in. 💅
+              </h1>
             </div>
-            <h1 style={{ fontSize: "1.8rem", fontWeight: 900, background: "linear-gradient(90deg,#FF8C42,#FF4ECD)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
-              Your diagnosis is in. 💅
-            </h1>
           </div>
 
           {/* Score + Archetype */}
@@ -2077,9 +2101,21 @@ export default function HotMessOS() {
 
           {/* Report sections */}
           {sections.map((sec, i) => (
-            <div key={i} style={{ ...card, marginBottom: "0.75rem" }}>
-              <div style={{ fontSize: "0.62rem", color: "#FF8C42", textTransform: "uppercase" as const, letterSpacing: "2px", marginBottom: "0.6rem" }}>{sec.title}</div>
-              <div style={{ fontSize: "0.88rem", lineHeight: 1.7, color: "#666", whiteSpace: "pre-wrap" }}>{sec.body}</div>
+            <div key={i} style={{
+              background: "linear-gradient(135deg, #44AAFF 0%, #44FF88 100%)",
+              border: "2px solid rgba(68,170,255,0.3)",
+              borderRadius: "6px",
+              padding: "1.5rem",
+              marginBottom: "0.75rem",
+            }}>
+              <div style={{
+                background: "#ffffff",
+                borderRadius: "5px",
+                padding: "1.5rem",
+              }}>
+                <div style={{ fontSize: "0.62rem", color: "#FF8C42", textTransform: "uppercase" as const, letterSpacing: "2px", marginBottom: "0.6rem" }}>{sec.title}</div>
+                <div style={{ fontSize: "1rem", lineHeight: 1.7, color: "#666", whiteSpace: "pre-wrap" }}>{sec.body}</div>
+              </div>
             </div>
           ))}
 
