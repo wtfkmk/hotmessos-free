@@ -1676,29 +1676,16 @@ export default function HotMessOS() {
       <div style={{ ...contentStyle, padding: "5rem 1.5rem 4rem", maxWidth: "700px", margin: "0 auto" }}>
         <button onClick={goHome} style={{ background: "none", border: "none", color: "#666", cursor: "pointer", fontSize: "0.8rem", padding: "0 0 1.5rem", fontFamily: "inherit" }}>← Back to Menu</button>
         
-        <div style={{
-          background: "linear-gradient(135deg, #44AAFF 0%, #44FF88 100%)",
-          border: "2px solid rgba(68,170,255,0.3)",
-          borderRadius: "6px",
-          padding: "1.5rem",
-          marginBottom: "2.5rem",
-        }}>
-          <div style={{
-            background: "#ffffff",
-            borderRadius: "5px",
-            padding: "2rem",
-            textAlign: "center" as const,
-          }}>
-            <div style={{ fontSize: "0.65rem", color: "#666", letterSpacing: "3px", textTransform: "uppercase" as const, marginBottom: "0.5rem" }}>
-              Quiz History
-            </div>
-            <h1 style={{ fontSize: "1.8rem", fontWeight: 900, color: "#1a1a1a" }}>
-              Your Diagnostic Journey
-            </h1>
-            <p style={{ color: "#666", fontSize: "0.9rem", marginTop: "0.75rem" }}>
-              Track your progress week over week
-            </p>
+        <div style={{ textAlign: "center" as const, marginBottom: "2.5rem" }}>
+          <div style={{ fontSize: "0.65rem", color: "#666", letterSpacing: "3px", textTransform: "uppercase" as const, marginBottom: "0.5rem" }}>
+            Quiz History
           </div>
+          <h1 style={{ fontSize: "1.8rem", fontWeight: 900, color: "#1a1a1a" }}>
+            Your Diagnostic Journey
+          </h1>
+          <p style={{ color: "#666", fontSize: "0.9rem", marginTop: "0.75rem" }}>
+            Track your progress week over week
+          </p>
         </div>
 
         {quizHistory.length === 0 ? (
@@ -1717,18 +1704,25 @@ export default function HotMessOS() {
               const date = new Date(quiz.created_at);
               const isLatest = idx === 0;
               return (
-                <div key={quiz.id} style={{ 
-                  ...card, 
-                  position: "relative" as const, 
-                  paddingTop: isLatest ? "2.5rem" : "1.5rem",
-                  background: "rgba(68,255,136,0.08)",
-                  border: "2px solid rgba(68,255,136,0.25)",
+                <div key={quiz.id} style={{
+                  background: "linear-gradient(135deg, #44AAFF 0%, #44FF88 100%)",
+                  border: "2px solid rgba(68,170,255,0.3)",
+                  borderRadius: "6px",
+                  padding: "0.75rem",
+                  marginBottom: "1rem",
+                  position: "relative" as const,
                 }}>
-                  {isLatest && (
-                    <div style={{ position: "absolute" as const, top: "1rem", left: "1rem", background: "rgba(68,255,136,0.1)", border: "1px solid rgba(68,255,136,0.3)", borderRadius: "3px", padding: "3px 8px", fontSize: "0.7rem", color: "#44FF88", letterSpacing: "0.05em", fontWeight: 700 }}>
-                      LATEST
-                    </div>
-                  )}
+                  <div style={{
+                    background: "#ffffff",
+                    borderRadius: "5px",
+                    padding: isLatest ? "2rem 1.5rem 1.5rem" : "1.5rem",
+                    position: "relative" as const,
+                  }}>
+                    {isLatest && (
+                      <div style={{ position: "absolute" as const, top: "1rem", left: "1rem", background: "rgba(68,255,136,0.1)", border: "1px solid rgba(68,255,136,0.3)", borderRadius: "3px", padding: "3px 8px", fontSize: "0.7rem", color: "#44FF88", letterSpacing: "0.05em", fontWeight: 700 }}>
+                        LATEST
+                      </div>
+                    )}
                   <div style={{ display: "flex", alignItems: "flex-start", gap: "1rem", marginBottom: "0.75rem" }}>
                     <div style={{ fontSize: "2.5rem" }}>{archetypes[quiz.archetype]?.emoji || "🎨"}</div>
                     <div style={{ flex: 1 }}>
@@ -1774,6 +1768,7 @@ export default function HotMessOS() {
                         </div>
                       </div>
                     ))}
+                  </div>
                   </div>
                 </div>
               );
@@ -2261,26 +2256,13 @@ export default function HotMessOS() {
         <div style={{ ...contentStyle, maxWidth: "580px", margin: "0 auto" }}>
           <button onClick={goHome} style={{ background: "none", border: "none", color: "#666", cursor: "pointer", fontSize: "0.8rem", padding: "0 0 1.5rem", fontFamily: "inherit" }}>← Menu</button>
 
-          <div style={{
-            background: "linear-gradient(135deg, #44AAFF 0%, #44FF88 100%)",
-            border: "2px solid rgba(68,170,255,0.3)",
-            borderRadius: "6px",
-            padding: "1.5rem",
-            marginBottom: "2rem",
-          }}>
-            <div style={{
-              background: "#ffffff",
-              borderRadius: "5px",
-              padding: "2rem",
-              textAlign: "center" as const,
-            }}>
-              <div style={{ fontSize: "0.65rem", color: "#666", letterSpacing: "3px", textTransform: "uppercase" as const, marginBottom: "0.5rem" }}>
-                Hot Mess Chaos Check
-              </div>
-              <h1 style={{ fontSize: "1.8rem", fontWeight: 900, color: "#1a1a1a" }}>
-                Your diagnosis is in. 💅
-              </h1>
+          <div style={{ textAlign: "center" as const, marginBottom: "2rem" }}>
+            <div style={{ fontSize: "0.65rem", color: "#666", letterSpacing: "3px", textTransform: "uppercase" as const, marginBottom: "0.5rem" }}>
+              Hot Mess Chaos Check
             </div>
+            <h1 style={{ fontSize: "1.8rem", fontWeight: 900, color: "#1a1a1a" }}>
+              Your diagnosis is in. 💅
+            </h1>
           </div>
 
           {/* Score + Archetype */}
