@@ -312,7 +312,6 @@ export default function HotMessOS() {
   const [errorMsg, setErrorMsg] = useState("");
   const [quizUsageCount, setQuizUsageCount] = useState(0);
   const [gateLoading, setGateLoading] = useState(false);
-  const [scopingLoading, setScopingLoading] = useState(false);
   const [userEmail, setUserEmail] = useState("");
   const [userPassword, setUserPassword] = useState("");
   const [loginMode, setLoginMode] = useState<"login" | "signup" | "reset">("login");
@@ -543,28 +542,6 @@ export default function HotMessOS() {
   }
 
   // ── Handle Scoping Session Checkout ──
-  async function handleScopingCheckout() {
-    setScopingLoading(true);
-    try {
-      const res = await fetch('/api/stripe/create-scoping-checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: userEmail }),
-      });
-      
-      if (!res.ok) {
-        throw new Error('Failed to create checkout session');
-      }
-      
-      const { url } = await res.json();
-      window.location.href = url; // Redirect to Stripe checkout
-    } catch (err) {
-      console.error('Checkout error:', err);
-      alert('Failed to start checkout. Please try again.');
-      setScopingLoading(false);
-    }
-  }
-
   // ── Email submission and start quiz (legacy, now unused) ──
   function handleEmailSubmit() {
     if (!userEmail || !userEmail.includes('@')) {
@@ -1277,20 +1254,21 @@ export default function HotMessOS() {
                 <div style={{ marginBottom: "0.4rem" }}>✓ Timeline & cost estimate</div>
                 <div>✓ Credits toward build if we proceed</div>
               </div>
-              <button 
-                onClick={handleScopingCheckout}
-                disabled={scopingLoading}
+              <a
+                href="https://calendly.com/kristinamariekendrick/hot-mess-os-scoping-session"
+                target="_blank"
+                rel="noopener noreferrer"
                 style={{ 
+                  display: "inline-block",
                   ...gradBtn, 
                   padding: "0.75rem 1.5rem",
+                  textDecoration: "none",
                   fontSize: "0.9rem",
                   background: "linear-gradient(135deg, #44AAFF 0%, #44FF88 100%)",
-                  opacity: scopingLoading ? 0.6 : 1,
-                  cursor: scopingLoading ? "wait" : "pointer",
                 }}
               >
-                {scopingLoading ? "Redirecting to checkout..." : "Book Scoping Session — $297"}
-              </button>
+                Book Scoping Session — $297
+              </a>
               <p style={{ fontSize: "0.75rem", color: "#666", marginTop: "0.75rem", fontStyle: "italic" }}>
                 Fee credits toward your custom build if we proceed
               </p>
@@ -1583,10 +1561,15 @@ export default function HotMessOS() {
         <div style={{ width: "100%", maxWidth: "540px", display: "flex", flexDirection: "column", gap: "1.5rem" }}>
 
           {/* Chat intro section */}
-          <div style={{ ...card, padding: "1.5rem" }}>
+          <div style={{ 
+            ...card, 
+            padding: "1.5rem",
+            background: "linear-gradient(135deg, rgba(255,140,66,0.08) 0%, rgba(255,78,205,0.08) 100%)",
+            border: "2px solid rgba(255,140,66,0.2)",
+          }}>
             <div style={{ marginBottom: "1rem" }}>
-              <h2 style={{ fontSize: "1.1rem", fontWeight: 800, color: "#1a1a1a", marginBottom: "0.25rem" }}>Chat with Your Digital Chaos Wrangler</h2>
-              <p style={{ fontSize: "0.75rem", color: "#666", lineHeight: 1.5 }}>
+              <h2 style={{ fontSize: "1.3rem", fontWeight: 800, color: "#1a1a1a", marginBottom: "0.5rem" }}>Chat with Your Digital Chaos Wrangler</h2>
+              <p style={{ fontSize: "0.9rem", color: "#666", lineHeight: 1.6 }}>
                 You get 10 messages per day per mode — because overthinking isn't a strategy, darling.
               </p>
             </div>
@@ -1637,10 +1620,15 @@ export default function HotMessOS() {
           </div>
 
           {/* Quiz section - matching chat layout */}
-          <div style={{ ...card, padding: "1.5rem" }}>
+          <div style={{ 
+            ...card, 
+            padding: "1.5rem",
+            background: "linear-gradient(135deg, rgba(68,255,136,0.08) 0%, rgba(68,170,255,0.08) 100%)",
+            border: "2px solid rgba(68,255,136,0.2)",
+          }}>
             <div style={{ marginBottom: "1rem" }}>
-              <h2 style={{ fontSize: "1.1rem", fontWeight: 800, color: "#1a1a1a", marginBottom: "0.25rem" }}>Hot Mess Chaos Check</h2>
-              <p style={{ fontSize: "0.75rem", color: "#666", lineHeight: 1.5 }}>
+              <h2 style={{ fontSize: "1.3rem", fontWeight: 800, color: "#1a1a1a", marginBottom: "0.5rem" }}>Hot Mess Chaos Check</h2>
+              <p style={{ fontSize: "0.9rem", color: "#666", lineHeight: 1.6 }}>
                 This free assessment reveals what flavor your hot mess takes in the digital world — and exactly where to focus first. <span style={{ color: "#666" }}>1× per week · Takes 3 minutes</span>
               </p>
             </div>
@@ -1720,25 +1708,26 @@ export default function HotMessOS() {
 
           {/* Premium Options Card */}
           <div style={{
-            background: "rgba(0,0,0,0.02)",
-            border: "1px solid rgba(0,0,0,0.08)",
+            background: "linear-gradient(135deg, rgba(123,47,247,0.08) 0%, rgba(255,78,205,0.08) 100%)",
+            border: "2px solid rgba(123,47,247,0.2)",
             borderRadius: "6px",
             padding: "1.5rem 1.25rem",
           }}>
               <h2 style={{ 
-                fontSize: "1.1rem", 
+                fontSize: "1.3rem", 
                 fontWeight: 800, 
                 color: "#1a1a1a",
                 textAlign: "left" as const,
-                marginBottom: "0.25rem",
+                marginBottom: "0.5rem",
               }}>
                 Stop Winging It, Start Winning It
               </h2>
               <p style={{
-                fontSize: "0.75rem",
+                fontSize: "0.85rem",
                 color: "#666",
                 textAlign: "left" as const,
                 marginBottom: "1.25rem",
+                lineHeight: 1.6,
               }}>
                 Premium pathways for the serious hot mess ready to level up
               </p>
@@ -1848,13 +1837,13 @@ export default function HotMessOS() {
               <div key={i} style={{ display: "flex", justifyContent: isAI ? "flex-start" : "flex-end" }}>
                 <div style={{
                   maxWidth: "82%",
-                  background: isAI ? "rgba(255,255,255,0.03)" : "rgba(255,140,66,0.1)",
-                  border: isAI ? "1px solid rgba(255,255,255,0.06)" : "1px solid rgba(255,140,66,0.2)",
+                  background: isAI ? "rgba(0,0,0,0.04)" : "linear-gradient(135deg, #FF8C42 0%, #FF4ECD 100%)",
+                  border: isAI ? "1px solid rgba(0,0,0,0.08)" : "none",
                   borderRadius: isAI ? "2px 12px 12px 12px" : "12px 2px 12px 12px",
                   padding: "0.8rem 1rem",
                   fontSize: "0.88rem",
                   lineHeight: 1.7,
-                  color: isAI ? "#ccc" : "#fff",
+                  color: isAI ? "#1a1a1a" : "#ffffff",
                   whiteSpace: "pre-wrap",
                   fontFamily: isAI ? "'DM Mono', monospace" : "inherit",
                 }}>
