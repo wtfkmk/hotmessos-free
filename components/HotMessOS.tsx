@@ -1215,15 +1215,15 @@ export default function HotMessOS() {
               <span style={{ fontSize: "2.5rem" }}>🎯</span>
               <div style={{ flex: 1 }}>
                 <h2 style={{ fontSize: "1.4rem", fontWeight: 800, color: "#1a1a1a", marginBottom: "0.5rem" }}>
-                  Free 15-Minute Discovery Call
+                  15-Minute Introduction Call
                 </h2>
                 <p style={{ fontSize: "1rem", color: "#666", lineHeight: 1.6, marginBottom: "1rem" }}>
-                  Got a wild idea but not sure if it's buildable? Book a quick call. I'll tell you if it's possible, if you should build it, or if there's a better approach you haven't considered.
+                  Questions about your Hot Mess Chaos Check results? Book a quick intro call. I'll help you understand your archetype, clarify your pillar scores, and answer any questions about what to do next.
                 </p>
                 <div style={{ fontSize: "0.95rem", color: "#666", marginBottom: "1.25rem" }}>
-                  <div style={{ marginBottom: "0.4rem" }}>✓ Is this idea technically possible?</div>
-                  <div style={{ marginBottom: "0.4rem" }}>✓ Should you build it or shelf it?</div>
-                  <div>✓ Is a scoping session worth it for you?</div>
+                  <div style={{ marginBottom: "0.4rem" }}>✓ Q&A about your chaos check results</div>
+                  <div style={{ marginBottom: "0.4rem" }}>✓ Understanding your archetype & scores</div>
+                  <div>✓ Clarifying your next steps</div>
                 </div>
                 <a 
                   href="https://calendly.com/kristinamariekendrick/30min" 
@@ -1237,7 +1237,7 @@ export default function HotMessOS() {
                     fontSize: "1rem"
                   }}
                 >
-                  Book Free Discovery Call →
+                  Book Introduction Call →
                 </a>
               </div>
             </div>
@@ -1285,7 +1285,6 @@ export default function HotMessOS() {
                     padding: "0.85rem 1.75rem",
                     textDecoration: "none",
                     fontSize: "1rem",
-                    background: "linear-gradient(135deg, #44AAFF 0%, #44FF88 100%)",
                   }}
                 >
                 Book Scoping Session — $297
@@ -1387,8 +1386,23 @@ export default function HotMessOS() {
             <div style={{ fontSize: "1.2rem", fontWeight: 800, color: "#1a1a1a", marginBottom: "0.5rem" }}>
               Launching Soon
             </div>
-            <p style={{ fontSize: "0.9rem", color: "#666", lineHeight: 1.6 }}>
-              These agents are currently in development. Want early access? Book a free discovery call to get on the waitlist and help shape what gets built first.
+            <p style={{ fontSize: "0.9rem", color: "#666", lineHeight: 1.6, marginBottom: "1.25rem" }}>
+              These agents are currently in development. Sign up below to receive updates and share feedback with the Hot Mess OS community.
+            </p>
+            <button
+              onClick={() => {
+                alert(`Thanks for your interest! We'll send updates to ${userEmail}`);
+              }}
+              style={{
+                ...gradBtn,
+                padding: "0.85rem 1.75rem",
+                fontSize: "1rem",
+              }}
+            >
+              ✓ Sign Up for Updates
+            </button>
+            <p style={{ fontSize: "0.75rem", color: "#666", marginTop: "0.75rem" }}>
+              Updates will be sent to {userEmail}
             </p>
           </div>
         </div>
@@ -1446,13 +1460,13 @@ export default function HotMessOS() {
                   Voice Amplifier Agent
                 </h2>
                 <p style={{ fontSize: "1rem", color: "#666", lineHeight: 1.6, marginBottom: "1rem" }}>
-                  Your brand voice shouldn't sound like everyone else's AI slop. Feed this agent your writing samples and it learns your actual voice — then generates content that sounds like you, not ChatGPT.
+                  Stop regurgitating generic takes. This agent scrapes trending articles, fresh content, and emerging ideas across your niche — then challenges you to form your own perspective. It turns your genuine reactions into content ideas that actually sound like you.
                 </p>
                 <div style={{ fontSize: "0.95rem", color: "#666" }}>
-                  <div style={{ marginBottom: "0.4rem" }}>✓ Voice analysis from your content</div>
-                  <div style={{ marginBottom: "0.4rem" }}>✓ Custom style guide generation</div>
-                  <div style={{ marginBottom: "0.4rem" }}>✓ Tone consistency scoring</div>
-                  <div>✓ Content generation in your voice</div>
+                  <div style={{ marginBottom: "0.4rem" }}>✓ Curated trending content in your niche</div>
+                  <div style={{ marginBottom: "0.4rem" }}>✓ Perspective prompts to develop your take</div>
+                  <div style={{ marginBottom: "0.4rem" }}>✓ Voice analysis & consistency scoring</div>
+                  <div>✓ Converts your ideas into content formats</div>
                 </div>
               </div>
             </div>
@@ -1528,23 +1542,8 @@ export default function HotMessOS() {
         {/* CTA Section */}
         <div style={{ marginTop: "2.5rem", textAlign: "center" as const }}>
           <p style={{ fontSize: "0.9rem", color: "#666", marginBottom: "1.5rem", lineHeight: 1.6 }}>
-            Want to influence which agents get built first? Or need something custom-built just for you?
+            Already signed up? Share your feedback and help shape what gets built first in the Hot Mess OS community.
           </p>
-          <a 
-            href="https://calendly.com/kristinamariekendrick/30min" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            style={{ 
-              display: "inline-block",
-              ...gradBtn, 
-              padding: "0.85rem 1.75rem",
-              textDecoration: "none",
-              fontSize: "1rem",
-              marginBottom: "0.75rem"
-            }}
-          >
-            Book Free Discovery Call →
-          </a>
           <div style={{ marginTop: "1.5rem" }}>
             <button onClick={goHome} style={{ ...gradBtn, width: "100%", background: "linear-gradient(135deg, #44AAFF 0%, #44FF88 100%)" }}>
               ← Back to Hot Mess OS
@@ -1578,13 +1577,29 @@ export default function HotMessOS() {
           </p>
 
           {quizResults && (
-            <div style={{ ...card, marginBottom: "1.5rem", display: "flex", alignItems: "center", gap: "1rem", textAlign: "left" as const }}>
-              <span style={{ fontSize: "2rem" }}>{archetypes[quizResults.archetype]?.emoji}</span>
-              <div>
-                <div style={{ fontWeight: 800, color: quizResults.meter.color, fontSize: "0.95rem" }}>{quizResults.meter.label}</div>
-                <div style={{ color: "#666", fontSize: "0.8rem" }}>{quizResults.archetype} · {quizResults.score.toFixed(1)}/5</div>
+            <div style={{
+              background: "linear-gradient(135deg, #44AAFF 0%, #44FF88 100%)",
+              border: "2px solid rgba(68,170,255,0.3)",
+              borderRadius: "6px",
+              padding: "0.75rem",
+              marginBottom: "1.5rem",
+            }}>
+              <div style={{
+                background: "#ffffff",
+                borderRadius: "5px",
+                padding: "1.5rem",
+                display: "flex",
+                alignItems: "center",
+                gap: "1rem",
+                textAlign: "left" as const,
+              }}>
+                <span style={{ fontSize: "2rem" }}>{archetypes[quizResults.archetype]?.emoji}</span>
+                <div>
+                  <div style={{ fontWeight: 800, color: quizResults.meter.color, fontSize: "0.95rem" }}>{quizResults.meter.label}</div>
+                  <div style={{ color: "#666", fontSize: "0.8rem" }}>{quizResults.archetype} · {quizResults.score.toFixed(1)}/5</div>
+                </div>
+                <button onClick={() => setScreen("quiz_results")} style={{ marginLeft: "auto", background: "none", border: "1px solid rgba(255,140,66,0.3)", borderRadius: "3px", padding: "0.4rem 0.8rem", color: "#FF8C42", fontSize: "0.75rem", cursor: "pointer", fontFamily: "inherit" }}>View report →</button>
               </div>
-              <button onClick={() => setScreen("quiz_results")} style={{ marginLeft: "auto", background: "none", border: "1px solid rgba(255,140,66,0.3)", borderRadius: "3px", padding: "0.4rem 0.8rem", color: "#FF8C42", fontSize: "0.75rem", cursor: "pointer", fontFamily: "inherit" }}>View report →</button>
             </div>
           )}
 
@@ -2323,6 +2338,24 @@ export default function HotMessOS() {
             <button onClick={exportQuizPDF} style={{ ...btn(), width: "100%", background: "rgba(255,140,66,0.08)", border: "1px solid rgba(255,140,66,0.2)", color: "#FF8C42" }}>
               📄 Export as PDF
             </button>
+            
+            <a
+              href="https://calendly.com/kristinamariekendrick/30min"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: "inline-block",
+                ...btn(),
+                width: "100%",
+                background: "rgba(68,170,255,0.08)",
+                border: "1px solid rgba(68,170,255,0.2)",
+                color: "#44AAFF",
+                textDecoration: "none",
+                textAlign: "center" as const,
+              }}
+            >
+              💬 Questions? Book a 15-Min Introduction Call
+            </a>
             
             <div style={{ height: "2rem" }} />
             
