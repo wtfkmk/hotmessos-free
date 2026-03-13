@@ -1201,72 +1201,95 @@ export default function HotMessOS() {
         </div>
 
         {/* Free Discovery Call */}
-        <div style={{ ...card, marginBottom: "1.5rem", border: "1px solid rgba(68,255,136,0.2)" }}>
-          <div style={{ display: "flex", alignItems: "flex-start", gap: "1rem", marginBottom: "1rem" }}>
-            <span style={{ fontSize: "2rem" }}>🎯</span>
-            <div style={{ flex: 1 }}>
-              <h2 style={{ fontSize: "1.2rem", fontWeight: 800, color: "#44FF88", marginBottom: "0.5rem" }}>
-                Free 15-Minute Discovery Call
-              </h2>
-              <p style={{ fontSize: "0.9rem", color: "#666", lineHeight: 1.6, marginBottom: "1rem" }}>
-                Got a wild idea but not sure if it's buildable? Book a quick call. I'll tell you if it's possible, if you should build it, or if there's a better approach you haven't considered.
-              </p>
-              <div style={{ fontSize: "0.85rem", color: "#666", marginBottom: "1.25rem" }}>
-                <div style={{ marginBottom: "0.4rem" }}>✓ Is this idea technically possible?</div>
-                <div style={{ marginBottom: "0.4rem" }}>✓ Should you build it or shelf it?</div>
-                <div>✓ Is a scoping session worth it for you?</div>
+        <div style={{ 
+          background: "linear-gradient(135deg, #44AAFF 0%, #44FF88 100%)",
+          border: "2px solid rgba(68,170,255,0.3)",
+          borderRadius: "6px",
+          padding: "1.5rem",
+          marginBottom: "1.5rem",
+        }}>
+          <div style={{ 
+            background: "#ffffff",
+            borderRadius: "5px",
+            padding: "1.5rem",
+          }}>
+            <div style={{ display: "flex", alignItems: "flex-start", gap: "1rem" }}>
+              <span style={{ fontSize: "2.5rem" }}>🎯</span>
+              <div style={{ flex: 1 }}>
+                <h2 style={{ fontSize: "1.4rem", fontWeight: 800, color: "#1a1a1a", marginBottom: "0.5rem" }}>
+                  Free 15-Minute Discovery Call
+                </h2>
+                <p style={{ fontSize: "1rem", color: "#666", lineHeight: 1.6, marginBottom: "1rem" }}>
+                  Got a wild idea but not sure if it's buildable? Book a quick call. I'll tell you if it's possible, if you should build it, or if there's a better approach you haven't considered.
+                </p>
+                <div style={{ fontSize: "0.95rem", color: "#666", marginBottom: "1.25rem" }}>
+                  <div style={{ marginBottom: "0.4rem" }}>✓ Is this idea technically possible?</div>
+                  <div style={{ marginBottom: "0.4rem" }}>✓ Should you build it or shelf it?</div>
+                  <div>✓ Is a scoping session worth it for you?</div>
+                </div>
+                <a 
+                  href="https://calendly.com/kristinamariekendrick/30min" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  style={{ 
+                    display: "inline-block",
+                    ...gradBtn, 
+                    padding: "0.85rem 1.75rem",
+                    textDecoration: "none",
+                    fontSize: "1rem"
+                  }}
+                >
+                  Book Free Discovery Call →
+                </a>
               </div>
-              <a 
-                href="https://calendly.com/kristinamariekendrick/30min" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                style={{ 
-                  display: "inline-block",
-                  ...gradBtn, 
-                  padding: "0.75rem 1.5rem",
-                  textDecoration: "none",
-                  fontSize: "0.9rem"
-                }}
-              >
-                Book Free Discovery Call →
-              </a>
             </div>
           </div>
         </div>
 
         {/* Paid Scoping Session */}
-        <div style={{ ...card, marginBottom: "1.5rem", border: "1px solid rgba(68,170,255,0.2)" }}>
-          <div style={{ display: "flex", alignItems: "flex-start", gap: "1rem", marginBottom: "1rem" }}>
-            <span style={{ fontSize: "2rem" }}>📐</span>
-            <div style={{ flex: 1 }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.5rem" }}>
-                <h2 style={{ fontSize: "1.2rem", fontWeight: 800, color: "#44AAFF", margin: 0 }}>
-                  Scoping Session
-                </h2>
-                <span style={{ fontSize: "1.1rem", fontWeight: 800, color: "#44AAFF" }}>$297</span>
-              </div>
-              <p style={{ fontSize: "0.9rem", color: "#666", lineHeight: 1.6, marginBottom: "1rem" }}>
-                Book a 45-60 minute deep-dive and I'll map out exactly what's possible, what it'll cost, and whether you should build it or shelf it. You'll get a written scope doc — your roadmap for what happens next.
-              </p>
-              <div style={{ fontSize: "0.85rem", color: "#666", marginBottom: "1.25rem" }}>
-                <div style={{ marginBottom: "0.4rem" }}>✓ 45-60 minute deep-dive session</div>
-                <div style={{ marginBottom: "0.4rem" }}>✓ Written scope document delivered</div>
-                <div style={{ marginBottom: "0.4rem" }}>✓ Timeline & cost estimate</div>
-                <div>✓ Credits toward build if we proceed</div>
-              </div>
-              <a
-                href="https://calendly.com/kristinamariekendrick/hot-mess-os-scoping-session"
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ 
-                  display: "inline-block",
-                  ...gradBtn, 
-                  padding: "0.75rem 1.5rem",
-                  textDecoration: "none",
-                  fontSize: "0.9rem",
-                  background: "linear-gradient(135deg, #44AAFF 0%, #44FF88 100%)",
-                }}
-              >
+        <div style={{ 
+          background: "linear-gradient(135deg, #44AAFF 0%, #44FF88 100%)",
+          border: "2px solid rgba(68,170,255,0.3)",
+          borderRadius: "6px",
+          padding: "1.5rem",
+          marginBottom: "1.5rem",
+        }}>
+          <div style={{ 
+            background: "#ffffff",
+            borderRadius: "5px",
+            padding: "1.5rem",
+          }}>
+            <div style={{ display: "flex", alignItems: "flex-start", gap: "1rem" }}>
+              <span style={{ fontSize: "2.5rem" }}>📐</span>
+              <div style={{ flex: 1 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.5rem" }}>
+                  <h2 style={{ fontSize: "1.4rem", fontWeight: 800, color: "#1a1a1a", margin: 0 }}>
+                    Scoping Session
+                  </h2>
+                  <span style={{ fontSize: "1.2rem", fontWeight: 800, color: "#44AAFF" }}>$297</span>
+                </div>
+                <p style={{ fontSize: "1rem", color: "#666", lineHeight: 1.6, marginBottom: "1rem" }}>
+                  Book a 45-60 minute deep-dive and I'll map out exactly what's possible, what it'll cost, and whether you should build it or shelf it. You'll get a written scope doc — your roadmap for what happens next.
+                </p>
+                <div style={{ fontSize: "0.95rem", color: "#666", marginBottom: "1.25rem" }}>
+                  <div style={{ marginBottom: "0.4rem" }}>✓ 45-60 minute deep-dive session</div>
+                  <div style={{ marginBottom: "0.4rem" }}>✓ Written scope document delivered</div>
+                  <div style={{ marginBottom: "0.4rem" }}>✓ Timeline & cost estimate</div>
+                  <div>✓ Credits toward build if we proceed</div>
+                </div>
+                <a
+                  href="https://calendly.com/kristinamariekendrick/hot-mess-os-scoping-session"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ 
+                    display: "inline-block",
+                    ...gradBtn, 
+                    padding: "0.85rem 1.75rem",
+                    textDecoration: "none",
+                    fontSize: "1rem",
+                    background: "linear-gradient(135deg, #44AAFF 0%, #44FF88 100%)",
+                  }}
+                >
                 Book Scoping Session — $297
               </a>
               <p style={{ fontSize: "0.75rem", color: "#666", marginTop: "0.75rem", fontStyle: "italic" }}>
@@ -1275,23 +1298,35 @@ export default function HotMessOS() {
             </div>
           </div>
         </div>
+        </div>
 
         {/* Custom Build */}
-        <div style={{ ...card, border: "1px solid rgba(255,255,255,0.1)" }}>
-          <div style={{ display: "flex", alignItems: "flex-start", gap: "1rem" }}>
-            <span style={{ fontSize: "2rem" }}>🏗️</span>
-            <div style={{ flex: 1 }}>
-              <h2 style={{ fontSize: "1.2rem", fontWeight: 800, color: "#1a1a1a", marginBottom: "0.5rem" }}>
-                Custom Build
-              </h2>
-              <p style={{ fontSize: "0.9rem", color: "#666", lineHeight: 1.6, marginBottom: "1rem" }}>
-                After your scoping session, we'll have a clear quote for your custom automation, AI agent, workflow system, or whatever beautiful chaos you're building. The scoping fee credits toward your build.
-              </p>
-              <div style={{ fontSize: "0.85rem", color: "#666" }}>
-                <div style={{ marginBottom: "0.4rem" }}>✓ Quoted based on scoping session</div>
-                <div style={{ marginBottom: "0.4rem" }}>✓ Scoping fee ($297) credits toward build</div>
-                <div style={{ marginBottom: "0.4rem" }}>✓ Direct access to KMK throughout</div>
-                <div>✓ Handoff documentation included</div>
+        <div style={{ 
+          background: "linear-gradient(135deg, #44AAFF 0%, #44FF88 100%)",
+          border: "2px solid rgba(68,170,255,0.3)",
+          borderRadius: "6px",
+          padding: "1.5rem",
+        }}>
+          <div style={{ 
+            background: "#ffffff",
+            borderRadius: "5px",
+            padding: "1.5rem",
+          }}>
+            <div style={{ display: "flex", alignItems: "flex-start", gap: "1rem" }}>
+              <span style={{ fontSize: "2.5rem" }}>🏗️</span>
+              <div style={{ flex: 1 }}>
+                <h2 style={{ fontSize: "1.4rem", fontWeight: 800, color: "#1a1a1a", marginBottom: "0.5rem" }}>
+                  Custom Build
+                </h2>
+                <p style={{ fontSize: "1rem", color: "#666", lineHeight: 1.6, marginBottom: "1rem" }}>
+                  After your scoping session, we'll have a clear quote for your custom automation, AI agent, workflow system, or whatever beautiful chaos you're building. The scoping fee credits toward your build.
+                </p>
+                <div style={{ fontSize: "0.95rem", color: "#666" }}>
+                  <div style={{ marginBottom: "0.4rem" }}>✓ Quoted based on scoping session</div>
+                  <div style={{ marginBottom: "0.4rem" }}>✓ Scoping fee ($297) credits toward build</div>
+                  <div style={{ marginBottom: "0.4rem" }}>✓ Direct access to KMK throughout</div>
+                  <div>✓ Handoff documentation included</div>
+                </div>
               </div>
             </div>
           </div>
@@ -1468,15 +1503,15 @@ export default function HotMessOS() {
                     </div>
                   )}
                   <div style={{ display: "flex", alignItems: "flex-start", gap: "1rem", marginBottom: "0.75rem" }}>
-                    <div style={{ fontSize: "2rem" }}>{archetypes[quiz.archetype]?.emoji || "🎨"}</div>
+                    <div style={{ fontSize: "2.5rem" }}>{archetypes[quiz.archetype]?.emoji || "🎨"}</div>
                     <div style={{ flex: 1 }}>
-                      <div style={{ fontWeight: 800, color: getMeter(quiz.score).color, fontSize: "0.95rem", marginBottom: "0.25rem" }}>
+                      <div style={{ fontWeight: 800, color: getMeter(quiz.score).color, fontSize: "1.1rem", marginBottom: "0.4rem" }}>
                         {quiz.meter_label}
                       </div>
-                      <div style={{ color: "#666", fontSize: "0.85rem", marginBottom: "0.25rem" }}>
+                      <div style={{ color: "#666", fontSize: "0.95rem", marginBottom: "0.4rem" }}>
                         {quiz.archetype} · {quiz.score.toFixed(1)}/5
                       </div>
-                      <div style={{ color: "#666", fontSize: "0.75rem" }}>
+                      <div style={{ color: "#666", fontSize: "0.85rem" }}>
                         {date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} at {date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
                       </div>
                     </div>
@@ -1496,7 +1531,7 @@ export default function HotMessOS() {
                         });
                         setScreen("quiz_results");
                       }}
-                      style={{ background: "none", border: "1px solid rgba(255,140,66,0.3)", borderRadius: "3px", padding: "0.5rem 0.9rem", color: "#FF8C42", fontSize: "0.75rem", cursor: "pointer", fontFamily: "inherit", whiteSpace: "nowrap" as const, flexShrink: 0 }}
+                      style={{ background: "none", border: "1px solid rgba(255,140,66,0.3)", borderRadius: "3px", padding: "0.6rem 1rem", color: "#FF8C42", fontSize: "0.85rem", cursor: "pointer", fontFamily: "inherit", whiteSpace: "nowrap" as const, flexShrink: 0 }}
                     >
                       View Report →
                     </button>
