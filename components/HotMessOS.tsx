@@ -298,7 +298,7 @@ const openers: Record<string, string> = {
 
 // ─── MAIN COMPONENT ──────────────────────────────────────────────────────────
 export default function HotMessOS() {
-  type Screen = "login" | "entry" | "about" | "consulting" | "quiz_gate" | "quiz_email" | "quiz_history" | "chat" | "quiz" | "quiz_loading" | "quiz_results" | "error";
+  type Screen = "login" | "entry" | "about" | "consulting" | "agents" | "quiz_gate" | "quiz_email" | "quiz_history" | "chat" | "quiz" | "quiz_loading" | "quiz_results" | "error";
 
   const [screen, setScreen] = useState<Screen>("login");
   const [chatMode, setChatMode] = useState<string | null>(null);
@@ -1341,6 +1341,222 @@ export default function HotMessOS() {
   );
 
   // ═══════════════════════════════════════════════════
+  // PRE-BUILT AGENTS — Digital Marketing Mini Apps
+  // ═══════════════════════════════════════════════════
+  if (screen === "agents") return (
+    <div style={pageStyle}>
+      <div style={grainStyle} />
+      <div style={glowStyle} />
+      <SiteNav />
+      <div style={{ ...contentStyle, padding: "5rem 1.5rem 4rem", maxWidth: "680px", margin: "0 auto" }}>
+        <button onClick={goHome} style={{ background: "none", border: "none", color: "#666", cursor: "pointer", fontSize: "0.8rem", padding: "0 0 2rem", fontFamily: "inherit" }}>← Back to Menu</button>
+        
+        <div style={{ marginBottom: "2.5rem", textAlign: "center" as const }}>
+          <div style={{ fontSize: "0.65rem", color: "#666", letterSpacing: "3px", textTransform: "uppercase" as const, marginBottom: "0.5rem" }}>
+            Pre-Built Agents
+          </div>
+          <h1 style={{ 
+            fontSize: "2.2rem", 
+            fontWeight: 900, 
+            lineHeight: 1.1, 
+            marginBottom: "0.75rem",
+            color: "#1a1a1a"
+          }}>
+            Plug & Play Digital Systems
+          </h1>
+          <p style={{ color: "#666", fontSize: "0.95rem", lineHeight: 1.6, maxWidth: "580px", margin: "0 auto" }}>
+            AI-powered mini apps that handle the digital marketing tasks you're tired of winging. Each one is a standalone tool you can use immediately — no setup, no overwhelm, just results.
+          </p>
+        </div>
+
+        {/* Coming Soon Notice */}
+        <div style={{
+          background: "linear-gradient(135deg, #44AAFF 0%, #44FF88 100%)",
+          border: "2px solid rgba(68,170,255,0.3)",
+          borderRadius: "6px",
+          padding: "1.5rem",
+          marginBottom: "2rem",
+        }}>
+          <div style={{
+            background: "#ffffff",
+            borderRadius: "5px",
+            padding: "2rem",
+            textAlign: "center" as const,
+          }}>
+            <div style={{ fontSize: "2rem", marginBottom: "0.75rem" }}>🚀</div>
+            <div style={{ fontSize: "1.2rem", fontWeight: 800, color: "#1a1a1a", marginBottom: "0.5rem" }}>
+              Launching Soon
+            </div>
+            <p style={{ fontSize: "0.9rem", color: "#666", lineHeight: 1.6 }}>
+              These agents are currently in development. Want early access? Book a free discovery call to get on the waitlist and help shape what gets built first.
+            </p>
+          </div>
+        </div>
+
+        {/* Niche Finder Agent */}
+        <div style={{
+          background: "linear-gradient(135deg, #44AAFF 0%, #44FF88 100%)",
+          border: "2px solid rgba(68,170,255,0.3)",
+          borderRadius: "6px",
+          padding: "1.5rem",
+          marginBottom: "1.5rem",
+        }}>
+          <div style={{
+            background: "#ffffff",
+            borderRadius: "5px",
+            padding: "1.5rem",
+          }}>
+            <div style={{ display: "flex", alignItems: "flex-start", gap: "1rem" }}>
+              <span style={{ fontSize: "2.5rem" }}>🎯</span>
+              <div style={{ flex: 1 }}>
+                <h2 style={{ fontSize: "1.4rem", fontWeight: 800, color: "#1a1a1a", marginBottom: "0.5rem" }}>
+                  Niche Finder Agent
+                </h2>
+                <p style={{ fontSize: "1rem", color: "#666", lineHeight: 1.6, marginBottom: "1rem" }}>
+                  Stop saying "I help everyone" and actually define who you serve. This agent interviews you, analyzes market gaps, and delivers 3-5 viable niche options with real positioning statements you can use today.
+                </p>
+                <div style={{ fontSize: "0.95rem", color: "#666" }}>
+                  <div style={{ marginBottom: "0.4rem" }}>✓ Market gap analysis</div>
+                  <div style={{ marginBottom: "0.4rem" }}>✓ Competitor positioning review</div>
+                  <div style={{ marginBottom: "0.4rem" }}>✓ 3-5 viable niche recommendations</div>
+                  <div>✓ Copy-paste positioning statements</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Voice Amplifier Agent */}
+        <div style={{
+          background: "linear-gradient(135deg, #44AAFF 0%, #44FF88 100%)",
+          border: "2px solid rgba(68,170,255,0.3)",
+          borderRadius: "6px",
+          padding: "1.5rem",
+          marginBottom: "1.5rem",
+        }}>
+          <div style={{
+            background: "#ffffff",
+            borderRadius: "5px",
+            padding: "1.5rem",
+          }}>
+            <div style={{ display: "flex", alignItems: "flex-start", gap: "1rem" }}>
+              <span style={{ fontSize: "2.5rem" }}>📢</span>
+              <div style={{ flex: 1 }}>
+                <h2 style={{ fontSize: "1.4rem", fontWeight: 800, color: "#1a1a1a", marginBottom: "0.5rem" }}>
+                  Voice Amplifier Agent
+                </h2>
+                <p style={{ fontSize: "1rem", color: "#666", lineHeight: 1.6, marginBottom: "1rem" }}>
+                  Your brand voice shouldn't sound like everyone else's AI slop. Feed this agent your writing samples and it learns your actual voice — then generates content that sounds like you, not ChatGPT.
+                </p>
+                <div style={{ fontSize: "0.95rem", color: "#666" }}>
+                  <div style={{ marginBottom: "0.4rem" }}>✓ Voice analysis from your content</div>
+                  <div style={{ marginBottom: "0.4rem" }}>✓ Custom style guide generation</div>
+                  <div style={{ marginBottom: "0.4rem" }}>✓ Tone consistency scoring</div>
+                  <div>✓ Content generation in your voice</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* SEO Keyword Agent */}
+        <div style={{
+          background: "linear-gradient(135deg, #44AAFF 0%, #44FF88 100%)",
+          border: "2px solid rgba(68,170,255,0.3)",
+          borderRadius: "6px",
+          padding: "1.5rem",
+          marginBottom: "1.5rem",
+        }}>
+          <div style={{
+            background: "#ffffff",
+            borderRadius: "5px",
+            padding: "1.5rem",
+          }}>
+            <div style={{ display: "flex", alignItems: "flex-start", gap: "1rem" }}>
+              <span style={{ fontSize: "2.5rem" }}>🔍</span>
+              <div style={{ flex: 1 }}>
+                <h2 style={{ fontSize: "1.4rem", fontWeight: 800, color: "#1a1a1a", marginBottom: "0.5rem" }}>
+                  SEO Keyword Strategy Agent
+                </h2>
+                <p style={{ fontSize: "1rem", color: "#666", lineHeight: 1.6, marginBottom: "1rem" }}>
+                  Stop guessing what keywords to target. This agent researches search volume, competition, and intent for your niche — then builds you a keyword strategy that actually drives traffic you can convert.
+                </p>
+                <div style={{ fontSize: "0.95rem", color: "#666" }}>
+                  <div style={{ marginBottom: "0.4rem" }}>✓ Keyword research & volume analysis</div>
+                  <div style={{ marginBottom: "0.4rem" }}>✓ Competition & difficulty scoring</div>
+                  <div style={{ marginBottom: "0.4rem" }}>✓ Search intent mapping</div>
+                  <div>✓ Content topic recommendations</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Content Calendar Agent */}
+        <div style={{
+          background: "linear-gradient(135deg, #44AAFF 0%, #44FF88 100%)",
+          border: "2px solid rgba(68,170,255,0.3)",
+          borderRadius: "6px",
+          padding: "1.5rem",
+          marginBottom: "1.5rem",
+        }}>
+          <div style={{
+            background: "#ffffff",
+            borderRadius: "5px",
+            padding: "1.5rem",
+          }}>
+            <div style={{ display: "flex", alignItems: "flex-start", gap: "1rem" }}>
+              <span style={{ fontSize: "2.5rem" }}>📅</span>
+              <div style={{ flex: 1 }}>
+                <h2 style={{ fontSize: "1.4rem", fontWeight: 800, color: "#1a1a1a", marginBottom: "0.5rem" }}>
+                  Content Calendar Agent
+                </h2>
+                <p style={{ fontSize: "1rem", color: "#666", lineHeight: 1.6, marginBottom: "1rem" }}>
+                  Planning content shouldn't take longer than creating it. This agent builds you a 30-90 day content calendar with topics, angles, creative briefs, and posting schedules tailored to your platform and goals.
+                </p>
+                <div style={{ fontSize: "0.95rem", color: "#666" }}>
+                  <div style={{ marginBottom: "0.4rem" }}>✓ 30-90 day content roadmap</div>
+                  <div style={{ marginBottom: "0.4rem" }}>✓ Creative briefs per post</div>
+                  <div style={{ marginBottom: "0.4rem" }}>✓ Platform-optimized scheduling</div>
+                  <div>✓ Seasonal & trend integration</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* CTA Section */}
+        <div style={{ marginTop: "2.5rem", textAlign: "center" as const }}>
+          <p style={{ fontSize: "0.9rem", color: "#666", marginBottom: "1.5rem", lineHeight: 1.6 }}>
+            Want to influence which agents get built first? Or need something custom-built just for you?
+          </p>
+          <a 
+            href="https://calendly.com/kristinamariekendrick/30min" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            style={{ 
+              display: "inline-block",
+              ...gradBtn, 
+              padding: "0.85rem 1.75rem",
+              textDecoration: "none",
+              fontSize: "1rem",
+              marginBottom: "0.75rem"
+            }}
+          >
+            Book Free Discovery Call →
+          </a>
+          <div style={{ marginTop: "1.5rem" }}>
+            <button onClick={goHome} style={{ ...gradBtn, width: "100%", background: "linear-gradient(135deg, #44AAFF 0%, #44FF88 100%)" }}>
+              ← Back to Hot Mess OS
+            </button>
+          </div>
+        </div>
+      </div>
+      <SiteFooter />
+    </div>
+  );
+
+  // ═══════════════════════════════════════════════════
   // QUIZ GATE — shown when limit is hit BEFORE quiz
   // ═══════════════════════════════════════════════════
   if (screen === "quiz_gate") return (
@@ -1473,10 +1689,10 @@ export default function HotMessOS() {
             padding: "2rem",
             textAlign: "center" as const,
           }}>
-            <div style={{ fontSize: "0.65rem", color: "#FF8C42", letterSpacing: "3px", textTransform: "uppercase" as const, marginBottom: "0.5rem" }}>
+            <div style={{ fontSize: "0.65rem", color: "#666", letterSpacing: "3px", textTransform: "uppercase" as const, marginBottom: "0.5rem" }}>
               Quiz History
             </div>
-            <h1 style={{ fontSize: "1.8rem", fontWeight: 900, background: "linear-gradient(90deg,#FF8C42,#FF4ECD)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+            <h1 style={{ fontSize: "1.8rem", fontWeight: 900, color: "#1a1a1a" }}>
               Your Diagnostic Journey
             </h1>
             <p style={{ color: "#666", fontSize: "0.9rem", marginTop: "0.75rem" }}>
@@ -1806,6 +2022,7 @@ export default function HotMessOS() {
 
                 {/* Pre-built Agents */}
                 <button
+                  onClick={() => setScreen("agents")}
                   style={{
                     ...btn(),
                     width: "100%",
@@ -2057,10 +2274,10 @@ export default function HotMessOS() {
               padding: "2rem",
               textAlign: "center" as const,
             }}>
-              <div style={{ fontSize: "0.65rem", color: "#FF8C42", letterSpacing: "3px", textTransform: "uppercase" as const, marginBottom: "0.5rem" }}>
+              <div style={{ fontSize: "0.65rem", color: "#666", letterSpacing: "3px", textTransform: "uppercase" as const, marginBottom: "0.5rem" }}>
                 Hot Mess Chaos Check
               </div>
-              <h1 style={{ fontSize: "1.8rem", fontWeight: 900, background: "linear-gradient(90deg,#FF8C42,#FF4ECD)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+              <h1 style={{ fontSize: "1.8rem", fontWeight: 900, color: "#1a1a1a" }}>
                 Your diagnosis is in. 💅
               </h1>
             </div>
@@ -2105,7 +2322,7 @@ export default function HotMessOS() {
               background: "linear-gradient(135deg, #44AAFF 0%, #44FF88 100%)",
               border: "2px solid rgba(68,170,255,0.3)",
               borderRadius: "6px",
-              padding: "1.5rem",
+              padding: "0.75rem",
               marginBottom: "0.75rem",
             }}>
               <div style={{
@@ -2120,10 +2337,13 @@ export default function HotMessOS() {
           ))}
 
           {/* CTAs */}
-          <div style={{ marginTop: "2rem", display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+          <div style={{ marginTop: "3rem", display: "flex", flexDirection: "column", gap: "0.75rem" }}>
             <button onClick={exportQuizPDF} style={{ ...btn(), width: "100%", background: "rgba(255,140,66,0.08)", border: "1px solid rgba(255,140,66,0.2)", color: "#FF8C42" }}>
               📄 Export as PDF
             </button>
+            
+            <div style={{ height: "2rem" }} />
+            
             <div style={{ ...card, textAlign: "center" as const }}>
               <div style={{ fontSize: "1.5rem", marginBottom: "0.4rem" }}>🧾</div>
               <div style={{ fontWeight: 800, fontSize: "0.95rem", marginBottom: "0.35rem" }}>Want the full roadmap?</div>
@@ -2132,6 +2352,9 @@ export default function HotMessOS() {
               </div>
               <button style={upgradeBtn}>Upgrade to Paid Diagnostic 💅</button>
             </div>
+            
+            <div style={{ height: "1rem" }} />
+            
             <button onClick={goHome} style={gradBtn}>← Back to Main Menu</button>
           </div>
         </div>
