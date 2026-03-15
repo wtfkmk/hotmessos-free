@@ -1,13 +1,16 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
+import { createClient } from "@supabase/supabase-js";
 
 // ─── SUPABASE CONFIG ────────────────────────────────────────────────────────
-// Replace with your actual Supabase URL and anon key
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
 const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
 const QUIZ_LIMIT = 1; // free attempts allowed (1× per week)
 const CHAT_LIMIT = 10; // messages per day per chat mode
+
+// Initialize Supabase client
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // ─── Lightweight fingerprint (no auth required) ─────────────────────────────
 function getSessionId(): string {
@@ -18,26 +21,6 @@ function getSessionId(): string {
     localStorage.setItem("hmOS_sessionId", id);
   }
   return id;
-}
-
-// ─── Local storage helpers for email ────────────────────────────────────────
-function getUserEmail(): string {
-  if (typeof window === "undefined") return "";
-  return localStorage.getItem("hmOS_userEmail") || "";
-}
-
-function saveUserEmail(email: string) {
-  if (typeof window === "undefined") return;
-  localStorage.setItem("hmOS_userEmail", email);
-}
-
-// Simple password hashing (for demo - use bcrypt in production)
-async function hashPassword(password: string): Promise<string> {
-  const encoder = new TextEncoder();
-  const data = encoder.encode(password);
-  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
 // ─── Supabase helpers ────────────────────────────────────────────────────────
@@ -59,87 +42,27 @@ async function sbFetch(path: string, opts: RequestInit = {}) {
   return res.status === 204 ? null : res.json();
 }
 
-// User management
-async function saveUserSession(sessionId: string, email: string) {
-  await sbFetch("user_sessions", {
-    method: "POST",
-    body: JSON.stringify({
-      session_id: sessionId,
-      email: email,
-      last_active: new Date().toISOString(),
-    }),
-  });
-}
-
-async function updateLastActive(email: string) {
-  await sbFetch(`user_sessions?email=eq.${encodeURIComponent(email)}`, {
-    method: "PATCH",
-    body: JSON.stringify({
-      last_active: new Date().toISOString(),
-    }),
-  });
-}
-
-// Authentication functions
-async function checkUserExists(email: string): Promise<boolean> {
+// Quiz history - USES USER_ID from Supabase Auth
+async function getQuizHistory(userId: string): Promise<any[]> {
   const data = await sbFetch(
-    `user_sessions?email=eq.${encodeURIComponent(email)}&select=id`
-  );
-  return Array.isArray(data) && data.length > 0;
-}
-
-async function createUser(email: string, passwordHash: string) {
-  // Generate unique session ID for this user
-  const uniqueSessionId = `sess_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-  await sbFetch("user_sessions", {
-    method: "POST",
-    body: JSON.stringify({
-      session_id: uniqueSessionId,
-      email: email,
-      password_hash: passwordHash,
-      last_active: new Date().toISOString(),
-      created_at: new Date().toISOString(),
-    }),
-  });
-}
-
-async function verifyPassword(email: string, passwordHash: string): Promise<boolean> {
-  const data = await sbFetch(
-    `user_sessions?email=eq.${encodeURIComponent(email)}&password_hash=eq.${encodeURIComponent(passwordHash)}&select=id`
-  );
-  return Array.isArray(data) && data.length > 0;
-}
-
-async function updatePassword(email: string, newPasswordHash: string) {
-  await sbFetch(`user_sessions?email=eq.${encodeURIComponent(email)}`, {
-    method: "PATCH",
-    body: JSON.stringify({
-      password_hash: newPasswordHash,
-    }),
-  });
-}
-
-// Quiz history - NOW USES EMAIL
-async function getQuizHistory(email: string): Promise<any[]> {
-  const data = await sbFetch(
-    `quiz_sessions?email=eq.${encodeURIComponent(email)}&select=*&order=created_at.desc`
+    `quiz_sessions?user_id=eq.${encodeURIComponent(userId)}&select=*&order=created_at.desc`
   );
   return Array.isArray(data) ? data : [];
 }
 
-async function getQuizUsage(email: string): Promise<number> {
+async function getQuizUsage(userId: string): Promise<number> {
   const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
   const data = await sbFetch(
-    `quiz_sessions?email=eq.${encodeURIComponent(email)}&created_at=gte.${weekAgo}&select=id`
+    `quiz_sessions?user_id=eq.${encodeURIComponent(userId)}&created_at=gte.${weekAgo}&select=id`
   );
   return Array.isArray(data) ? data.length : 0;
 }
 
-async function saveQuizSession(sessionId: string, email: string, results: QuizResults) {
+async function saveQuizSession(userId: string, email: string, results: QuizResults) {
   await sbFetch("quiz_sessions", {
     method: "POST",
     body: JSON.stringify({
-      session_id: sessionId,
+      user_id: userId,
       email: email,
       score: results.score,
       meter_label: results.meter.label,
@@ -154,21 +77,20 @@ async function saveQuizSession(sessionId: string, email: string, results: QuizRe
   });
 }
 
-// Chat history - NOW USES EMAIL
-async function getChatHistory(email: string, chatMode: string): Promise<Message[]> {
+// Chat history - USES USER_ID from Supabase Auth
+async function getChatHistory(userId: string, chatMode: string): Promise<Message[]> {
   const data = await sbFetch(
-    `chat_messages?email=eq.${encodeURIComponent(email)}&chat_mode=eq.${encodeURIComponent(chatMode)}&select=*&order=created_at.asc`
+    `chat_messages?user_id=eq.${encodeURIComponent(userId)}&chat_mode=eq.${encodeURIComponent(chatMode)}&select=*&order=created_at.asc`
   );
   if (!Array.isArray(data)) return [];
   return data.map((m: any) => ({ role: m.role as "user" | "assistant", content: m.content }));
 }
 
-async function saveChatMessage(email: string, chatMode: string, role: "user" | "assistant", content: string) {
+async function saveChatMessage(userId: string, chatMode: string, role: "user" | "assistant", content: string) {
   await sbFetch("chat_messages", {
     method: "POST",
     body: JSON.stringify({
-      session_id: getSessionId(), // Still store session_id for tracking, but query by email
-      email: email,
+      user_id: userId,
       chat_mode: chatMode,
       role: role,
       content: content,
@@ -177,11 +99,11 @@ async function saveChatMessage(email: string, chatMode: string, role: "user" | "
   });
 }
 
-async function getChatUsageToday(email: string, chatMode: string): Promise<number> {
+async function getChatUsageToday(userId: string, chatMode: string): Promise<number> {
   const todayStart = new Date();
   todayStart.setHours(0, 0, 0, 0);
   const data = await sbFetch(
-    `chat_messages?email=eq.${encodeURIComponent(email)}&chat_mode=eq.${encodeURIComponent(chatMode)}&role=eq.user&created_at=gte.${todayStart.toISOString()}&select=id`
+    `chat_messages?user_id=eq.${encodeURIComponent(userId)}&chat_mode=eq.${encodeURIComponent(chatMode)}&role=eq.user&created_at=gte.${todayStart.toISOString()}&select=id`
   );
   return Array.isArray(data) ? data.length : 0;
 }
@@ -312,48 +234,75 @@ export default function HotMessOS() {
   const [errorMsg, setErrorMsg] = useState("");
   const [quizUsageCount, setQuizUsageCount] = useState(0);
   const [gateLoading, setGateLoading] = useState(false);
-  const [userEmail, setUserEmail] = useState("");
-  const [userPassword, setUserPassword] = useState("");
+  
+  // Supabase Auth state
+  const [user, setUser] = useState<any>(null); // Supabase user object
+  const [loginEmail, setLoginEmail] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
   const [loginMode, setLoginMode] = useState<"login" | "signup" | "reset">("login");
   const [loginLoading, setLoginLoading] = useState(false);
+  const [authMessage, setAuthMessage] = useState(""); // For success/error messages
+  
   const [quizHistory, setQuizHistory] = useState<any[]>([]);
   const [chatUsageToday, setChatUsageToday] = useState(0);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // ── Check for existing login on mount ──
+  // ── Supabase Auth Session Management ──
   useEffect(() => {
-    const email = getUserEmail();
-    if (email) {
-      setUserEmail(email);
-      setIsLoggedIn(true);
-      setScreen("entry");
-      // Update last active and load user data
-      updateLastActive(email).catch(() => {});
-      
-      // Load quiz history and set most recent as current results
-      getQuizHistory(email).then(history => {
-        setQuizHistory(history);
-        if (history.length > 0) {
-          const latest = history[0];
-          setQuizResults({
-            score: latest.score,
-            meter: getMeter(latest.score),
-            archetype: latest.archetype,
-            pillarAvg: {
-              presence: latest.pillar_presence,
-              digital_self: latest.pillar_digital_self,
-              relationships: latest.pillar_relationships,
-              creative_flow: latest.pillar_creative_flow,
-            },
-            report: latest.report || "",
-          });
+    // Check for existing session on mount
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        setUser(session.user);
+        setScreen("entry");
+        loadUserData(session.user.id);
+      }
+    });
+
+    // Listen for auth state changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        setUser(session.user);
+        if (screen === "login") {
+          setScreen("entry");
         }
-      }).catch(err => {
-        console.error("Failed to load quiz history on auto-login:", err);
-      });
-    }
+        loadUserData(session.user.id);
+      } else {
+        setUser(null);
+        setScreen("login");
+        setQuizResults(null);
+        setQuizHistory([]);
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
+
+  // Load user data helper
+  async function loadUserData(userId: string) {
+    try {
+      const history = await getQuizHistory(userId);
+      setQuizHistory(history);
+      if (history.length > 0) {
+        const latest = history[0];
+        setQuizResults({
+          score: latest.score,
+          meter: getMeter(latest.score),
+          archetype: latest.archetype,
+          pillarAvg: {
+            presence: latest.pillar_presence,
+            digital_self: latest.pillar_digital_self,
+            relationships: latest.pillar_relationships,
+            creative_flow: latest.pillar_creative_flow,
+          },
+          report: latest.report || "",
+        });
+      }
+    } catch (err) {
+      console.error("Error loading user data:", err);
+    }
+  }
 
   useEffect(() => {
     if (messagesEndRef.current) messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
@@ -403,111 +352,122 @@ export default function HotMessOS() {
     return (data.content || []).map((b: any) => b.text || "").join("");
   }
 
-  // ── Login/Signup/Reset handlers ──
-  async function handleLogin() {
-    if (!userEmail || !userEmail.includes('@')) {
-      alert('Please enter a valid email address');
+  // ── Supabase Auth Handlers ──
+  async function handleSignup() {
+    if (!loginEmail || !loginEmail.includes('@')) {
+      setAuthMessage('Please enter a valid email address');
       return;
     }
-    if (!userPassword || userPassword.length < 6) {
-      alert('Password must be at least 6 characters');
+    if (!loginPassword || loginPassword.length < 6) {
+      setAuthMessage('Password must be at least 6 characters');
       return;
     }
 
     setLoginLoading(true);
+    setAuthMessage('');
     try {
-      const passwordHash = await hashPassword(userPassword);
+      const { data, error } = await supabase.auth.signUp({
+        email: loginEmail,
+        password: loginPassword,
+        options: {
+          emailRedirectTo: window.location.origin,
+        }
+      });
 
-      if (loginMode === "signup") {
-        // Check if user already exists
-        const exists = await checkUserExists(userEmail);
-        if (exists) {
-          alert('An account with this email already exists. Please login instead.');
-          setLoginMode("login");
-          setLoginLoading(false);
-          return;
-        }
-        // Create new user
-        await createUser(userEmail, passwordHash);
-        saveUserEmail(userEmail);
-        setIsLoggedIn(true);
-        setUserPassword("");
-        setScreen("entry");
-        setQuizHistory([]);
-        setQuizResults(null);
-      } else if (loginMode === "login") {
-        // Verify password
-        const valid = await verifyPassword(userEmail, passwordHash);
-        if (!valid) {
-          alert('Invalid email or password');
-          setLoginLoading(false);
-          return;
-        }
-        saveUserEmail(userEmail);
-        setIsLoggedIn(true);
-        setUserPassword("");
-        setScreen("entry");
+      if (error) throw error;
 
-        // Load user data
-        const history = await getQuizHistory(userEmail);
-        setQuizHistory(history);
-        if (history.length > 0) {
-          const latest = history[0];
-          setQuizResults({
-            score: latest.score,
-            meter: getMeter(latest.score),
-            archetype: latest.archetype,
-            pillarAvg: {
-              presence: latest.pillar_presence,
-              digital_self: latest.pillar_digital_self,
-              relationships: latest.pillar_relationships,
-              creative_flow: latest.pillar_creative_flow,
-            },
-            report: latest.report || "",
-          });
-        }
-        await updateLastActive(userEmail);
-      } else if (loginMode === "reset") {
-        // Password reset requires email verification (not yet implemented)
-        alert(
-          '🔐 Password Reset\n\n' +
-          'For security, password resets require email verification.\n\n' +
-          'This feature is coming soon. For now, please contact support if you need to reset your password:\n' +
-          'support@hotmessos.com'
-        );
-        setLoginLoading(false);
-        return;
-      }
-    } catch (err: any) {
-      console.error("Login error:", err);
-      const errorMessage = err?.message || 'Unknown error';
+      // Show success message
+      setAuthMessage('✅ Check your email! We sent you a verification link. Click it to activate your account.');
+      setLoginEmail('');
+      setLoginPassword('');
       
-      if (errorMessage.includes('Failed to fetch') || errorMessage.includes('NetworkError')) {
-        alert('Network error: Please check your internet connection and try again.');
-      } else if (errorMessage.includes('Supabase error 401')) {
-        alert('Authentication failed. Please check your credentials.');
-      } else if (errorMessage.includes('Supabase error 404')) {
-        alert('User not found. Please sign up for a new account.');
-      } else {
-        alert(`Login failed: ${errorMessage}\n\nPlease try again or contact support if the issue persists.`);
-      }
+    } catch (err: any) {
+      console.error("Signup error:", err);
+      setAuthMessage(err.message || 'Signup failed. Please try again.');
     }
     setLoginLoading(false);
   }
 
-  function handleLogout() {
-    localStorage.removeItem("hmOS_userEmail");
-    setUserEmail("");
-    setUserPassword("");
-    setIsLoggedIn(false);
-    setQuizResults(null);
-    setQuizHistory([]);
-    setScreen("login");
+  async function handleLogin() {
+    if (!loginEmail || !loginEmail.includes('@')) {
+      setAuthMessage('Please enter a valid email address');
+      return;
+    }
+    if (!loginPassword || loginPassword.length < 6) {
+      setAuthMessage('Password must be at least 6 characters');
+      return;
+    }
+
+    setLoginLoading(true);
+    setAuthMessage('');
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: loginEmail,
+        password: loginPassword,
+      });
+
+      if (error) {
+        // Check for unverified email
+        if (error.message.includes('Email not confirmed')) {
+          setAuthMessage('⚠️ Please verify your email first. Check your inbox for the verification link.');
+        } else {
+          setAuthMessage(error.message || 'Login failed. Please check your credentials.');
+        }
+        setLoginLoading(false);
+        return;
+      }
+
+      // Success - session handled by onAuthStateChange
+      setLoginEmail('');
+      setLoginPassword('');
+      
+    } catch (err: any) {
+      console.error("Login error:", err);
+      setAuthMessage(err.message || 'Login failed. Please try again.');
+    }
+    setLoginLoading(false);
+  }
+
+  async function handlePasswordReset() {
+    if (!loginEmail || !loginEmail.includes('@')) {
+      setAuthMessage('Please enter your email address');
+      return;
+    }
+
+    setLoginLoading(true);
+    setAuthMessage('');
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(loginEmail, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+
+      if (error) throw error;
+
+      setAuthMessage('✅ Password reset email sent! Check your inbox.');
+      setLoginMode('login');
+      
+    } catch (err: any) {
+      console.error("Password reset error:", err);
+      setAuthMessage(err.message || 'Failed to send reset email. Please try again.');
+    }
+    setLoginLoading(false);
+  }
+
+  async function handleLogout() {
+    try {
+      await supabase.auth.signOut();
+      setUser(null);
+      setQuizResults(null);
+      setQuizHistory([]);
+      setScreen("login");
+    } catch (err) {
+      console.error("Logout error:", err);
+    }
   }
 
   async function viewQuizHistory() {
     try {
-      const history = await getQuizHistory(userEmail);
+      const history = await getQuizHistory(user?.id || "");
       setQuizHistory(history);
       setScreen("quiz_history");
     } catch (err) {
@@ -520,7 +480,7 @@ export default function HotMessOS() {
   async function handleQuizClick() {
     setGateLoading(true);
     try {
-      const count = await getQuizUsage(userEmail);
+      const count = await getQuizUsage(user?.id || "");
       setQuizUsageCount(count);
       if (count >= QUIZ_LIMIT) {
         setScreen("quiz_gate"); // show wall immediately
@@ -544,7 +504,7 @@ export default function HotMessOS() {
   // ── Handle Scoping Session Checkout ──
   // ── Email submission and start quiz (legacy, now unused) ──
   function handleEmailSubmit() {
-    if (!userEmail || !userEmail.includes('@')) {
+    if (!user?.email || !user.email.includes('@')) {
       alert('Please enter a valid email address');
       return;
     }
@@ -553,7 +513,7 @@ export default function HotMessOS() {
     setAnswers({});
     setSelectedIdx(null);
     setScreen("quiz");
-    console.log('Quiz started by:', userEmail); // Log for tracking
+    console.log('Quiz started by:', user?.email); // Log for tracking
   }
 
   // ── start a chat mode ──
@@ -565,11 +525,11 @@ export default function HotMessOS() {
     
     // Check chat usage limit BY EMAIL
     try {
-      const usage = await getChatUsageToday(userEmail, mode);
+      const usage = await getChatUsageToday(user?.id || "", mode);
       setChatUsageToday(usage);
       
       // Load chat history BY EMAIL
-      const history = await getChatHistory(userEmail, mode);
+      const history = await getChatHistory(user?.id || "", mode);
       if (history.length > 0) {
         setMessages(history);
       } else {
@@ -605,8 +565,8 @@ export default function HotMessOS() {
       setMessages([...newMsgs, assistantMsg]);
       
       // Save both messages BY EMAIL
-      await saveChatMessage(userEmail, chatMode!, "user", userMsg.content);
-      await saveChatMessage(userEmail, chatMode!, "assistant", reply);
+      await saveChatMessage(user?.id || "", chatMode!, "user", userMsg.content);
+      await saveChatMessage(user?.id || "", chatMode!, "assistant", reply);
       setChatUsageToday(chatUsageToday + 1);
     } catch {
       setMessages([...newMsgs, { role: "assistant", content: "The OS glitched. Try again in a sec. 🔥" }]);
@@ -678,9 +638,9 @@ export default function HotMessOS() {
 
       // Save to Supabase (non-blocking)
       try {
-        await saveQuizSession(getSessionId(), userEmail, results);
+        await saveQuizSession(user?.id || "", user?.email || "", results);
         // Reload quiz history BY EMAIL
-        const history = await getQuizHistory(userEmail);
+        const history = await getQuizHistory(user?.id || "");
         setQuizHistory(history);
       } catch (e) {
         console.warn("Supabase save failed (non-fatal):", e);
@@ -724,7 +684,7 @@ export default function HotMessOS() {
       </head>
       <body>
         <h1>Hot Mess Chaos Check</h1>
-        <div class="meta">Generated ${new Date().toLocaleDateString()} for ${userEmail}</div>
+        <div class="meta">Generated ${new Date().toLocaleDateString()} for ${user?.email || "user"}</div>
         
         <div class="card">
           <div class="label">Mess Level</div>
@@ -934,6 +894,21 @@ export default function HotMessOS() {
           padding: "0.35rem 0.8rem",
           letterSpacing: "0.05em",
         }}>Upgrade 💅</a>
+        <button 
+          onClick={handleLogout}
+          style={{ 
+            background: "none", 
+            border: "none", 
+            color: "#999", 
+            fontSize: "0.8rem", 
+            letterSpacing: "0.05em",
+            cursor: "pointer",
+            fontFamily: "inherit",
+            opacity: 0.7
+          }}
+        >
+          Logout
+        </button>
       </div>
     </nav>
   );
@@ -997,8 +972,8 @@ export default function HotMessOS() {
               </label>
               <input
                 type="email"
-                value={userEmail}
-                onChange={(e) => setUserEmail(e.target.value)}
+                value={loginEmail}
+                onChange={(e) => setLoginEmail(e.target.value)}
                 placeholder="you@example.com"
                 autoFocus
                 style={{
@@ -1024,9 +999,9 @@ export default function HotMessOS() {
               </label>
               <input
                 type="password"
-                value={userPassword}
-                onChange={(e) => setUserPassword(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleLogin()}
+                value={loginPassword}
+                onChange={(e) => setLoginPassword(e.target.value)}
+                onKeyDown={(e) => { if (e.key === "Enter") { if (loginMode === "signup") handleSignup(); else if (loginMode === "reset") handlePasswordReset(); else handleLogin(); } }}
                 placeholder={loginMode === "reset" ? "Enter new password" : "Enter password"}
                 style={{
                   width: "100%",
@@ -1045,8 +1020,33 @@ export default function HotMessOS() {
               />
             </div>
 
+            {authMessage && (
+              <div style={{
+                padding: "0.75rem 1rem",
+                marginBottom: "1rem",
+                borderRadius: "6px",
+                background: authMessage.includes('✅') || authMessage.includes('Check your email') 
+                  ? "rgba(68,255,136,0.1)" 
+                  : "rgba(255,140,66,0.1)",
+                border: `1px solid ${authMessage.includes('✅') || authMessage.includes('Check your email') 
+                  ? "rgba(68,255,136,0.3)" 
+                  : "rgba(255,140,66,0.3)"}`,
+                color: authMessage.includes('✅') || authMessage.includes('Check your email') 
+                  ? "#2d8653" 
+                  : "#d97706",
+                fontSize: "0.85rem",
+                lineHeight: 1.5
+              }}>
+                {authMessage}
+              </div>
+            )}
+
             <button 
-              onClick={handleLogin} 
+              onClick={() => {
+                if (loginMode === "signup") handleSignup();
+                else if (loginMode === "reset") handlePasswordReset();
+                else handleLogin();
+              }} 
               disabled={loginLoading}
               style={{ ...gradBtn, width: "100%", opacity: loginLoading ? 0.6 : 1, cursor: loginLoading ? "wait" : "pointer" }}
             >
@@ -1055,7 +1055,7 @@ export default function HotMessOS() {
                 : loginMode === "signup" 
                 ? "Create Account →" 
                 : loginMode === "reset" 
-                ? "Reset Password" 
+                ? "Send Reset Email" 
                 : "Login →"}
             </button>
 
@@ -1078,7 +1078,7 @@ export default function HotMessOS() {
                 </>
               ) : (
                 <button 
-                  onClick={() => { setLoginMode("login"); setUserPassword(""); }}
+                  onClick={() => { setLoginMode("login"); setLoginPassword(""); setAuthMessage(""); }}
                   style={{ background: "none", border: "none", color: "#666", cursor: "pointer", fontFamily: "inherit", textDecoration: "underline", fontSize: "0.85rem" }}
                 >
                   ← Back to login
@@ -1391,7 +1391,7 @@ export default function HotMessOS() {
             </p>
             <button
               onClick={() => {
-                alert(`Thanks for your interest! We'll send updates to ${userEmail}`);
+                alert(`Thanks for your interest! We'll send updates to ${user?.email}`);
               }}
               style={{
                 ...gradBtn,
@@ -1402,7 +1402,7 @@ export default function HotMessOS() {
               ✓ Sign Up for Updates
             </button>
             <p style={{ fontSize: "0.75rem", color: "#666", marginTop: "0.75rem" }}>
-              Updates will be sent to {userEmail}
+              Updates will be sent to {user?.email}
             </p>
           </div>
         </div>
@@ -1646,8 +1646,8 @@ export default function HotMessOS() {
             </label>
             <input
               type="email"
-              value={userEmail}
-              onChange={(e) => setUserEmail(e.target.value)}
+              value={loginEmail}
+              onChange={(e) => setLoginEmail(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleEmailSubmit()}
               placeholder="you@example.com"
               style={{
@@ -2068,7 +2068,7 @@ export default function HotMessOS() {
 
           {/* User info & logout */}
           <div style={{ marginTop: "1rem", paddingTop: "1.5rem", borderTop: "1px solid rgba(255,255,255,0.05)", display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "0.75rem" }}>
-            <span style={{ color: "#666" }}>Logged in as {userEmail}</span>
+            <span style={{ color: "#666" }}>Logged in as {user?.email}</span>
             <button onClick={handleLogout} style={{ background: "none", border: "none", color: "#666", cursor: "pointer", fontSize: "0.75rem", textDecoration: "underline", fontFamily: "inherit" }}>
               Logout
             </button>
