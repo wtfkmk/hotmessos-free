@@ -1,16 +1,15 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 
-export default function DiagnosticOnboarding() {
+function OnboardingContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const sessionId = searchParams.get("session_id");
 
   useEffect(() => {
     if (sessionId) {
-      // Payment successful, redirect home
       setTimeout(() => {
         router.push("/");
       }, 2000);
@@ -56,5 +55,24 @@ export default function DiagnosticOnboarding() {
         }
       `}</style>
     </div>
+  );
+}
+
+export default function DiagnosticOnboarding() {
+  return (
+    <Suspense fallback={
+      <div style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        minHeight: "100vh",
+        background: "#0a0a0a",
+        color: "#fff",
+      }}>
+        Loading...
+      </div>
+    }>
+      <OnboardingContent />
+    </Suspense>
   );
 }
