@@ -2,7 +2,6 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import { createClient } from "@supabase/supabase-js";
-import ProfileSetup from "@/components/ProfileSetup";
 
 // ─── SUPABASE CONFIG ────────────────────────────────────────────────────────
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
@@ -221,7 +220,8 @@ const openers: Record<string, string> = {
 
 // ─── MAIN COMPONENT ──────────────────────────────────────────────────────────
 export default function HotMessOS() {
-type Screen = "login" | "entry" | "about" | "consulting" | "agents" | "quiz_gate" | "quiz_email" | "quiz_history" | "chat" | "quiz" | "quiz_loading" | "quiz_results" | "error" | "paid_diagnostic_gate" | "paid_diagnostic_profile" | "paid_diagnostic_business" | "paid_diagnostic_pillars" | "paid_diagnostic_loading" | "paid_diagnostic_report" | "profile_setup";
+  type Screen = "login" | "entry" | "about" | "consulting" | "agents" | "quiz_gate" | "quiz_email" | "quiz_history" | "chat" | "quiz" | "quiz_loading" | "quiz_results" | "error";
+
   const [screen, setScreen] = useState<Screen>("login");
   const [chatMode, setChatMode] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -247,74 +247,32 @@ type Screen = "login" | "entry" | "about" | "consulting" | "agents" | "quiz_gate
   const [chatUsageToday, setChatUsageToday] = useState(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // ── Paid Diagnostic State ──
-  const [diagnosticId, setDiagnosticId] = useState<string | null>(null);
-  const [diagnosticStep, setDiagnosticStep] = useState<number>(1); // 1=profile, 2=business, 3=pillars
-  const [profileData, setProfileData] = useState<any>({});
-  const [businessData, setBusinessData] = useState<any>({});
-  const [pillarData, setPillarData] = useState<any>({});
-  const [checkoutLoading, setCheckoutLoading] = useState(false);
-  const [profileChecked, setProfileChecked] = useState(false);
-
-// ── Supabase Auth Session Management ──
+  // ── Supabase Auth Session Management ──
   useEffect(() => {
     // Check for existing session on mount
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
         setUser(session.user);
+        setScreen("entry");
         loadUserData(session.user.id);
-        
-// Check if coming from Edit Profile
-        const editMode = sessionStorage.getItem('editProfile');
-        console.log("🔍 Edit mode check:", editMode);
-        
-        if (editMode === 'true') {
-          console.log("✅ Edit mode detected! Going to profile_setup");
-          // Don't remove flag yet - let profile_setup screen remove it
-          setScreen("profile_setup");
-          return;
-        }
-        
-        console.log("❌ No edit mode, checking profile...");
-        
-        // Only check profile if we're on login screen
-        if (screen === "login") {
-          supabase
-            .from("user_profiles")
-            .select("*")
-            .eq("email", session.user.email)
-            .maybeSingle()
-            .then(({ data: profile }) => {
-              if (!profile) {
-                setScreen("profile_setup");
-              } else {
-                setScreen("entry");
-              }
-            });
-        }
       }
     });
 
     // Listen for auth state changes
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((event, session) => {
-      console.log("🔐 Auth event:", event);
-      
+    } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session?.user) {
         setUser(session.user);
-        loadUserData(session.user.id);
-        
-        // Redirect to entry on successful login
-        if (event === 'SIGNED_IN' && screen === "login") {
+        if (screen === "login") {
           setScreen("entry");
         }
+        loadUserData(session.user.id);
       } else {
         setUser(null);
         setScreen("login");
         setQuizResults(null);
         setQuizHistory([]);
-        setProfileChecked(false);
       }
     });
 
@@ -495,13 +453,12 @@ type Screen = "login" | "entry" | "about" | "consulting" | "agents" | "quiz_gate
     setLoginLoading(false);
   }
 
-async function handleLogout() {
+  async function handleLogout() {
     try {
       await supabase.auth.signOut();
       setUser(null);
       setQuizResults(null);
       setQuizHistory([]);
-      setProfileChecked(false); // ADD THIS LINE
       setScreen("login");
     } catch (err) {
       console.error("Logout error:", err);
@@ -937,23 +894,6 @@ async function handleLogout() {
           padding: "0.35rem 0.8rem",
           letterSpacing: "0.05em",
         }}>Upgrade 💅</a>
-        <a
-          href="/account"
-          style={{ 
-            background: "none", 
-            border: "none", 
-            color: "#999", 
-            fontSize: "0.8rem", 
-            letterSpacing: "0.05em",
-            cursor: "pointer",
-            fontFamily: "inherit",
-            opacity: 0.7,
-            textDecoration: "none",
-            marginRight: "1.5rem",
-          }}
-        >
-          Account
-        </a>
         <button 
           onClick={handleLogout}
           style={{ 
@@ -1957,89 +1897,6 @@ async function handleLogout() {
             <div style={{ flex: 1, height: "1px", background: "rgba(0,0,0,0.1)" }} />
           </div>
 
-          {/* Paid Diagnostic Section */}
-          <div style={{ 
-            padding: "1.5rem",
-            background: "linear-gradient(135deg, #FF8C42 0%, #FF4ECD 100%)",
-            border: "2px solid rgba(255,140,66,0.3)",
-            borderRadius: "6px",
-          }}>
-            <div style={{ marginBottom: "1.25rem" }}>
-              <h2 style={{ fontSize: "1.5rem", fontWeight: 800, color: "#ffffff", marginBottom: "0.5rem" }}>
-                Complete Readiness Diagnostic
-              </h2>
-              <p style={{ fontSize: "1rem", color: "#ffffff", lineHeight: 1.6, opacity: 0.95 }}>
-                Go beyond the free chaos check. Get a comprehensive 17-section report with personalized growth roadmap, bottleneck diagnosis, and AI positioning strategy. <span style={{ fontWeight: 700 }}>$47 one-time</span>
-              </p>
-            </div>
-
-            <button
-              onClick={async () => {
-                setCheckoutLoading(true);
-                try {
-                  // Check if user already has diagnostic
-                  const { data: existing } = await supabase
-                    .from("paid_diagnostics")
-                    .select("*")
-                    .eq("email", user?.email)
-                    .maybeSingle();
-                  
-                  if (existing) {
-                    if (existing.status === "completed") {
-                      // Show their report
-                      setDiagnosticId(existing.id);
-                      setScreen("paid_diagnostic_report");
-                    } else if (existing.status !== "failed") {
-                      // Resume where they left off
-                      setDiagnosticId(existing.id);
-                      setScreen("paid_diagnostic_profile");
-                    } else {
-                      // Failed payment - allow re-purchase
-                      setScreen("paid_diagnostic_gate");
-                    }
-                  } else {
-                    // No purchase yet - show gate
-                    setScreen("paid_diagnostic_gate");
-                  }
-                } catch (err) {
-                  console.error("Error checking diagnostic status:", err);
-                  setScreen("paid_diagnostic_gate");
-                } finally {
-                  setCheckoutLoading(false);
-                }
-              }}
-              disabled={checkoutLoading}
-              style={{
-                background: "#ffffff",
-                border: "1px solid rgba(255,255,255,0.9)",
-                borderRadius: "5px",
-                padding: "1rem 1.25rem",
-                color: "#1a1a1a",
-                cursor: checkoutLoading ? "wait" : "pointer",
-                textAlign: "left" as const,
-                display: "flex",
-                alignItems: "center",
-                gap: "0.85rem",
-                transition: "transform 0.15s",
-                fontFamily: "inherit",
-                opacity: checkoutLoading ? 0.7 : 1,
-                width: "100%",
-              }}
-              onMouseEnter={(e) => !checkoutLoading && (e.currentTarget.style.transform = "translateY(-2px)")}
-              onMouseLeave={(e) => !checkoutLoading && (e.currentTarget.style.transform = "translateY(0)")}
-            >
-              <span style={{ fontSize: "1.5rem" }}>📊</span>
-              <div>
-                <div style={{ fontWeight: 700, fontSize: "1rem" }}>
-                  {checkoutLoading ? "Loading..." : "Get Your $47 Diagnostic Report"}
-                </div>
-                <div style={{ fontSize: "0.85rem", color: "#666", marginTop: "4px", letterSpacing: "0.02em" }}>
-                  Deep-dive assessment with transformation roadmap
-                </div>
-              </div>
-            </button>
-          </div>
-
           {/* Quiz section - matching chat layout */}
           <div style={{ 
             padding: "1.5rem",
@@ -2535,308 +2392,6 @@ async function handleLogout() {
       </div>
     </div>
   );
-
-  // ═══════════════════════════════════════════════════
-  // PAID DIAGNOSTIC GATE - Payment Page
-  // ═══════════════════════════════════════════════════
-  if (screen === "paid_diagnostic_gate") return (
-    <div style={pageStyle}>
-      <div style={grainStyle} />
-      <div style={glowStyle} />
-      <SiteNav />
-      <div style={{ ...contentStyle, padding: "6rem 1.5rem 4rem", minHeight: "100vh" }}>
-        <div style={{ maxWidth: "700px", margin: "0 auto" }}>
-          
-          {/* Header */}
-          <div style={{ textAlign: "center" as const, marginBottom: "2.5rem" }}>
-            <div style={{ fontSize: "0.65rem", color: "#666", letterSpacing: "3px", textTransform: "uppercase" as const, marginBottom: "0.5rem" }}>
-              Analyzing Your Digital Chaos
-            </div>
-            <h1 style={{
-              fontSize: "clamp(2rem, 6vw, 3rem)",
-              fontWeight: 900,
-              lineHeight: 1.1,
-              marginBottom: "1rem",
-              color: "#1a1a1a",
-            }}>
-              The Full Hot Mess Audit
-            </h1>
-            <p style={{ fontSize: "1rem", color: "#666", lineHeight: 1.6, maxWidth: "600px", margin: "0 auto" }}>
-              (and how to fix it)
-            </p>
-          </div>
-
-          {/* Intro Copy */}
-          <div style={{ marginBottom: "2.5rem", fontSize: "0.95rem", lineHeight: 1.7, color: "#666", textAlign: "center" as const, maxWidth: "620px", margin: "0 auto 2.5rem" }}>
-            Ready to see what your digital presence <em>actually</em> looks like when no one's watching? This isn't another surface-level assessment that tells you to "post more consistently." This is a full forensic analysis of YOU, your business, and how those two hot messes are (or aren't) working together online — where you're killing it, where you're bleeding opportunities, and exactly how ready you are to thrive (not just survive) in the creator economy.
-          </div>
-
-          {/* Main Product Card */}
-          <div style={{ 
-            background: "linear-gradient(135deg, #44AAFF 0%, #44FF88 100%)",
-            border: "2px solid rgba(68,170,255,0.3)",
-            borderRadius: "6px",
-            padding: "1.5rem",
-            marginBottom: "2rem"
-          }}>
-            <div style={{ 
-              background: "#ffffff",
-              borderRadius: "5px",
-              padding: "1.5rem",
-            }}>
-              <div style={{ display: "flex", alignItems: "flex-start", gap: "1rem", marginBottom: "1.5rem" }}>
-                <span style={{ fontSize: "2.5rem" }}>📊</span>
-                <div style={{ flex: 1 }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.5rem" }}>
-                    <h2 style={{ fontSize: "1.4rem", fontWeight: 800, color: "#1a1a1a", margin: 0 }}>
-                      Creator Economy Readiness Diagnostic
-                    </h2>
-                    <span style={{ fontSize: "1.2rem", fontWeight: 800, color: "#44AAFF" }}>$47</span>
-                  </div>
-                  <p style={{ fontSize: "0.95rem", color: "#666", lineHeight: 1.5, margin: 0 }}>
-                    Where you're killing it, where you're bleeding opportunities, and exactly how ready you are to thrive (not just survive) in the creator economy.
-                  </p>
-                </div>
-              </div>
-
-              {/* Feature List */}
-              <div style={{ fontSize: "0.92rem", color: "#666", marginBottom: "1.5rem" }}>
-                <div style={{ marginBottom: "0.4rem" }}><strong style={{ fontWeight: 700 }}>✓ 17-section reality check report</strong> — Every corner of your digital presence, analyzed and decoded</div>
-                <div style={{ marginBottom: "0.4rem" }}><strong style={{ fontWeight: 700 }}>✓ The gap analysis that stings a little</strong> — How you see yourself vs. how the internet sees you (prepare for some eye-opening moments)</div>
-                <div style={{ marginBottom: "0.4rem" }}><strong style={{ fontWeight: 700 }}>✓ Your ONE bottleneck diagnosed</strong> — The constraint holding everything else back (Theory of Constraints approach — not a laundry list)</div>
-                <div style={{ marginBottom: "0.4rem" }}><strong style={{ fontWeight: 700 }}>✓ Custom 30/90/365-day roadmap</strong> — Designed around your actual life constraints, not fantasy schedules</div>
-                <div style={{ marginBottom: "0.4rem" }}><strong style={{ fontWeight: 700 }}>✓ Tool stack intervention</strong> — What's working, what's digital clutter, and what you actually need</div>
-                <div style={{ marginBottom: "0.4rem" }}><strong style={{ fontWeight: 700 }}>✓ Content DNA breakdown</strong> — Your natural themes revealed through word cloud magic</div>
-                <div style={{ marginBottom: "0.4rem" }}><strong style={{ fontWeight: 700 }}>✓ AI displacement reality check</strong> — Based on Anthropic research: where you're vulnerable, where you're defensible, how to adapt</div>
-                <div style={{ marginBottom: "0.4rem" }}><strong style={{ fontWeight: 700 }}>✓ Competitive intel that matters</strong> — Where you stand, where the white space is, what you're underselling</div>
-                <div style={{ marginBottom: "0.4rem" }}><strong style={{ fontWeight: 700 }}>✓ Creator economy readiness score (0-100)</strong> — Are you positioned to capitalize or just contributing to the noise?</div>
-                <div><strong style={{ fontWeight: 700 }}>✓ Interactive results + downloadable PDF</strong> — So you can revisit your roadmap without hunting through emails</div>
-              </div>
-
-              {/* CTA Button */}
-              <button
-                onClick={async () => {
-                  setCheckoutLoading(true);
-                  try {
-                    const res = await fetch("/api/checkout-diagnostic", {
-                      method: "POST",
-                      headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({ 
-                        email: user?.email, 
-                        userId: user?.id 
-                      }),
-                    });
-                    
-                    if (!res.ok) {
-                      throw new Error(`HTTP ${res.status}`);
-                    }
-                    
-                    const data = await res.json();
-                    
-                    if (data.error) {
-                      alert(data.error);
-                      setCheckoutLoading(false);
-                      return;
-                    }
-                    
-                    if (data.url) {
-                      // Redirect to Stripe
-                      window.location.href = data.url;
-                    }
-                  } catch (err) {
-                    console.error("Checkout error:", err);
-                    alert("Something went wrong. Please try again or contact support.");
-                    setCheckoutLoading(false);
-                  }
-                }}
-                disabled={checkoutLoading}
-                style={{
-                  ...gradBtn,
-                  width: "100%",
-                  fontSize: "1.05rem",
-                  padding: "1.15rem",
-                  opacity: checkoutLoading ? 0.6 : 1,
-                  cursor: checkoutLoading ? "wait" : "pointer",
-                }}
-              >
-                {checkoutLoading ? "Redirecting to checkout..." : "Start Your Diagnostic →"}
-              </button>
-            </div>
-          </div>
-
-          {/* What Makes This Different */}
-          <div style={{ ...card, marginBottom: "2rem", background: "rgba(255,255,255,0.5)" }}>
-            <h3 style={{ fontSize: "1.2rem", fontWeight: 800, marginBottom: "1rem", color: "#1a1a1a" }}>
-              What makes this different from the free chaos check?
-            </h3>
-            <div style={{ fontSize: "0.92rem", color: "#666", lineHeight: 1.6 }}>
-              <p style={{ marginBottom: "0.75rem" }}>The free quiz gives you pillar scores and a vibe check. This gives you <strong>the forensic breakdown</strong>.</p>
-              <p style={{ marginBottom: "0.75rem" }}>We analyze your actual digital footprint — your website, profiles, content samples, competitor landscape, business model, constraints, and hidden strengths — then connect the dots between <strong>who you are</strong> (identity, capacity, beliefs) and <strong>what you've built</strong> (offer, presence, systems).</p>
-              <p style={{ margin: 0 }}>You get a personalized transformation blueprint that accounts for your real life (time, budget, working style) — not generic advice that assumes you have unlimited capacity and a team of five.</p>
-            </div>
-          </div>
-
-          {/* Back Button */}
-          <button
-            onClick={() => setScreen("entry")}
-            style={{
-              background: "none",
-              border: "none",
-              color: "#666",
-              cursor: "pointer",
-              fontSize: "0.95rem",
-              fontFamily: "inherit",
-              display: "block",
-              margin: "0 auto",
-              textDecoration: "underline",
-            }}
-          >
-            ← Back to dashboard
-          </button>
-        </div>
-      </div>
-      <SiteFooter />
-    </div>
-  );
-
-  // ═══════════════════════════════════════════════════
-  // PAID DIAGNOSTIC - Profile Setup (Coming Soon)
-  // ═══════════════════════════════════════════════════
-  if (screen === "paid_diagnostic_profile") return (
-    <div style={pageStyle}>
-      <div style={grainStyle} />
-      <div style={glowStyle} />
-      <SiteNav />
-      <div style={{ ...contentStyle, padding: "6rem 1.5rem 4rem", minHeight: "100vh" }}>
-        <div style={{ maxWidth: "700px", margin: "0 auto", textAlign: "center" as const }}>
-          <h1 style={{ fontSize: "2rem", marginBottom: "2rem" }}>Payment Successful!</h1>
-          <div style={{ ...card }}>
-            <p style={{ fontSize: "1.1rem", color: "#666", marginBottom: "2rem" }}>
-              Profile setup form coming in Phase 2...
-            </p>
-            <button onClick={() => setScreen("entry")} style={gradBtn}>
-              Back to Dashboard
-            </button>
-          </div>
-        </div>
-      </div>
-      <SiteFooter />
-    </div>
-  );
-
-  // Placeholder screens for other diagnostic steps
-  if (screen === "paid_diagnostic_business") return (
-    <div style={pageStyle}>
-      <div style={grainStyle} />
-      <div style={glowStyle} />
-      <SiteNav />
-      <div style={{ ...contentStyle, padding: "6rem 1.5rem 4rem", minHeight: "100vh", textAlign: "center" as const }}>
-        <h1>Business Deep Dive (Coming Soon)</h1>
-        <button onClick={() => setScreen("entry")} style={gradBtn}>Back</button>
-      </div>
-      <SiteFooter />
-    </div>
-  );
-
-  if (screen === "paid_diagnostic_pillars") return (
-    <div style={pageStyle}>
-      <div style={grainStyle} />
-      <div style={glowStyle} />
-      <SiteNav />
-      <div style={{ ...contentStyle, padding: "6rem 1.5rem 4rem", minHeight: "100vh", textAlign: "center" as const }}>
-        <h1>Pillar Assessment (Coming Soon)</h1>
-        <button onClick={() => setScreen("entry")} style={gradBtn}>Back</button>
-      </div>
-      <SiteFooter />
-    </div>
-  );
-
-  if (screen === "paid_diagnostic_loading") return (
-    <div style={pageStyle}>
-      <div style={grainStyle} />
-      <div style={glowStyle} />
-      <SiteNav />
-      <div style={{ ...contentStyle, padding: "6rem 1.5rem 4rem", minHeight: "100vh", textAlign: "center" as const }}>
-        <h1>Generating Your Report... (Coming Soon)</h1>
-        <button onClick={() => setScreen("entry")} style={gradBtn}>Back</button>
-      </div>
-      <SiteFooter />
-    </div>
-  );
-
-  if (screen === "paid_diagnostic_report") return (
-    <div style={pageStyle}>
-      <div style={grainStyle} />
-      <div style={glowStyle} />
-      <SiteNav />
-      <div style={{ ...contentStyle, padding: "6rem 1.5rem 4rem", minHeight: "100vh", textAlign: "center" as const }}>
-        <h1>Your Diagnostic Report (Coming Soon)</h1>
-        <button onClick={() => setScreen("entry")} style={gradBtn}>Back</button>
-      </div>
-      <SiteFooter />
-    </div>
-  );
-
-  // ═══════════════════════════════════════════════════
-  // PROFILE SETUP - After signup (skippable)
-  // ═══════════════════════════════════════════════════
-  if (screen === "profile_setup") return (
-    <div style={pageStyle}>
-      <div style={grainStyle} />
-      <div style={glowStyle} />
-      <SiteNav />
-      <div style={{ ...contentStyle, padding: "6rem 1.5rem 4rem", minHeight: "100vh" }}>
-        <div style={{ maxWidth: "700px", margin: "0 auto" }}>
-          
-          {/* Welcome Message */}
-          <div style={{ textAlign: "center" as const, marginBottom: "2rem" }}>
-            <h1 style={{
-              fontSize: "2rem",
-              fontWeight: 900,
-              marginBottom: "1rem",
-              color: "#1a1a1a",
-            }}>
-              Welcome to Hot Mess OS! 🎉
-            </h1>
-            <p style={{ fontSize: "1rem", color: "#666", marginBottom: "1.5rem" }}>
-              Let's set up your profile to personalize your experience.
-            </p>
-            <button
-              onClick={() => setScreen("entry")}
-              style={{
-                background: "none",
-                border: "none",
-                color: "#666",
-                cursor: "pointer",
-                fontSize: "0.95rem",
-                textDecoration: "underline",
-                fontFamily: "inherit",
-              }}
-            >
-              Skip for now →
-            </button>
-          </div>
-
-{/* Profile Setup Form */}
-<ProfileSetup
-            email={user?.email || ""}
-            onComplete={async () => {
-              // Reload user data after profile save
-              if (user?.id) {
-                await loadUserData(user.id);
-              }
-              // Clear edit mode flag
-              sessionStorage.removeItem('editProfile');
-              console.log("🧹 Cleared editProfile flag");
-              setScreen("entry");
-            }}
-          />
-        </div>
-      </div>
-      <SiteFooter />
-    </div>
-  );
-
 
   return null;
 }
