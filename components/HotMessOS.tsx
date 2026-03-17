@@ -2789,37 +2789,24 @@ onSaveAndExit={() => {
   );
 }
 
-{/* Pillar Assessment */}
-{screen === 'paid_diagnostic_pillars' && (
-  <PillarAssessment
-    userEmail={user?.email || ''}
-    onComplete={(data) => {
-      console.log('✅ Pillar assessment complete:', data);
-      setScreen('paid_diagnostic_loading');
-    }}
-    onBack={() => {
-      setScreen('paid_diagnostic_business');
-    }}
-    onSaveAndExit={() => {
-      setScreen('entry');
-    }}
-  />
-)}
-
-
-
-  if (screen === "paid_diagnostic_pillars") return (
-    <div style={pageStyle}>
-      <div style={grainStyle} />
-      <div style={glowStyle} />
-      <SiteNav />
-      <div style={{ ...contentStyle, padding: "6rem 1.5rem 4rem", minHeight: "100vh", textAlign: "center" as const }}>
-        <h1>Pillar Assessment (Coming Soon)</h1>
-        <button onClick={() => setScreen("entry")} style={gradBtn}>Back</button>
-      </div>
-      <SiteFooter />
-    </div>
+// Pillar Assessment
+if (screen === "paid_diagnostic_pillars") {
+  return (
+    <PillarAssessment
+      userEmail={user?.email || ''}
+      onComplete={(data) => {
+        console.log('✅ Pillar assessment complete:', data);
+        setScreen('paid_diagnostic_loading');
+      }}
+      onBack={() => {
+        setScreen('paid_diagnostic_business');
+      }}
+      onSaveAndExit={() => {
+        setScreen('entry');
+      }}
+    />
   );
+}
 
   if (screen === "paid_diagnostic_loading") return (
     <div style={pageStyle}>
