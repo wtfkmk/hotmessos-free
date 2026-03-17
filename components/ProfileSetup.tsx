@@ -1,6 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
 
 interface ProfileSetupProps {
   email: string;
@@ -33,6 +39,49 @@ export default function ProfileSetup({ email, onComplete }: ProfileSetupProps) {
   const [primaryGoal, setPrimaryGoal] = useState("");
 
   const totalSteps = 3;
+
+  // Load existing profile data on mount
+  useEffect(() => {
+    loadExistingProfile();
+  }, [email]);
+
+  const loadExistingProfile = async () => {
+    if (!email) return;
+    
+    try {
+      const { data, error } = await supabase
+        .from('user_profiles')
+        .select('*')
+        .eq('email', email)
+        .single();
+
+      if (error) {
+        // No existing profile, that's ok - user will fill fresh
+        console.log('No existing profile found');
+        return;
+      }
+
+      if (data) {
+        // Pre-fill the form with existing data
+        console.log('✅ Loading existing profile data');
+        
+        if (data.business_models) setBusinessModels(data.business_models);
+        if (data.elevator_pitch) setElevatorPitch(data.elevator_pitch);
+        if (data.team_size) setTeamSize(data.team_size);
+        if (data.working_style) setWorkingStyle(data.working_style);
+        if (data.monthly_revenue) setMonthlyRevenue(data.monthly_revenue);
+        if (data.hours_per_week) setHoursPerWeek(data.hours_per_week.toString());
+        if (data.monthly_budget) setMonthlyBudget(data.monthly_budget);
+        if (data.platforms) setPlatforms(data.platforms);
+        if (data.biggest_constraint) setBiggestConstraint(data.biggest_constraint);
+        if (data.primary_goal) setPrimaryGoal(data.primary_goal);
+        
+        console.log('✅ Profile data loaded successfully');
+      }
+    } catch (err) {
+      console.error('Error loading profile:', err);
+    }
+  };
 
   // Styles
   const pageStyle: React.CSSProperties = {

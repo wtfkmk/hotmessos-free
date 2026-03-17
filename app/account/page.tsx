@@ -317,8 +317,7 @@ export default function AccountPage() {
                       </div>
                       {diagnostic.status === "pending" && (
                         <button
-                          onClick={() => router.push("/")}
-                          style={{
+onClick={() => router.push("/?resume=true")}                          style={{
                             background: "linear-gradient(135deg, #FF8C42 0%, #FF4ECD 100%)",
                             border: "none",
                             borderRadius: "4px",

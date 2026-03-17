@@ -3,6 +3,13 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { createClient } from "@supabase/supabase-js";
 import ProfileSetup from "@/components/ProfileSetup";
+import BusinessDeepDive from './BusinessDeepDive';
+import { getResumePath } from '@/lib/resumeLogic';
+import VideoTransition from './VideoTransition';
+import PillarAssessment from './PillarAssessment';
+
+
+
 
 // ─── SUPABASE CONFIG ────────────────────────────────────────────────────────
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
@@ -221,9 +228,23 @@ const openers: Record<string, string> = {
 
 // ─── MAIN COMPONENT ──────────────────────────────────────────────────────────
 export default function HotMessOS() {
-type Screen = "login" | "entry" | "about" | "consulting" | "agents" | "quiz_gate" | "quiz_email" | "quiz_history" | "chat" | "quiz" | "quiz_loading" | "quiz_results" | "error" | "paid_diagnostic_gate" | "paid_diagnostic_profile" | "paid_diagnostic_business" | "paid_diagnostic_pillars" | "paid_diagnostic_loading" | "paid_diagnostic_report" | "profile_setup";
-  const [screen, setScreen] = useState<Screen>("login");
-  const [chatMode, setChatMode] = useState<string | null>(null);
+type Screen = "login" | "entry" | "about" | "consulting" | "agents" | 
+  "quiz_gate" | "quiz_email" | "quiz_history" | "chat" | "quiz" | 
+  "quiz_loading" | "quiz_results" | "error" | 
+  "paid_diagnostic_gate" | "paid_diagnostic_profile" | 
+  "paid_diagnostic_profile_confirm" |
+  "paid_diagnostic_business" | "paid_diagnostic_pillars" | 
+  "paid_diagnostic_loading" | "paid_diagnostic_report" | 
+  "profile_setup" | "account";  // ← ADD "account"
+const [screen, setScreen] = useState<Screen>("entry");
+const [chatMode, setChatMode] = useState<string | null>(null);
+const [businessDeepDiveData, setBusinessDeepDiveData] = useState<any>(null);
+const [showVideoTransition, setShowVideoTransition] = useState(false);
+const [videoTransitionConfig, setVideoTransitionConfig] = useState({
+  title: '',
+  description: '',
+  nextScreen: '' as Screen
+});
   const [messages, setMessages] = useState<Message[]>([]);
   const [userInput, setUserInput] = useState("");
   const [chatLoading, setChatLoading] = useState(false);
@@ -263,6 +284,8 @@ type Screen = "login" | "entry" | "about" | "consulting" | "agents" | "quiz_gate
       if (session?.user) {
         setUser(session.user);
         loadUserData(session.user.id);
+
+
         
 // Check if coming from Edit Profile
         const editMode = sessionStorage.getItem('editProfile');
@@ -320,6 +343,40 @@ type Screen = "login" | "entry" | "about" | "consulting" | "agents" | "quiz_gate
 
     return () => subscription.unsubscribe();
   }, []);
+
+  // Handle resume query parameter
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('resume') === 'true' && user?.email) {
+      handleResumeDiagnostic();
+      window.history.replaceState({}, '', '/');
+    }
+  }, [user]);
+
+  // Resume diagnostic helper
+  const handleResumeDiagnostic = async () => {
+    if (!user?.email) {
+      setScreen('login');
+      return;
+    }
+    
+    setCheckoutLoading(true);
+    try {
+      const resumeScreen = await getResumePath(user.email);
+      
+      // Skip confirmation screen since you don't want it
+      if (resumeScreen === 'paid_diagnostic_profile_confirm') {
+        setScreen('paid_diagnostic_business');
+      } else {
+        setScreen(resumeScreen);
+      }
+    } catch (error) {
+      console.error('Resume error:', error);
+      setScreen('paid_diagnostic_gate');
+    } finally {
+      setCheckoutLoading(false);
+    }
+  };
 
   // Load user data helper
   async function loadUserData(userId: string) {
@@ -1974,40 +2031,7 @@ async function handleLogout() {
             </div>
 
             <button
-              onClick={async () => {
-                setCheckoutLoading(true);
-                try {
-                  // Check if user already has diagnostic
-                  const { data: existing } = await supabase
-                    .from("paid_diagnostics")
-                    .select("*")
-                    .eq("email", user?.email)
-                    .maybeSingle();
-                  
-                  if (existing) {
-                    if (existing.status === "completed") {
-                      // Show their report
-                      setDiagnosticId(existing.id);
-                      setScreen("paid_diagnostic_report");
-                    } else if (existing.status !== "failed") {
-                      // Resume where they left off
-                      setDiagnosticId(existing.id);
-                      setScreen("paid_diagnostic_profile");
-                    } else {
-                      // Failed payment - allow re-purchase
-                      setScreen("paid_diagnostic_gate");
-                    }
-                  } else {
-                    // No purchase yet - show gate
-                    setScreen("paid_diagnostic_gate");
-                  }
-                } catch (err) {
-                  console.error("Error checking diagnostic status:", err);
-                  setScreen("paid_diagnostic_gate");
-                } finally {
-                  setCheckoutLoading(false);
-                }
-              }}
+              onClick={handleResumeDiagnostic}
               disabled={checkoutLoading}
               style={{
                 background: "#ffffff",
@@ -2702,7 +2726,21 @@ async function handleLogout() {
   // ═══════════════════════════════════════════════════
   // PAID DIAGNOSTIC - Profile Setup (Coming Soon)
   // ═══════════════════════════════════════════════════
-  if (screen === "paid_diagnostic_profile") return (
+  // Video Transition
+if (showVideoTransition) {
+  return (
+    <VideoTransition
+      title={videoTransitionConfig.title}
+      description={videoTransitionConfig.description}
+      onContinue={() => {
+        setShowVideoTransition(false);
+        setScreen(videoTransitionConfig.nextScreen);
+      }}
+    />
+  );
+}
+
+if (screen === "paid_diagnostic_profile") return (
     <div style={pageStyle}>
       <div style={grainStyle} />
       <div style={glowStyle} />
@@ -2724,19 +2762,51 @@ async function handleLogout() {
     </div>
   );
 
-  // Placeholder screens for other diagnostic steps
-  if (screen === "paid_diagnostic_business") return (
-    <div style={pageStyle}>
-      <div style={grainStyle} />
-      <div style={glowStyle} />
-      <SiteNav />
-      <div style={{ ...contentStyle, padding: "6rem 1.5rem 4rem", minHeight: "100vh", textAlign: "center" as const }}>
-        <h1>Business Deep Dive (Coming Soon)</h1>
-        <button onClick={() => setScreen("entry")} style={gradBtn}>Back</button>
-      </div>
-      <SiteFooter />
-    </div>
+  // Other diagnostic steps
+// After the ProfileSetup screen block
+if (screen === 'paid_diagnostic_business') {
+  return (
+<BusinessDeepDive
+  userEmail={user?.email || ''}
+onComplete={(data) => {
+  setBusinessDeepDiveData(data);
+  
+  // Show video transition before pillars
+  setVideoTransitionConfig({
+    title: 'Ready for Your Pillar Assessment?',
+    description: 'Next, we\'ll dive into 4 key areas that determine your creator readiness: Presence, Digital Self, Relationships, and Creative Flow. This will take about 15 minutes.',
+    nextScreen: 'paid_diagnostic_pillars'
+  });
+  setShowVideoTransition(true);
+}}
+onBack={() => {
+  setScreen('paid_diagnostic_profile');
+}}
+onSaveAndExit={() => {
+  setScreen('entry');
+}}
+/>
   );
+}
+
+{/* Pillar Assessment */}
+{screen === 'paid_diagnostic_pillars' && (
+  <PillarAssessment
+    userEmail={user?.email || ''}
+    onComplete={(data) => {
+      console.log('✅ Pillar assessment complete:', data);
+      setScreen('paid_diagnostic_loading');
+    }}
+    onBack={() => {
+      setScreen('paid_diagnostic_business');
+    }}
+    onSaveAndExit={() => {
+      setScreen('entry');
+    }}
+  />
+)}
+
+
 
   if (screen === "paid_diagnostic_pillars") return (
     <div style={pageStyle}>
@@ -2819,18 +2889,24 @@ async function handleLogout() {
 
 {/* Profile Setup Form */}
 <ProfileSetup
-            email={user?.email || ""}
-            onComplete={async () => {
-              // Reload user data after profile save
-              if (user?.id) {
-                await loadUserData(user.id);
-              }
-              // Clear edit mode flag
-              sessionStorage.removeItem('editProfile');
-              console.log("🧹 Cleared editProfile flag");
-              setScreen("entry");
-            }}
-          />
+  email={user?.email || ""}
+onComplete={async () => {
+  if (user?.id) {
+    await loadUserData(user.id);
+  }
+  
+  const editMode = sessionStorage.getItem('editProfile');
+  sessionStorage.removeItem('editProfile');
+  console.log("🧹 Cleared editProfile flag:", editMode);
+  
+  // If editing from account, go back to account
+if (editMode === 'true') {
+    setScreen('entry');
+  } else {
+    setScreen('paid_diagnostic_business');
+  }
+}}
+/>
         </div>
       </div>
       <SiteFooter />

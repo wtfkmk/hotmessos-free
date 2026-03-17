@@ -32,23 +32,24 @@ export async function POST(req: NextRequest) {
     // Save profile
     const { data: profile, error: profileError } = await supabase
       .from("user_profiles")
-      .upsert(
-        {
-          email,
-          business_models: businessModels,
-          elevator_pitch: elevatorPitch,
-          team_size: teamSize,
-          working_style: workingStyle,
-          monthly_revenue: monthlyRevenue,
-          hours_per_week: hoursPerWeek,
-          monthly_budget: monthlyBudget,
-          platforms,
-          biggest_constraint: biggestConstraint,
-          primary_goal: primaryGoal,
-          updated_at: new Date().toISOString(),
-        },
-        { onConflict: "email" }
-      )
+.upsert(
+  {
+    email,
+    business_models: businessModels,
+    elevator_pitch: elevatorPitch,
+    team_size: teamSize,
+    working_style: workingStyle,
+    monthly_revenue: monthlyRevenue,
+    hours_per_week: hoursPerWeek,
+    monthly_budget: monthlyBudget,
+    platforms,
+    biggest_constraint: biggestConstraint,
+    primary_goal: primaryGoal,
+    updated_at: new Date().toISOString(),
+    // Skip profile_complete for now - we'll add it later
+  },
+  { onConflict: "email" }
+)
       .select()
       .single();
 
