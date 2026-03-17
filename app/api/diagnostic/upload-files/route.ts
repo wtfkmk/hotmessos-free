@@ -141,10 +141,5 @@ export async function POST(req: NextRequest) {
 }
 
 // Increase body size limit for file uploads
-export const config = {
-  api: {
-    bodyParser: {
-      sizeLimit: '10mb'
-    }
-  }
-};
+export const maxDuration = 60; // optional: max execution time in seconds
+// Body size limit is handled differently in App Router - remove the config export
