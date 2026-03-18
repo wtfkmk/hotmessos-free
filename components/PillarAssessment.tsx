@@ -25,8 +25,8 @@ interface PillarData {
   // DIGITAL SELF (17 questions)
   ds_q1_file_organization: number;
   ds_q2_problem_identification: string;
-  ds_q3_ai_critique: string;
-  ds_q4_ai_tool_selection: string;
+  ds_q3_ai_quality_control: number;
+  ds_q4_tool_selection: string;
   ds_q5_ai_explainability: string;
   ds_q6_ai_integration: string;
   ds_q7_technical_fluency: number;
@@ -44,39 +44,33 @@ interface PillarData {
   
   // RELATIONSHIPS (16 questions)
   r_q1_inner_voice: string;
-  r_q2_conflict_approach: string;
-  r_q3_receive_feedback: string;
-  r_q4_give_feedback: string;
-  r_q5_boundaries: string;
-  r_q6_network_intention: string;
-  r_q7_collab_dynamics: string;
-  r_q8_mentor_presence: string;
-  r_q9_ask_for_help: string;
-  r_q10_community_reciprocity: string;
-  r_q11_public_vulnerability: string;
-  r_q12_leadership_style: string;
-  r_q13_network_quality: number;
-  r_q14_relationship_maintenance: string;
-  r_q15_people_energy: string;
-  r_q16_collaboration_capacity: string;
+  r_q2_emotional_awareness: string;
+  r_q3_regulation_stress: string;
+  r_q5_communication_clarity: string;
+  r_q6_conflict_pattern: string;
+  r_q7_online_feedback: string;
+  r_q10_reciprocity: string;
+  r_q11_energy_distribution: string;
+  r_q12_network_elevation: string;
+  r_q12_follow_up: string;
+  r_q13_network_alignment: string;
+  r_q14_resilience_flattery: string;
+  r_q16_collaboration: string;
+  r_q17_earning_relationship: string;
+  r_q18_sales_comfort: string;
   
   // CREATIVE FLOW (16 questions)
-  cf_q1_spark_to_ship: string;
-  cf_q2_creative_resistance: string;
-  cf_q3_perfectionism: string;
-  cf_q4_creative_identity: string;
-  cf_q5_constraints_creativity: string;
-  cf_q6_inspiration_sources: string;
-  cf_q7_idea_capture: string;
-  cf_q8_creative_environment: string;
-  cf_q9_deep_work: string;
-  cf_q10_creative_rhythm: string;
-  cf_q11_experimentation: string;
-  cf_q12_finishing: string;
+  cf_q1_natural_gifts: string[];
+  cf_q3_learning_appetite: string;
+  cf_q4_creative_consistency: string;
+  cf_q5_creation_source: string;
+  cf_q6_artistic_maturity: string;
+  cf_q7_creation_intent: string;
+  cf_q9_security_individuality: string;
   cf_q13_creative_confidence: number;
-  cf_q14_fear_judgment: string;
-  cf_q15_creative_recovery: string;
-  cf_q16_vision_execution: string;
+  cf_q16_work_curiosity: string;
+  cf_q17_brand_authenticity: string;
+  cf_q18_secret_hope: string;
 }
 
 export default function PillarAssessment({
@@ -406,27 +400,27 @@ export default function PillarAssessment({
     color: '#0a0a0a'
   };
 
-  const validate = (): boolean => {
-    const newErrors: Record<string, string> = {};
+const validate = (): boolean => {
+  const newErrors: Record<string, string> = {};
 
-    if (currentPillar === 1) {
-      // Presence validation
-      if (!formData.p_q1_inner_voice) newErrors.p_q1 = 'Required';
-      if (!formData.p_q2_evolution) newErrors.p_q2 = 'Required';
-      if (!formData.p_q3_chaos_clarity) newErrors.p_q3 = 'Required';
-      if (formData.p_q4_follow_through === 0) newErrors.p_q4 = 'Required';
-      if (formData.p_q6_physical_presence === 0) newErrors.p_q6 = 'Required';
-      if (!formData.p_q8_presence_quality) newErrors.p_q8 = 'Required';
-      if (formData.p_q9_energy_management === 0) newErrors.p_q9 = 'Required';
-      if (!formData.p_q10_creation_mode) newErrors.p_q10 = 'Required';
-      if (!formData.p_q11_consistency_volatility) newErrors.p_q11 = 'Required';
-    }
+  if (currentPillar === 1) {
+    // Presence validation
+    if (!formData.p_q1_inner_voice) newErrors.p_q1 = 'Required';
+    if (!formData.p_q2_evolution) newErrors.p_q2 = 'Required';
+    if (!formData.p_q3_chaos_clarity) newErrors.p_q3 = 'Required';
+    if (formData.p_q4_follow_through === 0) newErrors.p_q4 = 'Required';
+    if (formData.p_q6_physical_presence === 0) newErrors.p_q6 = 'Required';
+    if (!formData.p_q8_presence_quality) newErrors.p_q8 = 'Required';
+    if (formData.p_q9_energy_management === 0) newErrors.p_q9 = 'Required';
+    if (!formData.p_q10_creation_mode) newErrors.p_q10 = 'Required';
+    if (!formData.p_q11_consistency_volatility) newErrors.p_q11 = 'Required';
+  }
 
-    // Add validation for other pillars (TODO)
+  // Add validation for other pillars (TODO)
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+  setErrors(newErrors);
+  return Object.keys(newErrors).length === 0;
+};
 
   const handleNext = async () => {
     if (!validate()) return;
