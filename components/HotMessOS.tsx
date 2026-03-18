@@ -18,8 +18,10 @@ const QUIZ_LIMIT = 1; // free attempts allowed (1× per week)
 const CHAT_LIMIT = 10; // messages per day per chat mode
 
 // Initialize Supabase client
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
 // ─── Lightweight fingerprint (no auth required) ─────────────────────────────
 function getSessionId(): string {
   if (typeof window === "undefined") return "ssr";
@@ -115,6 +117,8 @@ async function getChatUsageToday(userId: string, chatMode: string): Promise<numb
   );
   return Array.isArray(data) ? data.length : 0;
 }
+
+
 
 // ─── TYPES ──────────────────────────────────────────────────────────────────
 interface PillarAvg {
@@ -345,13 +349,13 @@ const [videoTransitionConfig, setVideoTransitionConfig] = useState({
   }, []);
 
   // Handle resume query parameter
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('resume') === 'true' && user?.email) {
-      handleResumeDiagnostic();
-      window.history.replaceState({}, '', '/');
-    }
-  }, [user]);
+useEffect(() => {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('payment') === 'success') {
+    window.history.replaceState({}, '', '/'); // Remove query param
+    handleResumeDiagnostic(); // Actually start the diagnostic
+  }
+}, []);
 
   // Resume diagnostic helper
   const handleResumeDiagnostic = async () => {

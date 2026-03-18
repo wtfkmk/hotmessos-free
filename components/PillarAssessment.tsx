@@ -81,7 +81,7 @@ export default function PillarAssessment({
 }: PillarAssessmentProps) {
   const [currentPillar, setCurrentPillar] = useState(1); // 1=Presence, 2=Digital, 3=Relationships, 4=Creative
   const [formData, setFormData] = useState<PillarData>({
-    // PRESENCE
+    // PRESENCE (9 questions)
     p_q1_inner_voice: '',
     p_q2_evolution: '',
     p_q3_chaos_clarity: '',
@@ -92,11 +92,11 @@ export default function PillarAssessment({
     p_q10_creation_mode: '',
     p_q11_consistency_volatility: '',
     
-    // DIGITAL SELF
+    // DIGITAL SELF (17 questions)
     ds_q1_file_organization: 0,
-    ds_q2_problem_identification: '',     
-    ds_q3_ai_critique: '',
-    ds_q4_ai_tool_selection: '',
+    ds_q2_problem_identification: '',
+    ds_q3_ai_quality_control: 0,
+    ds_q4_tool_selection: '',
     ds_q5_ai_explainability: '',
     ds_q6_ai_integration: '',
     ds_q7_technical_fluency: 0,
@@ -112,41 +112,35 @@ export default function PillarAssessment({
     ds_q16_failure_recovery: '',
     ds_q17_content_leverage: '',
     
-    // RELATIONSHIPS
+    // RELATIONSHIPS (15 questions)
     r_q1_inner_voice: '',
-    r_q2_conflict_approach: '',
-    r_q3_receive_feedback: '',
-    r_q4_give_feedback: '',
-    r_q5_boundaries: '',
-    r_q6_network_intention: '',
-    r_q7_collab_dynamics: '',
-    r_q8_mentor_presence: '',
-    r_q9_ask_for_help: '',
-    r_q10_community_reciprocity: '',
-    r_q11_public_vulnerability: '',
-    r_q12_leadership_style: '',
-    r_q13_network_quality: 0,
-    r_q14_relationship_maintenance: '',
-    r_q15_people_energy: '',
-    r_q16_collaboration_capacity: '',
+    r_q2_emotional_awareness: '',
+    r_q3_regulation_stress: '',
+    r_q5_communication_clarity: '',
+    r_q6_conflict_pattern: '',
+    r_q7_online_feedback: '',
+    r_q10_reciprocity: '',
+    r_q11_energy_distribution: '',
+    r_q12_network_elevation: '',
+    r_q12_follow_up: '',
+    r_q13_network_alignment: '',
+    r_q14_resilience_flattery: '',
+    r_q16_collaboration: '',
+    r_q17_earning_relationship: '',
+    r_q18_sales_comfort: '',
     
-    // CREATIVE FLOW
-    cf_q1_spark_to_ship: '',
-    cf_q2_creative_resistance: '',
-    cf_q3_perfectionism: '',
-    cf_q4_creative_identity: '',
-    cf_q5_constraints_creativity: '',
-    cf_q6_inspiration_sources: '',
-    cf_q7_idea_capture: '',
-    cf_q8_creative_environment: '',
-    cf_q9_deep_work: '',
-    cf_q10_creative_rhythm: '',
-    cf_q11_experimentation: '',
-    cf_q12_finishing: '',
+    // CREATIVE FLOW (11 questions)
+    cf_q1_natural_gifts: [],
+    cf_q3_learning_appetite: '',
+    cf_q4_creative_consistency: '',
+    cf_q5_creation_source: '',
+    cf_q6_artistic_maturity: '',
+    cf_q7_creation_intent: '',
+    cf_q9_security_individuality: '',
     cf_q13_creative_confidence: 0,
-    cf_q14_fear_judgment: '',
-    cf_q15_creative_recovery: '',
-    cf_q16_vision_execution: ''
+    cf_q16_work_curiosity: '',
+    cf_q17_brand_authenticity: '',
+    cf_q18_secret_hope: ''
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -455,28 +449,32 @@ const validate = (): boolean => {
   };
 
   const handleSubmit = async () => {
-    setIsSubmitting(true);
+  setIsSubmitting(true);
 
-    try {
-      const saved = await savePillarProgress(
-        userEmail,
-        4,
-        formData,
-        true
-      );
+  try {
+    // Save to database via API
+    const res = await fetch('/api/diagnostic/save-pillar', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: userEmail,
+        pillarData: formData,
+        markComplete: true
+      })
+    });
 
-      if (!saved) {
-        throw new Error('Failed to save pillar assessment');
-      }
-
-      onComplete(formData);
-    } catch (error) {
-      console.error('Error submitting pillar assessment:', error);
-      setErrors({ submit: 'Failed to save. Please try again.' });
-    } finally {
-      setIsSubmitting(false);
+    if (!res.ok) {
+      throw new Error('Failed to save pillar assessment');
     }
-  };
+
+    onComplete(formData);
+  } catch (error) {
+    console.error('Error submitting pillar assessment:', error);
+    setErrors({ submit: 'Failed to save. Please try again.' });
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   const handleCheckboxChange = (field: keyof PillarData, value: string) => {
     const currentArray = (formData[field] as string[]) || [];
@@ -2695,14 +2693,14 @@ const validate = (): boolean => {
         {['A', 'B', 'C', 'D'].map((option) => (
           <label
             key={option}
-            style={formData.cf_q13_creative_fulfillment === option ? radioLabelSelectedStyle : radioLabelStyle}
+            style={formData.cf_q13_creative_confidence === option ? radioLabelSelectedStyle : radioLabelStyle}
             onMouseEnter={(e) => {
-              if (formData.cf_q13_creative_fulfillment !== option) {
+              if (formData.cf_q13_creative_confidence !== option) {
                 e.currentTarget.style.borderColor = '#44AAFF';
               }
             }}
             onMouseLeave={(e) => {
-              if (formData.cf_q13_creative_fulfillment !== option) {
+              if (formData.cf_q13_creative_confidence !== option) {
                 e.currentTarget.style.borderColor = '#e0e0e0';
               }
             }}
@@ -2711,8 +2709,8 @@ const validate = (): boolean => {
               type="radio"
               name="cf_q13"
               value={option}
-              checked={formData.cf_q13_creative_fulfillment === option}
-              onChange={(e) => setFormData({ ...formData, cf_q13_creative_fulfillment: e.target.value })}
+              checked={formData.cf_q13_creative_confidence === option}
+              onChange={(e) => setFormData({ ...formData, cf_q13_creative_confidence: e.target.value })}
               style={{ marginTop: '2px' }}
             />
             <span>
