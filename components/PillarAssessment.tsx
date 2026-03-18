@@ -24,7 +24,7 @@ interface PillarData {
   
   // DIGITAL SELF (17 questions)
   ds_q1_file_organization: number;
-  ds_q2_ai_reliance: string;
+  ds_q2_problem_identification: string;
   ds_q3_ai_critique: string;
   ds_q4_ai_tool_selection: string;
   ds_q5_ai_explainability: string;
@@ -100,7 +100,7 @@ export default function PillarAssessment({
     
     // DIGITAL SELF
     ds_q1_file_organization: 0,
-    ds_q2_ai_reliance: '',
+    ds_q2_problem_identification: '',     
     ds_q3_ai_critique: '',
     ds_q4_ai_tool_selection: '',
     ds_q5_ai_explainability: '',
