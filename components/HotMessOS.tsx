@@ -364,9 +364,7 @@ const [videoTransitionConfig, setVideoTransitionConfig] = useState({
     try {
       const resumeScreen = await getResumePath(user.email);
       
-      // Skip confirmation screen since you don't want it
-      if (resumeScreen === 'paid_diagnostic_profile_confirm') {
-        setScreen('paid_diagnostic_business');
+      
       } else {
         setScreen(resumeScreen);
       }
