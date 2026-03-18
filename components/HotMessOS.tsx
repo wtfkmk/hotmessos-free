@@ -364,9 +364,8 @@ const [videoTransitionConfig, setVideoTransitionConfig] = useState({
     try {
       const resumeScreen = await getResumePath(user.email);
       
-      
-      } else {
-        setScreen(resumeScreen);
+setScreen(resumeScreen);
+
       }
     } catch (error) {
       console.error('Resume error:', error);
