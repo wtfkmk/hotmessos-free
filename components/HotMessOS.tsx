@@ -363,10 +363,7 @@ const [videoTransitionConfig, setVideoTransitionConfig] = useState({
     setCheckoutLoading(true);
     try {
       const resumeScreen = await getResumePath(user.email);
-      
-setScreen(resumeScreen);
-
-      }
+      setScreen(resumeScreen);
     } catch (error) {
       console.error('Resume error:', error);
       setScreen('paid_diagnostic_gate');
