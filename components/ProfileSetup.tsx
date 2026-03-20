@@ -86,9 +86,9 @@ export default function ProfileSetup({ email, onComplete }: ProfileSetupProps) {
   // Styles
   const pageStyle: React.CSSProperties = {
     minHeight: "100vh",
-    background: "#ffffff",
+    background: "#0a0a0a",
     fontFamily: "'DM Mono', 'Fira Mono', 'Courier New', monospace",
-    color: "#1a1a1a",
+    color: "#ffffff",
     position: "relative",
     overflow: "auto",
     display: "flex",
@@ -98,8 +98,8 @@ export default function ProfileSetup({ email, onComplete }: ProfileSetupProps) {
   };
 
   const cardStyle: React.CSSProperties = {
-    background: "rgba(255,255,255,0.025)",
-    border: "1px solid rgba(0,0,0,0.08)",
+    background: "rgba(255,255,255,0.04)",
+    border: "1px solid rgba(255,255,255,0.1)",
     borderRadius: "6px",
     padding: "2rem",
     maxWidth: "600px",
@@ -123,10 +123,10 @@ export default function ProfileSetup({ email, onComplete }: ProfileSetupProps) {
   const inputStyle: React.CSSProperties = {
     width: "100%",
     padding: "0.85rem 1rem",
-    background: "#ffffff",
-    border: "1px solid rgba(0,0,0,0.15)",
+    background: "#1a1a1a",
+    border: "1px solid rgba(255,255,255,0.12)",
     borderRadius: "6px",
-    color: "#1a1a1a",
+    color: "#ffffff",
     fontSize: "0.95rem",
     fontFamily: "inherit",
     outline: "none",
@@ -135,7 +135,7 @@ export default function ProfileSetup({ email, onComplete }: ProfileSetupProps) {
   const labelStyle: React.CSSProperties = {
     display: "block",
     marginBottom: "0.5rem",
-    color: "#666",
+    color: "#aaa",
     fontSize: "0.85rem",
     fontWeight: 600,
   };
@@ -376,7 +376,7 @@ export default function ProfileSetup({ email, onComplete }: ProfileSetupProps) {
                     gap: "0.75rem",
                     marginBottom: "0.5rem",
                     padding: "0.5rem",
-                    background: "#f5f5f5",
+                    background: "#1a1a1a",
                     borderRadius: "4px",
                   }}
                 >

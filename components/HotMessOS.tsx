@@ -2927,11 +2927,10 @@ onComplete={async () => {
   
   const editMode = sessionStorage.getItem('editProfile');
   sessionStorage.removeItem('editProfile');
-  console.log("🧹 Cleared editProfile flag:", editMode);
-  
-  // If editing from account, go back to account
-if (editMode === 'true') {
-    setScreen('paid_diagnostic_profile_confirm');
+
+  // If editing from account page, return there; otherwise continue diagnostic
+  if (editMode === 'true') {
+    window.location.href = '/account';
   } else {
     setScreen('paid_diagnostic_profile_confirm');
   }
