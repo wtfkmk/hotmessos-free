@@ -39,13 +39,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Email required" }, { status: 400 });
     }
 
-    // Check if user already has an active diagnostic
-    const { data: existing } = await supabase
-      .from("paid_diagnostics")
-      .select("id, status")
-      .eq("email", email)
+    // Check if user already has an active diagnostic (by user_id if available, else email)
+    const existingQuery = userId
+      ? supabase.from("paid_diagnostics").select("id, status").eq("user_id", userId)
+      : supabase.from("paid_diagnostics").select("id, status").eq("email", email);
+    const { data: existing } = await existingQuery
       .in("status", ["pending", "processing", "completed"])
-      .single();
+      .maybeSingle();
 
     if (existing && existing.status === "completed") {
       return NextResponse.json(
@@ -74,11 +74,12 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // Create pending diagnostic record
+    // Create pending diagnostic record, including user_id so resume logic can find it
     const { error: insertError } = await supabase
       .from("paid_diagnostics")
       .insert({
         email,
+        user_id: userId || null,
         stripe_session_id: session.id,
         status: "pending",
         amount_paid: 4700,

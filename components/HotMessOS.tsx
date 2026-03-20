@@ -358,18 +358,18 @@ const [resumePillar, setResumePillar] = useState(0);
     return () => subscription.unsubscribe();
   }, []);
 
-  // Handle resume query parameter
+  // Handle resume query parameter — set by /diagnostic/onboarding after payment
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    if (params.get('resume') === 'true' && user?.email) {
-      handleResumeDiagnostic();
+    if (params.get('resume') === 'true' && user?.id) {
       window.history.replaceState({}, '', '/');
+      handleResumeDiagnostic();
     }
   }, [user]);
 
   // Resume diagnostic helper
   const handleResumeDiagnostic = async () => {
-    if (!user?.email) {
+    if (!user?.id) {
       setScreen('login');
       return;
     }

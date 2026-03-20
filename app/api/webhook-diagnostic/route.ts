@@ -85,13 +85,14 @@ export async function POST(request: NextRequest) {
 
 async function handleDiagnosticPurchase(session: Stripe.Checkout.Session) {
   const email = session.customer_email || session.metadata?.email;
-  
+  const userId = session.metadata?.userId || null;
+
   if (!email) {
     console.error("No email in session metadata");
     return;
   }
 
-  // Find or create diagnostic record
+  // Find or create diagnostic record by stripe_session_id
   const { data: diagnostic, error: fetchError } = await supabase
     .from("paid_diagnostics")
     .select("*")
@@ -99,25 +100,25 @@ async function handleDiagnosticPurchase(session: Stripe.Checkout.Session) {
     .single();
 
   if (fetchError && fetchError.code !== "PGRST116") {
-    // PGRST116 = not found (expected if record doesn't exist)
     console.error("Error fetching diagnostic:", fetchError);
   }
 
   if (diagnostic) {
-    // Update existing record
+    // Update existing record — always write user_id when available
     const { error: updateError } = await supabase
       .from("paid_diagnostics")
       .update({
-        status: "pending", // Will be "processing" when they start, "completed" when done
+        status: "pending",
         stripe_payment_intent: session.payment_intent as string,
         amount_paid: session.amount_total || 4700,
+        ...(userId ? { user_id: userId } : {}),
       })
       .eq("id", diagnostic.id);
 
     if (updateError) {
       console.error("Error updating diagnostic:", updateError);
     } else {
-      console.log(`Diagnostic ${diagnostic.id} marked as paid`);
+      console.log(`Diagnostic ${diagnostic.id} marked as paid, user_id: ${userId}`);
     }
   } else {
     // Create new record
@@ -125,6 +126,7 @@ async function handleDiagnosticPurchase(session: Stripe.Checkout.Session) {
       .from("paid_diagnostics")
       .insert({
         email,
+        user_id: userId,
         stripe_session_id: session.id,
         stripe_payment_intent: session.payment_intent as string,
         status: "pending",
@@ -134,10 +136,7 @@ async function handleDiagnosticPurchase(session: Stripe.Checkout.Session) {
     if (insertError) {
       console.error("Error creating diagnostic:", insertError);
     } else {
-      console.log(`New diagnostic created for ${email}`);
+      console.log(`New diagnostic created for ${email}, user_id: ${userId}`);
     }
   }
-
-  // Optional: Send welcome email here
-  // await sendDiagnosticWelcomeEmail(email);
 }
