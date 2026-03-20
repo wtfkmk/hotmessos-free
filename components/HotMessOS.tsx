@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { createClient } from "@supabase/supabase-js";
 import ProfileSetup from "@/components/ProfileSetup";
+import ProfileConfirmation from '@/components/ProfileConfirmation';
 import BusinessDeepDive from './BusinessDeepDive';
 import { getResumePath } from '@/lib/resumeLogic';
 import VideoTransition from './VideoTransition';
@@ -2756,8 +2757,26 @@ if (screen === "paid_diagnostic_profile") return (
     </div>
   );
 
+  // Profile Confirmation — review saved profile before Business Deep Dive
+if (screen === 'paid_diagnostic_profile_confirm') {
+  return (
+    <ProfileConfirmation
+      userEmail={user?.email || ''}
+      onConfirm={() => {
+        setScreen('paid_diagnostic_business');
+      }}
+      onEdit={() => {
+        sessionStorage.setItem('editProfile', 'true');
+        setScreen('paid_diagnostic_profile');
+      }}
+      onSaveAndExit={() => {
+        setScreen('entry');
+      }}
+    />
+  );
+}
+
   // Other diagnostic steps
-// After the ProfileSetup screen block
 if (screen === 'paid_diagnostic_business') {
   return (
 <BusinessDeepDive
@@ -2774,7 +2793,7 @@ onComplete={(data) => {
   setShowVideoTransition(true);
 }}
 onBack={() => {
-  setScreen('paid_diagnostic_profile');
+  setScreen('paid_diagnostic_profile_confirm');
 }}
 onSaveAndExit={() => {
   setScreen('entry');
@@ -2882,9 +2901,9 @@ onComplete={async () => {
   
   // If editing from account, go back to account
 if (editMode === 'true') {
-    setScreen('entry');
+    setScreen('paid_diagnostic_profile_confirm');
   } else {
-    setScreen('paid_diagnostic_business');
+    setScreen('paid_diagnostic_profile_confirm');
   }
 }}
 />
