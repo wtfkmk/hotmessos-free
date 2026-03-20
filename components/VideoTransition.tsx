@@ -1,16 +1,21 @@
 interface VideoTransitionProps {
   title: string;
   description?: string;
+  message?: string; // alias for description
   onContinue: () => void;
+  onBack?: () => void;
   duration?: number;
 }
 
 export default function VideoTransition({
   title,
   description,
+  message,
   onContinue,
+  onBack,
   duration = 3
 }: VideoTransitionProps) {
+  const body = message ?? description;
   return (
     <div style={{
       width: '100%',
@@ -58,27 +63,47 @@ export default function VideoTransition({
       <h2 style={{ fontSize: '24px', marginBottom: '16px', textAlign: 'center' as const, maxWidth: '600px' }}>
         {title}
       </h2>
-      {description && (
+      {body && (
         <p style={{ fontSize: '16px', color: '#888', marginBottom: '32px', textAlign: 'center' as const, maxWidth: '540px', lineHeight: 1.6 }}>
-          {description}
+          {body}
         </p>
       )}
-      <button
-        onClick={onContinue}
-        style={{
-          padding: '12px 32px',
-          background: 'linear-gradient(135deg, #44AAFF 0%, #44FF88 100%)',
-          border: 'none',
-          borderRadius: '8px',
-          color: '#0a0a0a',
-          fontSize: '16px',
-          fontWeight: 600,
-          cursor: 'pointer',
-          fontFamily: '"DM Mono", monospace',
-        }}
-      >
-        Continue →
-      </button>
+      <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+        {onBack && (
+          <button
+            onClick={onBack}
+            style={{
+              padding: '12px 24px',
+              background: 'none',
+              border: '1px solid rgba(255,255,255,0.2)',
+              borderRadius: '8px',
+              color: '#aaa',
+              fontSize: '15px',
+              fontWeight: 600,
+              cursor: 'pointer',
+              fontFamily: '"DM Mono", monospace',
+            }}
+          >
+            ← Back
+          </button>
+        )}
+        <button
+          onClick={onContinue}
+          style={{
+            padding: '12px 32px',
+            background: 'linear-gradient(135deg, #44AAFF 0%, #44FF88 100%)',
+            border: 'none',
+            borderRadius: '8px',
+            color: '#0a0a0a',
+            fontSize: '16px',
+            fontWeight: 600,
+            cursor: 'pointer',
+            fontFamily: '"DM Mono", monospace',
+          }}
+        >
+          Continue →
+        </button>
+      </div>
     </div>
   );
 }

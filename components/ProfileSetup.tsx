@@ -98,12 +98,16 @@ export default function ProfileSetup({ email, onComplete, onCancel }: ProfileSet
   };
 
   const cardStyle: React.CSSProperties = {
-    background: "rgba(255,255,255,0.04)",
-    border: "1px solid rgba(255,255,255,0.1)",
-    borderRadius: "6px",
-    padding: "2rem",
-    maxWidth: "600px",
-    width: "100%",
+    background: '#fff',
+    borderRadius: '12px',
+    padding: '2.5rem',
+    maxWidth: '680px',
+    width: '100%',
+    color: '#1a1a1a',
+    border: '2px solid transparent',
+    backgroundImage: 'linear-gradient(#fff, #fff), linear-gradient(135deg, #44AAFF 0%, #44FF88 100%)',
+    backgroundOrigin: 'border-box',
+    backgroundClip: 'padding-box, border-box',
   };
 
   const gradBtn: React.CSSProperties = {
@@ -135,7 +139,7 @@ export default function ProfileSetup({ email, onComplete, onCancel }: ProfileSet
   const labelStyle: React.CSSProperties = {
     display: "block",
     marginBottom: "0.5rem",
-    color: "#aaa",
+    color: "#666",
     fontSize: "0.85rem",
     fontWeight: 600,
   };
@@ -247,7 +251,7 @@ export default function ProfileSetup({ email, onComplete, onCancel }: ProfileSet
           <div
             style={{
               fontSize: "0.65rem",
-              color: "#666",
+              color: "#888",
               letterSpacing: "3px",
               textTransform: "uppercase",
               marginBottom: "0.5rem",
@@ -255,7 +259,7 @@ export default function ProfileSetup({ email, onComplete, onCancel }: ProfileSet
           >
             Step {step} of {totalSteps}
           </div>
-          <h2 style={{ fontSize: "1.6rem", fontWeight: 800, marginBottom: "0.5rem" }}>
+          <h2 style={{ fontSize: "1.6rem", fontWeight: 800, marginBottom: "0.5rem", color: "#1a1a1a" }}>
             {step === 1 && "Tell us about you"}
             {step === 2 && "Business metrics"}
             {step === 3 && "Your focus"}
@@ -279,7 +283,7 @@ export default function ProfileSetup({ email, onComplete, onCancel }: ProfileSet
                 "Hybrid (multiple revenue streams)",
               ].map((model) => (
                 <div key={model} style={{ marginBottom: "0.5rem" }}>
-                  <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer" }}>
+                  <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer", color: "#1a1a1a" }}>
                     <input
                       type="checkbox"
                       checked={businessModels.includes(model)}
@@ -368,7 +372,7 @@ export default function ProfileSetup({ email, onComplete, onCancel }: ProfileSet
 
             <div>
               <label style={labelStyle}>Rank your platforms (top priority first)</label>
-              <div style={{ fontSize: "0.8rem", color: "#666", marginBottom: "0.75rem" }}>
+              <div style={{ fontSize: "0.8rem", color: "#888", marginBottom: "0.75rem" }}>
                 Use arrows to reorder by importance
               </div>
               {platforms.map((platform, index) => (

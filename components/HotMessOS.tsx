@@ -232,14 +232,15 @@ const openers: Record<string, string> = {
 
 // ─── MAIN COMPONENT ──────────────────────────────────────────────────────────
 export default function HotMessOS() {
-type Screen = "login" | "entry" | "about" | "consulting" | "agents" | 
-  "quiz_gate" | "quiz_email" | "quiz_history" | "chat" | "quiz" | 
-  "quiz_loading" | "quiz_results" | "error" | 
-  "paid_diagnostic_gate" | "paid_diagnostic_profile" | 
-  "paid_diagnostic_profile_confirm" |
-  "paid_diagnostic_business" | "paid_diagnostic_pillars" | 
-  "paid_diagnostic_loading" | "paid_diagnostic_report" | 
-  "profile_setup" | "account";  // ← ADD "account"
+type Screen = "login" | "entry" | "about" | "consulting" | "agents" |
+  "quiz_gate" | "quiz_email" | "quiz_history" | "chat" | "quiz" |
+  "quiz_loading" | "quiz_results" | "error" |
+  "paid_diagnostic_gate" | "paid_diagnostic_profile" |
+  "paid_diagnostic_profile_confirm" | "paid_diagnostic_profile_transition" |
+  "paid_diagnostic_business" | "business_to_pillars_transition" |
+  "paid_diagnostic_pillars" |
+  "paid_diagnostic_loading" | "paid_diagnostic_report" |
+  "profile_setup" | "account";
 const [screen, setScreen] = useState<Screen>("entry");
 const [chatMode, setChatMode] = useState<string | null>(null);
 const [businessDeepDiveData, setBusinessDeepDiveData] = useState<any>(null);
@@ -1783,19 +1784,19 @@ async function handleLogout() {
       <div style={glowStyle} />
       <SiteNav />
       <div style={{ ...contentStyle, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "100vh", padding: "6rem 1.5rem 4rem" }}>
-        <div style={{ maxWidth: "480px", width: "100%", ...card }}>
+        <div style={{ maxWidth: "480px", width: "100%", background: '#fff', borderRadius: '12px', padding: '2rem', border: '2px solid transparent', backgroundImage: 'linear-gradient(#fff, #fff), linear-gradient(135deg, #44AAFF 0%, #44FF88 100%)', backgroundOrigin: 'border-box', backgroundClip: 'padding-box, border-box' }}>
           <div style={{ textAlign: "center" as const, marginBottom: "1.5rem" }}>
             <div style={{ fontSize: "2.5rem", marginBottom: "0.75rem" }}>📧</div>
-            <h2 style={{ fontSize: "1.4rem", fontWeight: 800, marginBottom: "0.5rem", color: "#ffffff" }}>
+            <h2 style={{ fontSize: "1.4rem", fontWeight: 800, marginBottom: "0.5rem", color: "#1a1a1a" }}>
               Quick info before we start
             </h2>
-            <p style={{ color: "#aaa", fontSize: "0.9rem", lineHeight: 1.6 }}>
+            <p style={{ color: "#666", fontSize: "0.9rem", lineHeight: 1.6 }}>
               Drop your email so I can send your results + what's next.
             </p>
           </div>
 
           <div style={{ marginBottom: "1.5rem" }}>
-            <label style={{ display: "block", marginBottom: "0.5rem", color: "#aaa", fontSize: "0.85rem", fontWeight: 600 }}>
+            <label style={{ display: "block", marginBottom: "0.5rem", color: "#666", fontSize: "0.85rem", fontWeight: 600 }}>
               Email address
             </label>
             <input
@@ -2486,31 +2487,31 @@ async function handleLogout() {
 
           {/* Score + Archetype */}
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", marginBottom: "1.5rem" }}>
-            <div style={{ ...card, background: meter.bg, border: `1px solid ${meter.color}22`, textAlign: "center" as const }}>
-              <div style={label}>Mess Level</div>
+            <div style={{ background: '#fff', borderRadius: '10px', padding: '1.25rem', border: '2px solid transparent', backgroundImage: 'linear-gradient(#fff, #fff), linear-gradient(135deg, #44AAFF 0%, #44FF88 100%)', backgroundOrigin: 'border-box', backgroundClip: 'padding-box, border-box', textAlign: "center" as const }}>
+              <div style={{ ...label, color: '#888' }}>Mess Level</div>
               <div style={{ fontSize: "1.05rem", fontWeight: 800, color: meter.color }}>{meter.label}</div>
-              <div style={{ fontSize: "0.75rem", color: "#aaa", marginTop: "0.25rem" }}>{score.toFixed(1)} / 5.0</div>
+              <div style={{ fontSize: "0.75rem", color: "#888", marginTop: "0.25rem" }}>{score.toFixed(1)} / 5.0</div>
             </div>
-            <div style={{ ...card, textAlign: "center" as const }}>
-              <div style={label}>Archetype</div>
+            <div style={{ background: '#fff', borderRadius: '10px', padding: '1.25rem', border: '2px solid transparent', backgroundImage: 'linear-gradient(#fff, #fff), linear-gradient(135deg, #44AAFF 0%, #44FF88 100%)', backgroundOrigin: 'border-box', backgroundClip: 'padding-box, border-box', textAlign: "center" as const }}>
+              <div style={{ ...label, color: '#888' }}>Archetype</div>
               <div style={{ fontSize: "1.05rem", fontWeight: 800, color: "#FF4ECD" }}>{arch.emoji} {archetype}</div>
-              <div style={{ fontSize: "0.7rem", color: "#aaa", marginTop: "0.25rem", lineHeight: 1.4 }}>{arch.tagline}</div>
+              <div style={{ fontSize: "0.7rem", color: "#666", marginTop: "0.25rem", lineHeight: 1.4 }}>{arch.tagline}</div>
             </div>
           </div>
 
           {/* Pillar bars */}
-          <div style={{ ...card, marginBottom: "1.5rem" }}>
-            <div style={label}>Pillar Breakdown</div>
+          <div style={{ background: '#fff', borderRadius: '10px', padding: '1.5rem', border: '2px solid transparent', backgroundImage: 'linear-gradient(#fff, #fff), linear-gradient(135deg, #44AAFF 0%, #44FF88 100%)', backgroundOrigin: 'border-box', backgroundClip: 'padding-box, border-box', marginBottom: "1.5rem" }}>
+            <div style={{ ...label, color: '#888' }}>Pillar Breakdown</div>
             {Object.keys(pa).map((k) => (
               <div key={k} style={{ marginBottom: "0.75rem" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.78rem", marginBottom: "0.2rem" }}>
                   <span style={{ color: pillarColors[k], fontWeight: 700 }}>{pillarLabels[k]}</span>
-                  <span style={{ color: "#aaa", fontWeight: 700 }}>{(pa as any)[k].toFixed(1)}</span>
+                  <span style={{ color: "#666", fontWeight: 700 }}>{(pa as any)[k].toFixed(1)}</span>
                 </div>
-                <div style={{ fontSize: "0.7rem", color: "#aaa", marginBottom: "0.5rem", lineHeight: 1.3 }}>
+                <div style={{ fontSize: "0.7rem", color: "#666", marginBottom: "0.5rem", lineHeight: 1.3 }}>
                   {pillarDescriptions[k]}
                 </div>
-                <div style={{ height: "4px", background: "rgba(255,255,255,0.08)", borderRadius: "2px" }}>
+                <div style={{ height: "4px", background: "rgba(0,0,0,0.08)", borderRadius: "2px" }}>
                   <div style={{ height: "100%", width: `${((pa as any)[k] / 5) * 100}%`, background: pillarColors[k], borderRadius: "2px" }} />
                 </div>
               </div>
@@ -2563,10 +2564,10 @@ async function handleLogout() {
             
             <div style={{ height: "2rem" }} />
             
-            <div style={{ ...card, textAlign: "center" as const }}>
+            <div style={{ background: '#fff', borderRadius: '10px', padding: '1.5rem', border: '2px solid transparent', backgroundImage: 'linear-gradient(#fff, #fff), linear-gradient(135deg, #44AAFF 0%, #44FF88 100%)', backgroundOrigin: 'border-box', backgroundClip: 'padding-box, border-box', textAlign: "center" as const }}>
               <div style={{ fontSize: "1.5rem", marginBottom: "0.4rem" }}>🧾</div>
-              <div style={{ fontWeight: 800, fontSize: "0.95rem", marginBottom: "0.35rem" }}>Want the full roadmap?</div>
-              <div style={{ fontSize: "0.8rem", color: "#aaa", lineHeight: 1.6, marginBottom: "1rem" }}>
+              <div style={{ fontWeight: 800, fontSize: "0.95rem", marginBottom: "0.35rem", color: '#1a1a1a' }}>Want the full roadmap?</div>
+              <div style={{ fontSize: "0.8rem", color: "#666", lineHeight: 1.6, marginBottom: "1rem" }}>
                 The complete diagnostic goes deep on all four pillars, gives you a 30-day strategic action plan, and connects you with Hot Mess OS agents who can build the systems you need (or hey, I do custom consulting too if you want the founder treatment).
               </div>
               <button style={upgradeBtn}>Upgrade to Paid Diagnostic 💅</button>
@@ -2787,10 +2788,22 @@ if (showVideoTransition) {
 if (screen === "paid_diagnostic_profile") return (
     <ProfileSetup
       email={user?.email || ''}
-      onComplete={() => setScreen('paid_diagnostic_profile_confirm')}
+      onComplete={() => setScreen('paid_diagnostic_profile_transition')}
       onCancel={() => setScreen('entry')}
     />
   );
+
+// Profile → Business transition
+if (screen === 'paid_diagnostic_profile_transition') {
+  return (
+    <VideoTransition
+      title="Let's dive into your business"
+      message="Next, we'll explore your business model, constraints, and what's working (or not working) in your day-to-day operations."
+      onBack={() => setScreen('paid_diagnostic_profile')}
+      onContinue={() => setScreen('paid_diagnostic_business')}
+    />
+  );
+}
 
   // Profile Confirmation — review saved profile before Business Deep Dive
 if (screen === 'paid_diagnostic_profile_confirm') {
@@ -2824,24 +2837,28 @@ if (screen === 'paid_diagnostic_business') {
   diagnosticId={activeDiagnosticId}
 onComplete={(data) => {
   setBusinessDeepDiveData(data);
-  
-  // Show video transition before pillars
   setResumePillar(1);
-  setVideoTransitionConfig({
-    title: 'Time to assess your foundations',
-    description: "Next up: 4 pillars that reveal how you show up — Presence, Digital Self, Relationships, and Creative Flow. This takes about 15 minutes.",
-    nextScreen: 'paid_diagnostic_pillars',
-    afterTransition: () => setResumePillar(1),
-  });
-  setShowVideoTransition(true);
+  setScreen('business_to_pillars_transition');
 }}
 onBack={() => {
-  setScreen('paid_diagnostic_profile_confirm');
+  setScreen('paid_diagnostic_profile_transition');
 }}
 onSaveAndExit={() => {
   setScreen('entry');
 }}
 />
+  );
+}
+
+// Business → Pillars transition
+if (screen === 'business_to_pillars_transition') {
+  return (
+    <VideoTransition
+      title="Time to assess your foundations"
+      message="Next up: 4 pillars that reveal how you show up — Presence, Digital Self, Relationships, and Creative Flow. This takes about 15 minutes."
+      onBack={() => setScreen('paid_diagnostic_business')}
+      onContinue={() => setScreen('paid_diagnostic_pillars')}
+    />
   );
 }
 
