@@ -852,6 +852,13 @@ async function handleLogout() {
     overflow: "hidden",
   };
 
+  // Dark override used for all quiz-related screens
+  const quizPageStyle: React.CSSProperties = {
+    ...pageStyle,
+    background: "#0a0a0a",
+    color: "#ffffff",
+  };
+
   // Grain overlay via pseudo — we'll inline it as a fixed div
   const grainStyle: React.CSSProperties = {
     position: "fixed",
@@ -1677,20 +1684,20 @@ async function handleLogout() {
   // QUIZ GATE — shown when limit is hit BEFORE quiz
   // ═══════════════════════════════════════════════════
   if (screen === "quiz_gate") return (
-    <div style={pageStyle}>
+    <div style={quizPageStyle}>
       <div style={grainStyle} />
       <div style={glowStyle} />
       <SiteNav />
       <div style={{ ...contentStyle, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "100vh", padding: "6rem 1.5rem 4rem" }}>
         <div style={{ maxWidth: "460px", width: "100%", textAlign: "center" as const }}>
           <div style={{ fontSize: "3.5rem", marginBottom: "1rem" }}>🧱</div>
-          <div style={{ ...label, textAlign: "center" as const, marginBottom: "1rem" }}>Quiz limit reached</div>
-          <h2 style={{ fontSize: "1.6rem", fontWeight: 900, lineHeight: 1.2, marginBottom: "1rem", color: "#1a1a1a" }}>
+          <div style={{ ...label, textAlign: "center" as const, marginBottom: "1rem", color: "#aaa" }}>Quiz limit reached</div>
+          <h2 style={{ fontSize: "1.6rem", fontWeight: 900, lineHeight: 1.2, marginBottom: "1rem", color: "#ffffff" }}>
             You've already taken the free quiz this week.
           </h2>
-          <p style={{ color: "#666", fontSize: "0.9rem", lineHeight: 1.7, marginBottom: "2rem" }}>
-            The free readiness check is a one-time weekly peek into the OS. 
-            You've already got your archetype and your mess level. The next step isn't retaking — 
+          <p style={{ color: "#aaa", fontSize: "0.9rem", lineHeight: 1.7, marginBottom: "2rem" }}>
+            The free readiness check is a one-time weekly peek into the OS.
+            You've already got your archetype and your mess level. The next step isn't retaking —
             it's <em style={{ color: "#FF4ECD" }}>acting on it</em>.
           </p>
 
@@ -1703,7 +1710,7 @@ async function handleLogout() {
               marginBottom: "1.5rem",
             }}>
               <div style={{
-                background: "#ffffff",
+                background: "#111",
                 borderRadius: "5px",
                 padding: "1.5rem",
                 display: "flex",
@@ -1714,7 +1721,7 @@ async function handleLogout() {
                 <span style={{ fontSize: "2rem" }}>{archetypes[quizResults.archetype]?.emoji}</span>
                 <div>
                   <div style={{ fontWeight: 800, color: quizResults.meter.color, fontSize: "0.95rem" }}>{quizResults.meter.label}</div>
-                  <div style={{ color: "#666", fontSize: "0.8rem" }}>{quizResults.archetype} · {quizResults.score.toFixed(1)}/5</div>
+                  <div style={{ color: "#aaa", fontSize: "0.8rem" }}>{quizResults.archetype} · {quizResults.score.toFixed(1)}/5</div>
                 </div>
                 <button onClick={() => setScreen("quiz_results")} style={{ marginLeft: "auto", background: "none", border: "1px solid rgba(255,140,66,0.3)", borderRadius: "3px", padding: "0.4rem 0.8rem", color: "#FF8C42", fontSize: "0.75rem", cursor: "pointer", fontFamily: "inherit" }}>View report →</button>
               </div>
@@ -1742,7 +1749,7 @@ async function handleLogout() {
   // EMAIL COLLECTION — shown before quiz starts
   // ═══════════════════════════════════════════════════
   if (screen === "quiz_email") return (
-    <div style={pageStyle}>
+    <div style={quizPageStyle}>
       <div style={grainStyle} />
       <div style={glowStyle} />
       <SiteNav />
@@ -1750,16 +1757,16 @@ async function handleLogout() {
         <div style={{ maxWidth: "480px", width: "100%", ...card }}>
           <div style={{ textAlign: "center" as const, marginBottom: "1.5rem" }}>
             <div style={{ fontSize: "2.5rem", marginBottom: "0.75rem" }}>📧</div>
-            <h2 style={{ fontSize: "1.4rem", fontWeight: 800, marginBottom: "0.5rem", color: "#1a1a1a" }}>
+            <h2 style={{ fontSize: "1.4rem", fontWeight: 800, marginBottom: "0.5rem", color: "#ffffff" }}>
               Quick info before we start
             </h2>
-            <p style={{ color: "#666", fontSize: "0.9rem", lineHeight: 1.6 }}>
+            <p style={{ color: "#aaa", fontSize: "0.9rem", lineHeight: 1.6 }}>
               Drop your email so I can send your results + what's next.
             </p>
           </div>
-          
+
           <div style={{ marginBottom: "1.5rem" }}>
-            <label style={{ display: "block", marginBottom: "0.5rem", color: "#666", fontSize: "0.85rem", fontWeight: 600 }}>
+            <label style={{ display: "block", marginBottom: "0.5rem", color: "#aaa", fontSize: "0.85rem", fontWeight: 600 }}>
               Email address
             </label>
             <input
@@ -1771,25 +1778,25 @@ async function handleLogout() {
               style={{
                 width: "100%",
                 padding: "0.85rem 1rem",
-                background: "rgba(8,8,8,0.8)",
-                border: "1px solid rgba(0,0,0,0.08)",
+                background: "#1a1a1a",
+                border: "1px solid rgba(255,255,255,0.12)",
                 borderRadius: "6px",
-                color: "#1a1a1a",
+                color: "#ffffff",
                 fontSize: "0.95rem",
                 fontFamily: "inherit",
                 outline: "none",
                 transition: "border-color 0.2s"
               }}
               onFocus={(e) => e.target.style.borderColor = "rgba(255,140,66,0.4)"}
-              onBlur={(e) => e.target.style.borderColor = "rgba(255,255,255,0.08)"}
+              onBlur={(e) => e.target.style.borderColor = "rgba(255,255,255,0.12)"}
             />
           </div>
 
           <button onClick={handleEmailSubmit} style={{ ...gradBtn, width: "100%", marginBottom: "0.75rem" }}>
             Continue to Quiz →
           </button>
-          
-          <button onClick={goHome} style={{ ...btn(), width: "100%", background: "none", border: "1px solid rgba(0,0,0,0.08)", color: "#666" }}>
+
+          <button onClick={goHome} style={{ ...btn(), width: "100%", background: "none", border: "1px solid rgba(255,255,255,0.1)", color: "#aaa" }}>
             ← Back
           </button>
         </div>
@@ -1802,21 +1809,21 @@ async function handleLogout() {
   // QUIZ HISTORY — show all past quiz results
   // ═══════════════════════════════════════════════════
   if (screen === "quiz_history") return (
-    <div style={pageStyle}>
+    <div style={quizPageStyle}>
       <div style={grainStyle} />
       <div style={glowStyle} />
       <SiteNav />
       <div style={{ ...contentStyle, padding: "5rem 1.5rem 4rem", maxWidth: "700px", margin: "0 auto" }}>
-        <button onClick={goHome} style={{ background: "none", border: "none", color: "#666", cursor: "pointer", fontSize: "0.8rem", padding: "0 0 1.5rem", fontFamily: "inherit" }}>← Back to Menu</button>
-        
+        <button onClick={goHome} style={{ background: "none", border: "none", color: "#aaa", cursor: "pointer", fontSize: "0.8rem", padding: "0 0 1.5rem", fontFamily: "inherit" }}>← Back to Menu</button>
+
         <div style={{ textAlign: "center" as const, marginBottom: "2.5rem" }}>
-          <div style={{ fontSize: "0.65rem", color: "#666", letterSpacing: "3px", textTransform: "uppercase" as const, marginBottom: "0.5rem" }}>
+          <div style={{ fontSize: "0.65rem", color: "#aaa", letterSpacing: "3px", textTransform: "uppercase" as const, marginBottom: "0.5rem" }}>
             Quiz History
           </div>
-          <h1 style={{ fontSize: "1.8rem", fontWeight: 900, color: "#1a1a1a" }}>
+          <h1 style={{ fontSize: "1.8rem", fontWeight: 900, color: "#ffffff" }}>
             Your Diagnostic Journey
           </h1>
-          <p style={{ color: "#666", fontSize: "0.9rem", marginTop: "0.75rem" }}>
+          <p style={{ color: "#aaa", fontSize: "0.9rem", marginTop: "0.75rem" }}>
             Track your progress week over week
           </p>
         </div>
@@ -1846,7 +1853,7 @@ async function handleLogout() {
                   position: "relative" as const,
                 }}>
                   <div style={{
-                    background: "#ffffff",
+                    background: "#111",
                     borderRadius: "5px",
                     padding: isLatest ? "2rem 1.5rem 1.5rem" : "1.5rem",
                     position: "relative" as const,
@@ -1862,10 +1869,10 @@ async function handleLogout() {
                       <div style={{ fontWeight: 800, color: getMeter(quiz.score).color, fontSize: "1.1rem", marginBottom: "0.4rem" }}>
                         {quiz.meter_label}
                       </div>
-                      <div style={{ color: "#666", fontSize: "0.95rem", marginBottom: "0.4rem" }}>
+                      <div style={{ color: "#aaa", fontSize: "0.95rem", marginBottom: "0.4rem" }}>
                         {quiz.archetype} · {quiz.score.toFixed(1)}/5
                       </div>
-                      <div style={{ color: "#666", fontSize: "0.85rem" }}>
+                      <div style={{ color: "#aaa", fontSize: "0.85rem" }}>
                         {date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} at {date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
                       </div>
                     </div>
@@ -1893,7 +1900,7 @@ async function handleLogout() {
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: "0.5rem", fontSize: "0.7rem" }}>
                     {Object.keys({ presence: quiz.pillar_presence, digital_self: quiz.pillar_digital_self, relationships: quiz.pillar_relationships, creative_flow: quiz.pillar_creative_flow }).map(k => (
                       <div key={k}>
-                        <div style={{ color: "#666", marginBottom: "2px", fontSize: "0.65rem", textTransform: "uppercase" as const, letterSpacing: "0.5px" }}>
+                        <div style={{ color: "#aaa", marginBottom: "2px", fontSize: "0.65rem", textTransform: "uppercase" as const, letterSpacing: "0.5px" }}>
                           {pillarLabels[k].split(' ')[0]}
                         </div>
                         <div style={{ fontWeight: 700, color: pillarColors[k] }}>
@@ -2339,18 +2346,18 @@ async function handleLogout() {
     const q = questions[currentQ] as any;
     const progress = Math.round((currentQ / questions.length) * 100);
     return (
-      <div style={{ ...pageStyle, display: "flex", flexDirection: "column", alignItems: "center", padding: "5rem 1.5rem 4rem" }}>
+      <div style={{ ...quizPageStyle, display: "flex", flexDirection: "column", alignItems: "center", padding: "5rem 1.5rem 4rem" }}>
         <div style={grainStyle} />
         <div style={glowStyle} />
         <SiteNav />
         <div style={{ ...contentStyle, width: "100%", maxWidth: "520px" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
-            <button onClick={goHome} style={{ background: "none", border: "none", color: "#666", cursor: "pointer", fontSize: "0.8rem", padding: 0, fontFamily: "inherit" }}>← Menu</button>
-            <span style={{ color: "#666", fontSize: "0.78rem", letterSpacing: "0.05em" }}>{currentQ + 1} / {questions.length}</span>
+            <button onClick={goHome} style={{ background: "none", border: "none", color: "#aaa", cursor: "pointer", fontSize: "0.8rem", padding: 0, fontFamily: "inherit" }}>← Menu</button>
+            <span style={{ color: "#aaa", fontSize: "0.78rem", letterSpacing: "0.05em" }}>{currentQ + 1} / {questions.length}</span>
           </div>
 
           {/* Progress bar */}
-          <div style={{ height: "3px", background: "rgba(0,0,0,0.1)", borderRadius: "2px", marginBottom: "2.5rem" }}>
+          <div style={{ height: "3px", background: "rgba(255,255,255,0.1)", borderRadius: "2px", marginBottom: "2.5rem" }}>
             <div style={{ height: "100%", width: `${progress}%`, background: "linear-gradient(90deg,#FF8C42,#FF4ECD)", borderRadius: "2px", transition: "width 0.3s ease" }} />
           </div>
 
@@ -2359,7 +2366,7 @@ async function handleLogout() {
             {pillarLabels[q.pillar]}
           </div>
 
-          <h2 style={{ fontSize: "1.15rem", fontWeight: 700, lineHeight: 1.5, marginBottom: "1.75rem", color: "#1a1a1a" }}>{q.q}</h2>
+          <h2 style={{ fontSize: "1.15rem", fontWeight: 700, lineHeight: 1.5, marginBottom: "1.75rem", color: "#ffffff" }}>{q.q}</h2>
 
           {q.type === "single" && (
             <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", marginBottom: "1.75rem" }}>
@@ -2413,7 +2420,7 @@ async function handleLogout() {
   // QUIZ LOADING
   // ═══════════════════════════════════════════════════
   if (screen === "quiz_loading") return (
-    <div style={{ ...pageStyle, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "1.5rem" }}>
+    <div style={{ ...quizPageStyle, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "1.5rem" }}>
       <div style={grainStyle} />
       <div style={glowStyle} />
       <div style={{ ...contentStyle, textAlign: "center" as const }}>
@@ -2432,18 +2439,18 @@ async function handleLogout() {
     const sections = parseReport(quizResults.report);
     const arch = archetypes[archetype] || archetypes["Creator"];
     return (
-      <div style={{ ...pageStyle, padding: "5rem 1.5rem 4rem" }}>
+      <div style={{ ...quizPageStyle, padding: "5rem 1.5rem 4rem" }}>
         <div style={grainStyle} />
         <div style={glowStyle} />
         <SiteNav />
         <div style={{ ...contentStyle, maxWidth: "580px", margin: "0 auto" }}>
-          <button onClick={goHome} style={{ background: "none", border: "none", color: "#666", cursor: "pointer", fontSize: "0.8rem", padding: "0 0 1.5rem", fontFamily: "inherit" }}>← Menu</button>
+          <button onClick={goHome} style={{ background: "none", border: "none", color: "#aaa", cursor: "pointer", fontSize: "0.8rem", padding: "0 0 1.5rem", fontFamily: "inherit" }}>← Menu</button>
 
           <div style={{ textAlign: "center" as const, marginBottom: "2rem" }}>
-            <div style={{ fontSize: "0.65rem", color: "#666", letterSpacing: "3px", textTransform: "uppercase" as const, marginBottom: "0.5rem" }}>
+            <div style={{ fontSize: "0.65rem", color: "#aaa", letterSpacing: "3px", textTransform: "uppercase" as const, marginBottom: "0.5rem" }}>
               Hot Mess Chaos Check
             </div>
-            <h1 style={{ fontSize: "1.8rem", fontWeight: 900, color: "#1a1a1a" }}>
+            <h1 style={{ fontSize: "1.8rem", fontWeight: 900, color: "#ffffff" }}>
               Your diagnosis is in. 💅
             </h1>
           </div>
@@ -2453,12 +2460,12 @@ async function handleLogout() {
             <div style={{ ...card, background: meter.bg, border: `1px solid ${meter.color}22`, textAlign: "center" as const }}>
               <div style={label}>Mess Level</div>
               <div style={{ fontSize: "1.05rem", fontWeight: 800, color: meter.color }}>{meter.label}</div>
-              <div style={{ fontSize: "0.75rem", color: "#666", marginTop: "0.25rem" }}>{score.toFixed(1)} / 5.0</div>
+              <div style={{ fontSize: "0.75rem", color: "#aaa", marginTop: "0.25rem" }}>{score.toFixed(1)} / 5.0</div>
             </div>
             <div style={{ ...card, textAlign: "center" as const }}>
               <div style={label}>Archetype</div>
               <div style={{ fontSize: "1.05rem", fontWeight: 800, color: "#FF4ECD" }}>{arch.emoji} {archetype}</div>
-              <div style={{ fontSize: "0.7rem", color: "#666", marginTop: "0.25rem", lineHeight: 1.4 }}>{arch.tagline}</div>
+              <div style={{ fontSize: "0.7rem", color: "#aaa", marginTop: "0.25rem", lineHeight: 1.4 }}>{arch.tagline}</div>
             </div>
           </div>
 
@@ -2469,12 +2476,12 @@ async function handleLogout() {
               <div key={k} style={{ marginBottom: "0.75rem" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.78rem", marginBottom: "0.2rem" }}>
                   <span style={{ color: pillarColors[k], fontWeight: 700 }}>{pillarLabels[k]}</span>
-                  <span style={{ color: "#666", fontWeight: 700 }}>{(pa as any)[k].toFixed(1)}</span>
+                  <span style={{ color: "#aaa", fontWeight: 700 }}>{(pa as any)[k].toFixed(1)}</span>
                 </div>
-                <div style={{ fontSize: "0.7rem", color: "#666", marginBottom: "0.5rem", lineHeight: 1.3 }}>
+                <div style={{ fontSize: "0.7rem", color: "#aaa", marginBottom: "0.5rem", lineHeight: 1.3 }}>
                   {pillarDescriptions[k]}
                 </div>
-                <div style={{ height: "4px", background: "rgba(255,255,255,0.04)", borderRadius: "2px" }}>
+                <div style={{ height: "4px", background: "rgba(255,255,255,0.08)", borderRadius: "2px" }}>
                   <div style={{ height: "100%", width: `${((pa as any)[k] / 5) * 100}%`, background: pillarColors[k], borderRadius: "2px" }} />
                 </div>
               </div>
@@ -2491,12 +2498,12 @@ async function handleLogout() {
               marginBottom: "0.75rem",
             }}>
               <div style={{
-                background: "#ffffff",
+                background: "#111",
                 borderRadius: "5px",
                 padding: "1.5rem",
               }}>
                 <div style={{ fontSize: "0.62rem", color: "#FF8C42", textTransform: "uppercase" as const, letterSpacing: "2px", marginBottom: "0.6rem" }}>{sec.title}</div>
-                <div style={{ fontSize: "1rem", lineHeight: 1.7, color: "#666", whiteSpace: "pre-wrap" }}>{sec.body}</div>
+                <div style={{ fontSize: "1rem", lineHeight: 1.7, color: "#aaa", whiteSpace: "pre-wrap" }}>{sec.body}</div>
               </div>
             </div>
           ))}
@@ -2530,7 +2537,7 @@ async function handleLogout() {
             <div style={{ ...card, textAlign: "center" as const }}>
               <div style={{ fontSize: "1.5rem", marginBottom: "0.4rem" }}>🧾</div>
               <div style={{ fontWeight: 800, fontSize: "0.95rem", marginBottom: "0.35rem" }}>Want the full roadmap?</div>
-              <div style={{ fontSize: "0.8rem", color: "#666", lineHeight: 1.6, marginBottom: "1rem" }}>
+              <div style={{ fontSize: "0.8rem", color: "#aaa", lineHeight: 1.6, marginBottom: "1rem" }}>
                 The complete diagnostic goes deep on all four pillars, gives you a 30-day strategic action plan, and connects you with Hot Mess OS agents who can build the systems you need (or hey, I do custom consulting too if you want the founder treatment).
               </div>
               <button style={upgradeBtn}>Upgrade to Paid Diagnostic 💅</button>
