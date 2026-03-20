@@ -45,13 +45,21 @@ export async function POST(request: NextRequest) {
       : supabase.from("paid_diagnostics").select("id, status").eq("email", email);
     const { data: existing } = await existingQuery
       .in("status", ["pending", "processing", "completed"])
+      .order("created_at", { ascending: false })
+      .limit(1)
       .maybeSingle();
 
-    if (existing && existing.status === "completed") {
+    if (existing?.status === "pending" || existing?.status === "processing") {
+      // User already has an active in-progress diagnostic — don't create a duplicate
       return NextResponse.json(
-        { error: "You've already purchased a diagnostic" },
-        { status: 400 }
+        { error: "You already have an active diagnostic. Please complete it first.", diagnosticId: existing.id },
+        { status: 409 }
       );
+    }
+
+    if (existing?.status === "completed") {
+      // Allow starting a new diagnostic once the previous one is done
+      // (fall through to create a new checkout session)
     }
 
     // Create Stripe checkout session

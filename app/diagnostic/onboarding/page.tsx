@@ -51,11 +51,13 @@ function OnboardingContent() {
         throw new Error(data.error || "Activation failed");
       }
 
+      const result = await res.json();
       setStatus("success");
 
       // Short pause so the user sees the success state, then start the diagnostic
       setTimeout(() => {
-        router.replace("/?resume=true");
+        const param = result.diagnosticId ? `&diagnosticId=${result.diagnosticId}` : "";
+        router.replace(`/?resume=true${param}`);
       }, 1500);
 
     } catch (err: any) {

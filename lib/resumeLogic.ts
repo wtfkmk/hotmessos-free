@@ -86,17 +86,27 @@ export function getResumeScreen(progress: DiagnosticProgress | null): ResumeScre
   return 'paid_diagnostic_report';
 }
 
+export type ResumeResult = {
+  screen: ResumeScreen;
+  diagnosticId: string | null;
+};
+
 /**
- * Main function to call when user wants to resume/start diagnostic
+ * Main function to call when user wants to resume/start diagnostic.
+ * Returns both the screen to navigate to and the active diagnostic's ID.
  */
-export async function getResumePath(userId: string): Promise<ResumeScreen> {
+export async function getResumePath(userId: string): Promise<ResumeResult> {
+  // Pick the most recent non-completed diagnostic for this user
   const { data: paidData } = await supabase
     .from('paid_diagnostics')
-    .select('business_deep_dive, business_completed, pillar_responses, pillar_completed, report_data')
+    .select('id, business_deep_dive, business_completed, pillar_responses, pillar_completed, report_data')
     .eq('user_id', userId)
+    .in('status', ['pending', 'processing'])
+    .order('created_at', { ascending: false })
+    .limit(1)
     .maybeSingle();
 
-  if (!paidData) return 'paid_diagnostic_gate';
+  if (!paidData) return { screen: 'paid_diagnostic_gate', diagnosticId: null };
 
   const { data: profileData } = await supabase
     .from('user_profiles')
@@ -105,14 +115,14 @@ export async function getResumePath(userId: string): Promise<ResumeScreen> {
     .maybeSingle();
 
   if (!profileData?.business_models || !profileData?.elevator_pitch) {
-    return 'paid_diagnostic_profile';
+    return { screen: 'paid_diagnostic_profile', diagnosticId: paidData.id };
   }
 
-  if (!paidData.business_completed) return 'paid_diagnostic_business';
-  if (!paidData.pillar_completed) return 'paid_diagnostic_pillars';
-  if (!paidData.report_data) return 'paid_diagnostic_loading';
+  if (!paidData.business_completed) return { screen: 'paid_diagnostic_business', diagnosticId: paidData.id };
+  if (!paidData.pillar_completed) return { screen: 'paid_diagnostic_pillars', diagnosticId: paidData.id };
+  if (!paidData.report_data) return { screen: 'paid_diagnostic_loading', diagnosticId: paidData.id };
 
-  return 'paid_diagnostic_report';
+  return { screen: 'paid_diagnostic_report', diagnosticId: paidData.id };
 }
 
 /**
@@ -122,10 +132,11 @@ export async function saveBusinessProgress(
   userId: string,
   stepCompleted: number,
   data: any,
-  isComplete: boolean = false
+  isComplete: boolean = false,
+  diagnosticId?: string | null
 ): Promise<boolean> {
   try {
-    const { error } = await supabase
+    let query = supabase
       .from('paid_diagnostics')
       .update({
         business_deep_dive: data,
@@ -135,6 +146,8 @@ export async function saveBusinessProgress(
         updated_at: new Date().toISOString()
       })
       .eq('user_id', userId);
+    if (diagnosticId) query = query.eq('id', diagnosticId);
+    const { error } = await query;
 
     if (error) {
       console.error('Error saving business progress:', error);
@@ -156,10 +169,11 @@ export async function savePillarProgress(
   userId: string,
   stepCompleted: number,
   data: any,
-  isComplete: boolean = false
+  isComplete: boolean = false,
+  diagnosticId?: string | null
 ): Promise<boolean> {
   try {
-    const { error } = await supabase
+    let query = supabase
       .from('paid_diagnostics')
       .update({
         pillar_responses: data,
@@ -169,6 +183,8 @@ export async function savePillarProgress(
         updated_at: new Date().toISOString()
       })
       .eq('user_id', userId);
+    if (diagnosticId) query = query.eq('id', diagnosticId);
+    const { error } = await query;
 
     if (error) {
       console.error('Error saving pillar progress:', error);
@@ -186,17 +202,18 @@ export async function savePillarProgress(
 /**
  * Load pillar assessment progress
  */
-export async function loadPillarProgress(userId: string): Promise<{
+export async function loadPillarProgress(userId: string, diagnosticId?: string | null): Promise<{
   step: number;
   data: any;
   isComplete: boolean;
 } | null> {
   try {
-    const { data, error } = await supabase
+    let query = supabase
       .from('paid_diagnostics')
       .select('pillar_step_completed, pillar_responses, pillar_completed')
-      .eq('user_id', userId)
-      .single();
+      .eq('user_id', userId);
+    if (diagnosticId) query = query.eq('id', diagnosticId);
+    const { data, error } = await query.order('created_at', { ascending: false }).limit(1).single();
 
     if (error || !data) return null;
 
@@ -214,16 +231,17 @@ export async function loadPillarProgress(userId: string): Promise<{
 /**
  * Load partial progress to resume where user left off
  */
-export async function loadBusinessProgress(userId: string): Promise<{
+export async function loadBusinessProgress(userId: string, diagnosticId?: string | null): Promise<{
   step: number;
   data: any;
 } | null> {
   try {
-    const { data, error } = await supabase
+    let query = supabase
       .from('paid_diagnostics')
       .select('business_step_completed, business_deep_dive')
-      .eq('user_id', userId)
-      .single();
+      .eq('user_id', userId);
+    if (diagnosticId) query = query.eq('id', diagnosticId);
+    const { data, error } = await query.order('created_at', { ascending: false }).limit(1).single();
 
     if (error || !data) return null;
 

@@ -286,6 +286,7 @@ const [resumePillar, setResumePillar] = useState(0);
   const [pillarData, setPillarData] = useState<any>({});
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [profileChecked, setProfileChecked] = useState(false);
+  const [activeDiagnosticId, setActiveDiagnosticId] = useState<string | null>(null);
 
 // ── Supabase Auth Session Management ──
   useEffect(() => {
@@ -362,6 +363,8 @@ const [resumePillar, setResumePillar] = useState(0);
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (params.get('resume') === 'true' && user?.id) {
+      const diagnosticId = params.get('diagnosticId');
+      if (diagnosticId) setActiveDiagnosticId(diagnosticId);
       window.history.replaceState({}, '', '/');
       handleResumeDiagnostic();
     }
@@ -376,7 +379,8 @@ const [resumePillar, setResumePillar] = useState(0);
     
     setCheckoutLoading(true);
     try {
-      const resumeScreen = await getResumePath(user.id);
+      const { screen: resumeScreen, diagnosticId } = await getResumePath(user.id);
+      if (diagnosticId) setActiveDiagnosticId(diagnosticId);
       setScreen(resumeScreen);
     } catch (error) {
       console.error('Resume error:', error);
@@ -2691,8 +2695,14 @@ async function handleLogout() {
                     const data = await res.json();
                     
                     if (data.error) {
-                      alert(data.error);
-                      setCheckoutLoading(false);
+                      if (data.diagnosticId) {
+                        // User already has an active diagnostic — resume it
+                        setActiveDiagnosticId(data.diagnosticId);
+                        handleResumeDiagnostic();
+                      } else {
+                        alert(data.error);
+                        setCheckoutLoading(false);
+                      }
                       return;
                     }
                     
@@ -2778,6 +2788,7 @@ if (screen === "paid_diagnostic_profile") return (
     <ProfileSetup
       email={user?.email || ''}
       onComplete={() => setScreen('paid_diagnostic_profile_confirm')}
+      onCancel={() => setScreen('entry')}
     />
   );
 
@@ -2810,6 +2821,7 @@ if (screen === 'paid_diagnostic_business') {
   return (
 <BusinessDeepDive
   userId={user?.id || ''}
+  diagnosticId={activeDiagnosticId}
 onComplete={(data) => {
   setBusinessDeepDiveData(data);
   
@@ -2853,6 +2865,7 @@ if (screen === "paid_diagnostic_pillars") {
   return (
     <PillarAssessment
       userId={user?.id || ''}
+      diagnosticId={activeDiagnosticId}
       resumePillar={resumePillar}
       onPillarTransition={(nextPillar) => {
         const config = pillarTransitionTitles[nextPillar];
@@ -2952,21 +2965,29 @@ if (screen === "paid_diagnostic_pillars") {
 {/* Profile Setup Form */}
 <ProfileSetup
   email={user?.email || ""}
-onComplete={async () => {
-  if (user?.id) {
-    await loadUserData(user.id);
-  }
-  
-  const editMode = sessionStorage.getItem('editProfile');
-  sessionStorage.removeItem('editProfile');
+  onCancel={() => {
+    const editMode = sessionStorage.getItem('editProfile');
+    if (editMode === 'true') {
+      window.location.href = '/account';
+    } else {
+      setScreen('entry');
+    }
+  }}
+  onComplete={async () => {
+    if (user?.id) {
+      await loadUserData(user.id);
+    }
 
-  // If editing from account page, return there; otherwise continue diagnostic
-  if (editMode === 'true') {
-    window.location.href = '/account';
-  } else {
-    setScreen('paid_diagnostic_profile_confirm');
-  }
-}}
+    const editMode = sessionStorage.getItem('editProfile');
+    sessionStorage.removeItem('editProfile');
+
+    // If editing from account page, return there; otherwise continue diagnostic
+    if (editMode === 'true') {
+      window.location.href = '/account';
+    } else {
+      setScreen('paid_diagnostic_profile_confirm');
+    }
+  }}
 />
         </div>
       </div>

@@ -5,6 +5,7 @@ import { savePillarProgress, loadPillarProgress } from '@/lib/resumeLogic';
 
 interface PillarAssessmentProps {
   userId: string;
+  diagnosticId?: string | null;
   onComplete: (data: PillarData) => void;
   onBack?: () => void;
   onSaveAndExit: () => void;
@@ -86,6 +87,7 @@ interface PillarData {
 
 export default function PillarAssessment({
   userId,
+  diagnosticId,
   onComplete,
   onBack,
   onSaveAndExit,
@@ -182,7 +184,7 @@ export default function PillarAssessment({
   }, [resumePillar]);
 
   const loadProgress = async () => {
-    const progress = await loadPillarProgress(userId);
+    const progress = await loadPillarProgress(userId, diagnosticId);
     if (progress && progress.data && Object.keys(progress.data).length > 0) {
       setFormData(prev => ({ ...prev, ...progress.data }));
       // resumePillar prop takes precedence — parent is directing us to a specific pillar
@@ -518,7 +520,8 @@ const validate = (): boolean => {
       userId,
       currentPillar,
       formData,
-      false
+      false,
+      diagnosticId
     );
 
     if (!saved) {
@@ -554,7 +557,8 @@ const validate = (): boolean => {
         userId,
         4,
         formData,
-        true
+        true,
+        diagnosticId
       );
 
       if (!saved) {
@@ -610,7 +614,7 @@ const validate = (): boolean => {
           {/* Save & Exit Button */}
           <button
             onClick={async () => {
-              await savePillarProgress(userId, currentPillar, formData, false);
+              await savePillarProgress(userId, currentPillar, formData, false, diagnosticId);
               onSaveAndExit();
             }}
             style={saveExitButtonStyle}

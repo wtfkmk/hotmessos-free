@@ -6,6 +6,7 @@ import { supabase } from '@/lib/supabase';
 
 interface BusinessDeepDiveProps {
   userId: string;
+  diagnosticId?: string | null;
   onComplete: (data: BusinessDeepDiveData) => void;
   onBack?: () => void;
   onSaveAndExit: () => void;
@@ -32,6 +33,7 @@ interface BusinessDeepDiveData {
 
 export default function BusinessDeepDive({
   userId,
+  diagnosticId,
   onComplete,
   onBack,
   onSaveAndExit
@@ -76,7 +78,7 @@ export default function BusinessDeepDive({
     if (!userId) return;
 
     try {
-      const progress = await loadBusinessProgress(userId);
+      const progress = await loadBusinessProgress(userId, diagnosticId);
       if (progress && progress.data && Object.keys(progress.data).length > 0) {
         console.log('✅ Loading existing business deep dive data');
         setFormData(prev => ({ ...prev, ...progress.data }));

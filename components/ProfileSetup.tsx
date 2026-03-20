@@ -6,9 +6,10 @@ import { supabase } from '@/lib/supabase';
 interface ProfileSetupProps {
   email: string;
   onComplete: () => void;
+  onCancel?: () => void;
 }
 
-export default function ProfileSetup({ email, onComplete }: ProfileSetupProps) {
+export default function ProfileSetup({ email, onComplete, onCancel }: ProfileSetupProps) {
   const [step, setStep] = useState(1);
   const [saving, setSaving] = useState(false);
 
@@ -457,19 +458,31 @@ export default function ProfileSetup({ email, onComplete }: ProfileSetupProps) {
 
         {/* Navigation */}
         <div style={{ marginTop: "2rem", display: "flex", gap: "1rem" }}>
-          {step > 1 && (
+          {step > 1 ? (
             <button
               onClick={() => setStep(step - 1)}
               style={{
                 ...gradBtn,
                 background: "none",
-                border: "1px solid rgba(0,0,0,0.15)",
-                color: "#666",
+                border: "1px solid rgba(255,255,255,0.15)",
+                color: "#aaa",
               }}
             >
               ← Back
             </button>
-          )}
+          ) : onCancel ? (
+            <button
+              onClick={onCancel}
+              style={{
+                ...gradBtn,
+                background: "none",
+                border: "1px solid rgba(255,255,255,0.15)",
+                color: "#aaa",
+              }}
+            >
+              ← Cancel
+            </button>
+          ) : null}
           {step < totalSteps ? (
             <button onClick={() => setStep(step + 1)} disabled={!canGoNext()} style={gradBtn}>
               Continue →
