@@ -171,10 +171,12 @@ export default function PillarAssessment({
 
   const loadProgress = async () => {
     const progress = await loadPillarProgress(userEmail);
-    if (progress && progress.data) {
-      setFormData(progress.data);
-      setCurrentPillar(progress.step > 0 ? progress.step : 1);
-      console.log(`✅ Loaded pillar progress: Pillar ${progress.step}`);
+    if (progress && progress.data && Object.keys(progress.data).length > 0) {
+      setFormData(prev => ({ ...prev, ...progress.data }));
+      // Retake: already completed → start at Pillar 1 with answers prepopulated
+      // Resume: not completed → jump to where they left off
+      setCurrentPillar(progress.isComplete ? 1 : (progress.step > 0 ? progress.step : 1));
+      console.log(`✅ Loaded pillar progress: Pillar ${progress.step}, complete: ${progress.isComplete}`);
     }
   };
 

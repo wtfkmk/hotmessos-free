@@ -233,11 +233,12 @@ export async function savePillarProgress(
 export async function loadPillarProgress(email: string): Promise<{
   step: number;
   data: any;
+  isComplete: boolean;
 } | null> {
   try {
     const { data, error } = await supabase
       .from('paid_diagnostics')
-      .select('pillar_step_completed, pillar_responses')
+      .select('pillar_step_completed, pillar_responses, pillar_completed')
       .eq('email', email)
       .single();
 
@@ -245,7 +246,8 @@ export async function loadPillarProgress(email: string): Promise<{
 
     return {
       step: data.pillar_step_completed || 0,
-      data: data.pillar_responses || {}
+      data: data.pillar_responses || {},
+      isComplete: !!data.pillar_completed,
     };
   } catch (error) {
     console.error('Error loading pillar progress:', error);
