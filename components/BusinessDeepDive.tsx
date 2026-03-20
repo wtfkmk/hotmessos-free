@@ -15,7 +15,7 @@ interface BusinessDeepDiveData {
   clientJourneyFollowUp: string;
   onlineProfiles: Array<{ platform: string; url: string; intention: string; performance: string }>;
   topProducts: string;
-  contentSamples: Array<{ name: string; url: string; file?: File | null; fileName?: string }>;
+  contentSamples: Array<{ name: string; url: string; file?: File | null; fileName?: string; file_url?: string }>;
   competitors: Array<{ url: string }>;
   competitorAnalysis: string;
   gapAnalysis: string;
@@ -37,6 +37,7 @@ export default function BusinessDeepDive({
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [uploadingIndex, setUploadingIndex] = useState<number | null>(null);
 
   // Form state - 15 questions
   const [formData, setFormData] = useState<BusinessDeepDiveData>({
@@ -45,7 +46,11 @@ export default function BusinessDeepDive({
     clientJourneyFollowUp: '',
     onlineProfiles: [{ platform: 'Website homepage', url: '', intention: '', performance: '' }],
     topProducts: '',
-    contentSamples: [],
+    contentSamples: [
+      { name: '', url: '', file: null, fileName: '', file_url: '' },
+      { name: '', url: '', file: null, fileName: '', file_url: '' },
+      { name: '', url: '', file: null, fileName: '', file_url: '' }
+    ],
     competitors: [{ url: '' }],
     competitorAnalysis: '',
     gapAnalysis: '',
@@ -390,11 +395,44 @@ export default function BusinessDeepDive({
     setFormData({ ...formData, contentSamples: updated });
   };
 
-  const updateContentSampleFile = (index: number, file: File | null) => {
+  const updateContentSampleFile = async (index: number, file: File | null) => {
     const updated = [...formData.contentSamples];
     updated[index].file = file;
     updated[index].fileName = file?.name || '';
+    updated[index].file_url = '';
     setFormData({ ...formData, contentSamples: updated });
+
+    if (!file) return;
+
+    setUploadingIndex(index);
+    try {
+      const uploadForm = new FormData();
+      uploadForm.append('email', userEmail);
+      uploadForm.append(`contentSample0`, file);
+
+      const response = await fetch('/api/diagnostic/upload-files', {
+        method: 'POST',
+        body: uploadForm
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        if (result.files && result.files.length > 0) {
+          setFormData(prev => ({
+            ...prev,
+            contentSamples: prev.contentSamples.map((s, i) =>
+              i === index ? { ...s, file_url: result.files[0].fileUrl, fileName: file.name } : s
+            )
+          }));
+        }
+      } else {
+        console.error('File upload failed:', await response.text());
+      }
+    } catch (error) {
+      console.error('Error uploading file:', error);
+    } finally {
+      setUploadingIndex(null);
+    }
   };
 
   const removeContentSample = (index: number) => {
@@ -607,21 +645,32 @@ export default function BusinessDeepDive({
           {/* STEP 2: Content Samples */}
           {step === 2 && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-              {/* Q5: Content Samples (3-5) */}
+              {/* Q5: Content Samples (3 fixed slots) */}
               <div>
                 <label style={labelStyle}>
-                  Upload 3-5 content samples (posts, articles, videos)
+                  Share 3 content samples (posts, articles, videos, docs)
                 </label>
                 <p style={{ fontSize: '13px', color: '#666', marginBottom: '12px' }}>
-                  Add a link OR upload a screenshot/file for each content sample
+                  For each sample, add a URL or upload a file — or both
                 </p>
                 {formData.contentSamples.map((sample, index) => (
-                  <div key={index} style={{ 
+                  <div key={index} style={{
                     padding: '16px',
                     background: '#f9f9f9',
                     borderRadius: '8px',
-                    marginBottom: '16px'
+                    marginBottom: '16px',
+                    border: '1px solid #e0e0e0'
                   }}>
+                    <div style={{
+                      fontSize: '12px',
+                      fontWeight: 700,
+                      color: '#666',
+                      marginBottom: '12px',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.05em'
+                    }}>
+                      Sample {index + 1}
+                    </div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                       {/* Content Title */}
                       <input
@@ -631,7 +680,7 @@ export default function BusinessDeepDive({
                         placeholder="Content title or description"
                         style={inputStyle}
                       />
-                      
+
                       {/* URL Input */}
                       <input
                         type="text"
@@ -640,61 +689,87 @@ export default function BusinessDeepDive({
                         placeholder="URL (e.g., https://instagram.com/p/...)"
                         style={inputStyle}
                       />
-                      
+
                       {/* OR divider */}
-                      <div style={{ 
-                        textAlign: 'center', 
-                        color: '#999', 
+                      <div style={{
+                        textAlign: 'center',
+                        color: '#999',
                         fontSize: '13px',
                         margin: '4px 0'
                       }}>
-                        — OR —
+                        — OR upload a file —
                       </div>
-                      
+
                       {/* File Upload */}
                       <div>
                         <input
                           type="file"
-                          accept="image/*,.pdf"
+                          accept=".pdf,.jpg,.jpeg,.png,.webp,.docx,.txt"
+                          disabled={uploadingIndex === index}
                           onChange={(e) => {
-                            const file = e.target.files?.[0];
-                            updateContentSampleFile(index, file || null);
+                            const file = e.target.files?.[0] || null;
+                            updateContentSampleFile(index, file);
                           }}
-                          style={{ fontSize: '14px' }}
+                          style={{
+                            fontSize: '14px',
+                            fontFamily: '"DM Mono", monospace',
+                            cursor: uploadingIndex === index ? 'wait' : 'pointer'
+                          }}
                         />
-                        {sample.fileName && (
-                          <div style={{ 
-                            marginTop: '8px', 
-                            fontSize: '13px', 
+                        <div style={{ fontSize: '11px', color: '#999', marginTop: '4px' }}>
+                          PDF, JPG, PNG, WEBP, DOCX, TXT
+                        </div>
+
+                        {/* Uploading state */}
+                        {uploadingIndex === index && (
+                          <div style={{
+                            marginTop: '8px',
+                            fontSize: '13px',
+                            color: '#44AAFF',
+                            padding: '8px 12px',
+                            background: '#f0f9ff',
+                            borderRadius: '6px',
+                            border: '1px solid #44AAFF'
+                          }}>
+                            Uploading…
+                          </div>
+                        )}
+
+                        {/* Upload success */}
+                        {sample.file_url && uploadingIndex !== index && (
+                          <div style={{
+                            marginTop: '8px',
+                            fontSize: '13px',
+                            color: '#2e7d32',
+                            padding: '8px 12px',
+                            background: '#f1f8e9',
+                            borderRadius: '6px',
+                            border: '1px solid #a5d6a7',
+                            wordBreak: 'break-all'
+                          }}>
+                            ✓ Uploaded: {sample.fileName}
+                          </div>
+                        )}
+
+                        {/* File selected but no URL yet (edge case) */}
+                        {sample.fileName && !sample.file_url && uploadingIndex !== index && (
+                          <div style={{
+                            marginTop: '8px',
+                            fontSize: '13px',
                             color: '#666',
-                            padding: '8px',
+                            padding: '8px 12px',
                             background: '#e3f2fd',
-                            borderRadius: '4px'
+                            borderRadius: '6px'
                           }}>
                             📎 {sample.fileName}
                           </div>
                         )}
                       </div>
-                      
-                      {/* Remove button */}
-                      <button
-                        onClick={() => removeContentSample(index)}
-                        style={{
-                          padding: '8px 16px',
-                          background: '#ffebee',
-                          border: 'none',
-                          borderRadius: '6px',
-                          cursor: 'pointer',
-                          fontSize: '14px',
-                          color: '#c62828',
-                          alignSelf: 'flex-start'
-                        }}
-                      >
-                        Remove Sample
-                      </button>
                     </div>
                   </div>
                 ))}
+
+                {/* Allow adding up to 5 total */}
                 {formData.contentSamples.length < 5 && (
                   <button
                     onClick={addContentSample}
@@ -704,7 +779,7 @@ export default function BusinessDeepDive({
                       marginTop: '8px'
                     }}
                   >
-                    + Add Content Sample (up to 5)
+                    + Add Another Sample (up to 5)
                   </button>
                 )}
               </div>
