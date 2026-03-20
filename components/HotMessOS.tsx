@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
-import { createClient } from "@supabase/supabase-js";
+import { createBrowserClient } from "@supabase/ssr";
 import ProfileSetup from "@/components/ProfileSetup";
 import ProfileConfirmation from '@/components/ProfileConfirmation';
 import BusinessDeepDive from './BusinessDeepDive';
@@ -18,8 +18,11 @@ const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
 const QUIZ_LIMIT = 1; // free attempts allowed (1× per week)
 const CHAT_LIMIT = 10; // messages per day per chat mode
 
-// Initialize Supabase client
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// Initialize Supabase client using createBrowserClient so the session is
+// stored in cookies (in addition to localStorage). This is required for
+// Next.js middleware to be able to read the session server-side — without it
+// the middleware sees no auth cookie and blocks navigation to /account.
+const supabase = createBrowserClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // ─── Lightweight fingerprint (no auth required) ─────────────────────────────
 function getSessionId(): string {

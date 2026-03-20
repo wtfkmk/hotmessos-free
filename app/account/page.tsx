@@ -4,10 +4,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { createClient } from "@supabase/supabase-js";
+import { createBrowserClient } from "@supabase/ssr";
 import { useRouter } from "next/navigation";
 
-const supabase = createClient(
+const supabase = createBrowserClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
@@ -115,7 +115,7 @@ export default function AccountPage() {
     minHeight: "100vh",
     background: "#ffffff",
     fontFamily: "'DM Mono', monospace",
-    color: "#fff",
+    color: "#1a1a1a",
     padding: "2rem 1.5rem",
   };
 
