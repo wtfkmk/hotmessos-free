@@ -288,6 +288,7 @@ const [resumePillar, setResumePillar] = useState(0);
   useEffect(() => {
     // Check for existing session on mount
     supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log("🔍 getSession on mount — user:", session?.user?.email ?? "none");
       if (session?.user) {
         setUser(session.user);
         loadUserData(session.user.id);
@@ -329,14 +330,17 @@ const [resumePillar, setResumePillar] = useState(0);
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
-      console.log("🔐 Auth event:", event);
-      
+      console.log("🔐 Auth event:", event, "| user:", session?.user?.email ?? "none");
+
       if (session?.user) {
         setUser(session.user);
         loadUserData(session.user.id);
-        
-        // Redirect to entry on successful login
-        if (event === 'SIGNED_IN' && screen === "login") {
+
+        // Navigate to entry on sign-in. No screen check here — that check used
+        // a stale closure (screen captured at mount = "entry"), so it always
+        // evaluated false and login appeared to silently do nothing.
+        if (event === 'SIGNED_IN') {
+          console.log("✅ SIGNED_IN — navigating to entry");
           setScreen("entry");
         }
       } else {
@@ -501,10 +505,12 @@ const [resumePillar, setResumePillar] = useState(0);
     setLoginLoading(true);
     setAuthMessage('');
     try {
+      console.log("🔑 Attempting login for:", loginEmail);
       const { data, error } = await supabase.auth.signInWithPassword({
         email: loginEmail,
         password: loginPassword,
       });
+      console.log("🔑 signInWithPassword result — error:", error?.message ?? "none", "| session:", data?.session ? "present" : "missing");
 
       if (error) {
         // Check for unverified email
@@ -526,10 +532,17 @@ const [resumePillar, setResumePillar] = useState(0);
         return;
       }
 
-      // Success - session handled by onAuthStateChange
+      // Success — onAuthStateChange will fire SIGNED_IN and navigate to "entry".
+      // Also navigate explicitly here as a belt-and-suspenders in case the
+      // auth state listener fires before state updates settle.
+      console.log("✅ Login success — session:", data.session?.user?.email);
       setLoginEmail('');
       setLoginPassword('');
-      
+      if (data.session) {
+        setUser(data.session.user);
+        setScreen("entry");
+      }
+
     } catch (err: any) {
       console.error("Login error:", err);
       setAuthMessage(err.message || 'Login failed. Please try again.');
