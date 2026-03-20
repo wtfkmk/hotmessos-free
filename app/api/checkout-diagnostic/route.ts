@@ -7,6 +7,25 @@ import { createClient } from "@supabase/supabase-js";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
+// Guarantee an absolute URL with https:// scheme for Stripe success/cancel URLs.
+// NEXT_PUBLIC_APP_URL must be set in Vercel env vars (e.g. https://yourdomain.com).
+function getAppUrl(): string {
+  const raw = process.env.NEXT_PUBLIC_APP_URL || "";
+  // Strip trailing slash for clean URL concatenation
+  const clean = raw.replace(/\/$/, "");
+  if (clean.startsWith("http://") || clean.startsWith("https://")) {
+    return clean;
+  }
+  // If the var is set but missing the scheme, prepend https://
+  if (clean) {
+    return `https://${clean}`;
+  }
+  // Last resort fallback — should not be reached if NEXT_PUBLIC_APP_URL is set
+  throw new Error(
+    "NEXT_PUBLIC_APP_URL is not set. Add it to your Vercel environment variables (e.g. https://yourdomain.com)."
+  );
+}
+
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -45,8 +64,8 @@ export async function POST(request: NextRequest) {
         },
       ],
       mode: "payment",
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/diagnostic/onboarding?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/`,
+      success_url: `${getAppUrl()}/diagnostic/onboarding?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${getAppUrl()}/`,
       customer_email: email,
       metadata: {
         email,
