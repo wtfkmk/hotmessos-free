@@ -21,7 +21,7 @@ interface PillarData {
   p_q9_energy_management: number;
   p_q10_creation_mode: string;
   p_q11_consistency_volatility: string;
-  
+
   // DIGITAL SELF (17 questions)
   ds_q1_file_organization: number;
   ds_q2_problem_identification: string;
@@ -41,24 +41,29 @@ interface PillarData {
   ds_q15_past_wave: string;
   ds_q16_failure_recovery: string;
   ds_q17_content_leverage: string;
-  
-  // RELATIONSHIPS (16 questions)
+
+  // RELATIONSHIPS (20 questions)
   r_q1_inner_voice: string;
   r_q2_emotional_awareness: string;
   r_q3_regulation_stress: string;
+  r_q4_deep_work: number;
   r_q5_communication_clarity: string;
   r_q6_conflict_pattern: string;
   r_q7_online_feedback: string;
+  r_q8_mentor_presence: string;
+  r_q9_boundaries: number;
   r_q10_reciprocity: string;
-  r_q11_energy_distribution: string;
+  r_q11_energy_distribution: string[];
   r_q12_network_elevation: string;
   r_q12_follow_up: string;
   r_q13_network_alignment: string;
   r_q14_resilience_flattery: string;
+  r_q15_people_energy: string;
   r_q16_collaboration: string;
   r_q17_earning_relationship: string;
+  r_q17_follow_up: number;
   r_q18_sales_comfort: string;
-  
+
   // CREATIVE FLOW (16 questions)
   cf_q1_natural_gifts: string[];
   cf_q3_learning_appetite: string;
@@ -66,11 +71,16 @@ interface PillarData {
   cf_q5_creation_source: string;
   cf_q6_artistic_maturity: string;
   cf_q7_creation_intent: string;
+  cf_q8_ai_flow: number;
   cf_q9_security_individuality: string;
-  cf_q13_creative_confidence: number;
+  cf_q10_content_areas: string[];
+  cf_q11_perspective_flexibility: string;
+  cf_q12_path_awareness: string;
+  cf_q13_creative_fulfillment: string;
+  cf_q14_creative_blocks: string[];
+  cf_q15_resistance_pattern: string;
   cf_q16_work_curiosity: string;
   cf_q17_brand_authenticity: string;
-  cf_q18_secret_hope: string;
 }
 
 export default function PillarAssessment({
@@ -91,12 +101,12 @@ export default function PillarAssessment({
     p_q9_energy_management: 0,
     p_q10_creation_mode: '',
     p_q11_consistency_volatility: '',
-    
+
     // DIGITAL SELF
     ds_q1_file_organization: 0,
-    ds_q2_problem_identification: '',     
-    ds_q3_ai_critique: '',
-    ds_q4_ai_tool_selection: '',
+    ds_q2_problem_identification: '',
+    ds_q3_ai_quality_control: 0,
+    ds_q4_tool_selection: '',
     ds_q5_ai_explainability: '',
     ds_q6_ai_integration: '',
     ds_q7_technical_fluency: 0,
@@ -111,42 +121,46 @@ export default function PillarAssessment({
     ds_q15_past_wave: '',
     ds_q16_failure_recovery: '',
     ds_q17_content_leverage: '',
-    
+
     // RELATIONSHIPS
     r_q1_inner_voice: '',
-    r_q2_conflict_approach: '',
-    r_q3_receive_feedback: '',
-    r_q4_give_feedback: '',
-    r_q5_boundaries: '',
-    r_q6_network_intention: '',
-    r_q7_collab_dynamics: '',
+    r_q2_emotional_awareness: '',
+    r_q3_regulation_stress: '',
+    r_q4_deep_work: 0,
+    r_q5_communication_clarity: '',
+    r_q6_conflict_pattern: '',
+    r_q7_online_feedback: '',
     r_q8_mentor_presence: '',
-    r_q9_ask_for_help: '',
-    r_q10_community_reciprocity: '',
-    r_q11_public_vulnerability: '',
-    r_q12_leadership_style: '',
-    r_q13_network_quality: 0,
-    r_q14_relationship_maintenance: '',
+    r_q9_boundaries: 0,
+    r_q10_reciprocity: '',
+    r_q11_energy_distribution: [],
+    r_q12_network_elevation: '',
+    r_q12_follow_up: '',
+    r_q13_network_alignment: '',
+    r_q14_resilience_flattery: '',
     r_q15_people_energy: '',
-    r_q16_collaboration_capacity: '',
-    
+    r_q16_collaboration: '',
+    r_q17_earning_relationship: '',
+    r_q17_follow_up: 0,
+    r_q18_sales_comfort: '',
+
     // CREATIVE FLOW
-    cf_q1_spark_to_ship: '',
-    cf_q2_creative_resistance: '',
-    cf_q3_perfectionism: '',
-    cf_q4_creative_identity: '',
-    cf_q5_constraints_creativity: '',
-    cf_q6_inspiration_sources: '',
-    cf_q7_idea_capture: '',
-    cf_q8_creative_environment: '',
-    cf_q9_deep_work: '',
-    cf_q10_creative_rhythm: '',
-    cf_q11_experimentation: '',
-    cf_q12_finishing: '',
-    cf_q13_creative_confidence: 0,
-    cf_q14_fear_judgment: '',
-    cf_q15_creative_recovery: '',
-    cf_q16_vision_execution: ''
+    cf_q1_natural_gifts: [],
+    cf_q3_learning_appetite: '',
+    cf_q4_creative_consistency: '',
+    cf_q5_creation_source: '',
+    cf_q6_artistic_maturity: '',
+    cf_q7_creation_intent: '',
+    cf_q8_ai_flow: 0,
+    cf_q9_security_individuality: '',
+    cf_q10_content_areas: [],
+    cf_q11_perspective_flexibility: '',
+    cf_q12_path_awareness: '',
+    cf_q13_creative_fulfillment: '',
+    cf_q14_creative_blocks: [],
+    cf_q15_resistance_pattern: '',
+    cf_q16_work_curiosity: '',
+    cf_q17_brand_authenticity: '',
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -404,7 +418,6 @@ const validate = (): boolean => {
   const newErrors: Record<string, string> = {};
 
   if (currentPillar === 1) {
-    // Presence validation
     if (!formData.p_q1_inner_voice) newErrors.p_q1 = 'Required';
     if (!formData.p_q2_evolution) newErrors.p_q2 = 'Required';
     if (!formData.p_q3_chaos_clarity) newErrors.p_q3 = 'Required';
@@ -416,7 +429,67 @@ const validate = (): boolean => {
     if (!formData.p_q11_consistency_volatility) newErrors.p_q11 = 'Required';
   }
 
-  // Add validation for other pillars (TODO)
+  if (currentPillar === 2) {
+    if (formData.ds_q1_file_organization === 0) newErrors.ds_q1 = 'Required';
+    if (!formData.ds_q2_problem_identification) newErrors.ds_q2 = 'Required';
+    if (formData.ds_q3_ai_quality_control === 0) newErrors.ds_q3 = 'Required';
+    if (!formData.ds_q4_tool_selection) newErrors.ds_q4 = 'Required';
+    if (!formData.ds_q5_ai_explainability) newErrors.ds_q5 = 'Required';
+    if (!formData.ds_q6_ai_integration) newErrors.ds_q6 = 'Required';
+    if (formData.ds_q7_technical_fluency === 0) newErrors.ds_q7 = 'Required';
+    if (!formData.ds_q8_system_resilience) newErrors.ds_q8 = 'Required';
+    if (!formData.ds_q8_5_automation) newErrors.ds_q8_5 = 'Required';
+    if (!formData.ds_q9_baseline_monitoring) newErrors.ds_q9 = 'Required';
+    if (!formData.ds_q10_brand_evolution) newErrors.ds_q10 = 'Required';
+    if (!formData.ds_q11_ai_power_dynamic) newErrors.ds_q11 = 'Required';
+    if (formData.ds_q12_data_boundaries.length === 0) newErrors.ds_q12 = 'Select at least one';
+    if (!formData.ds_q12_follow_up) newErrors.ds_q12_follow = 'Required';
+    if (!formData.ds_q13_strength_alignment) newErrors.ds_q13 = 'Required';
+    if (!formData.ds_q15_past_wave) newErrors.ds_q15 = 'Required';
+    if (!formData.ds_q16_failure_recovery) newErrors.ds_q16 = 'Required';
+    if (!formData.ds_q17_content_leverage) newErrors.ds_q17 = 'Required';
+  }
+
+  if (currentPillar === 3) {
+    if (!formData.r_q1_inner_voice) newErrors.r_q1 = 'Required';
+    if (!formData.r_q2_emotional_awareness) newErrors.r_q2 = 'Required';
+    if (!formData.r_q3_regulation_stress) newErrors.r_q3 = 'Required';
+    if (formData.r_q4_deep_work === 0) newErrors.r_q4 = 'Required';
+    if (!formData.r_q5_communication_clarity) newErrors.r_q5 = 'Required';
+    if (!formData.r_q6_conflict_pattern) newErrors.r_q6 = 'Required';
+    if (!formData.r_q7_online_feedback) newErrors.r_q7 = 'Required';
+    if (!formData.r_q8_mentor_presence) newErrors.r_q8 = 'Required';
+    if (formData.r_q9_boundaries === 0) newErrors.r_q9 = 'Required';
+    if (!formData.r_q10_reciprocity) newErrors.r_q10 = 'Required';
+    if (formData.r_q11_energy_distribution.length === 0) newErrors.r_q11 = 'Select at least one';
+    if (!formData.r_q12_network_elevation) newErrors.r_q12 = 'Required';
+    if (!formData.r_q13_network_alignment) newErrors.r_q13 = 'Required';
+    if (!formData.r_q14_resilience_flattery) newErrors.r_q14 = 'Required';
+    if (!formData.r_q15_people_energy) newErrors.r_q15 = 'Required';
+    if (!formData.r_q16_collaboration) newErrors.r_q16 = 'Required';
+    if (!formData.r_q17_earning_relationship) newErrors.r_q17 = 'Required';
+    if (formData.r_q17_follow_up === 0) newErrors.r_q17_follow = 'Required';
+    if (!formData.r_q18_sales_comfort) newErrors.r_q18 = 'Required';
+  }
+
+  if (currentPillar === 4) {
+    if (formData.cf_q1_natural_gifts.length === 0) newErrors.cf_q1 = 'Select at least one';
+    if (!formData.cf_q3_learning_appetite) newErrors.cf_q3 = 'Required';
+    if (!formData.cf_q4_creative_consistency) newErrors.cf_q4 = 'Required';
+    if (!formData.cf_q5_creation_source) newErrors.cf_q5 = 'Required';
+    if (!formData.cf_q6_artistic_maturity) newErrors.cf_q6 = 'Required';
+    if (!formData.cf_q7_creation_intent) newErrors.cf_q7 = 'Required';
+    if (formData.cf_q8_ai_flow === 0) newErrors.cf_q8 = 'Required';
+    if (!formData.cf_q9_security_individuality) newErrors.cf_q9 = 'Required';
+    if (formData.cf_q10_content_areas.length === 0) newErrors.cf_q10 = 'Select at least one';
+    if (!formData.cf_q11_perspective_flexibility) newErrors.cf_q11 = 'Required';
+    if (!formData.cf_q12_path_awareness) newErrors.cf_q12 = 'Required';
+    if (!formData.cf_q13_creative_fulfillment) newErrors.cf_q13 = 'Required';
+    if (formData.cf_q14_creative_blocks.length === 0) newErrors.cf_q14 = 'Select at least one';
+    if (!formData.cf_q15_resistance_pattern) newErrors.cf_q15 = 'Required';
+    if (!formData.cf_q16_work_curiosity) newErrors.cf_q16 = 'Required';
+    if (!formData.cf_q17_brand_authenticity) newErrors.cf_q17 = 'Required';
+  }
 
   setErrors(newErrors);
   return Object.keys(newErrors).length === 0;
@@ -1821,6 +1894,46 @@ const validate = (): boolean => {
       </div>
     </div>
 
+    {/* R Q8: Mentor Presence */}
+    <div style={questionStyle}>
+      <div style={questionTextStyle}>
+        When it comes to seeking guidance and mentorship…
+      </div>
+      <div style={radioGroupStyle}>
+        {['A', 'B', 'C', 'D'].map((option) => (
+          <label
+            key={option}
+            style={formData.r_q8_mentor_presence === option ? radioLabelSelectedStyle : radioLabelStyle}
+            onMouseEnter={(e) => {
+              if (formData.r_q8_mentor_presence !== option) {
+                e.currentTarget.style.borderColor = '#44AAFF';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (formData.r_q8_mentor_presence !== option) {
+                e.currentTarget.style.borderColor = '#e0e0e0';
+              }
+            }}
+          >
+            <input
+              type="radio"
+              name="r_q8"
+              value={option}
+              checked={formData.r_q8_mentor_presence === option}
+              onChange={(e) => setFormData({ ...formData, r_q8_mentor_presence: e.target.value })}
+              style={{ marginTop: '2px' }}
+            />
+            <span>
+              {option === 'A' && "I don't seek it — I figure things out alone"}
+              {option === 'B' && "I wait for mentors to find me"}
+              {option === 'C' && "I actively seek guidance but struggle to find the right people"}
+              {option === 'D' && "I have a clear mentor network and leverage it intentionally"}
+            </span>
+          </label>
+        ))}
+      </div>
+    </div>
+
     {/* R Q9: Boundaries */}
     <div style={questionStyle}>
       <div style={questionTextStyle}>
@@ -2086,6 +2199,46 @@ const validate = (): boolean => {
               {option === 'A' && "Nodding along feels nice, I keep it"}
               {option === 'B' && "I use parts of it, even if shallow, to save time"}
               {option === 'C' && "I push it deeper, question it, and make sure the substance is mine"}
+            </span>
+          </label>
+        ))}
+      </div>
+    </div>
+
+    {/* R Q15: People Energy */}
+    <div style={questionStyle}>
+      <div style={questionTextStyle}>
+        After spending time with most people in my life, I feel…
+      </div>
+      <div style={radioGroupStyle}>
+        {['A', 'B', 'C', 'D'].map((option) => (
+          <label
+            key={option}
+            style={formData.r_q15_people_energy === option ? radioLabelSelectedStyle : radioLabelStyle}
+            onMouseEnter={(e) => {
+              if (formData.r_q15_people_energy !== option) {
+                e.currentTarget.style.borderColor = '#44AAFF';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (formData.r_q15_people_energy !== option) {
+                e.currentTarget.style.borderColor = '#e0e0e0';
+              }
+            }}
+          >
+            <input
+              type="radio"
+              name="r_q15"
+              value={option}
+              checked={formData.r_q15_people_energy === option}
+              onChange={(e) => setFormData({ ...formData, r_q15_people_energy: e.target.value })}
+              style={{ marginTop: '2px' }}
+            />
+            <span>
+              {option === 'A' && "Drained — people are exhausting"}
+              {option === 'B' && "Neutral — it depends heavily on the person"}
+              {option === 'C' && "Energized by most, drained by a few"}
+              {option === 'D' && "Energized — I've curated my circle intentionally"}
             </span>
           </label>
         ))}
@@ -2504,15 +2657,15 @@ const validate = (): boolean => {
         {[1, 2, 3, 4, 5].map((num) => (
           <button
             key={num}
-            onClick={() => setFormData({ ...formData, cf_q8_creative_flow_ai: num })}
-            style={scaleButtonStyle(num, formData.cf_q8_creative_flow_ai === num)}
+            onClick={() => setFormData({ ...formData, cf_q8_ai_flow: num })}
+            style={scaleButtonStyle(num, formData.cf_q8_ai_flow === num)}
             onMouseEnter={(e) => {
-              if (formData.cf_q8_creative_flow_ai !== num) {
+              if (formData.cf_q8_ai_flow !== num) {
                 e.currentTarget.style.borderColor = '#44AAFF';
               }
             }}
             onMouseLeave={(e) => {
-              if (formData.cf_q8_creative_flow_ai !== num) {
+              if (formData.cf_q8_ai_flow !== num) {
                 e.currentTarget.style.borderColor = '#e0e0e0';
               }
             }}
