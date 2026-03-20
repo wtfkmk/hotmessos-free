@@ -185,10 +185,14 @@ export default function PillarAssessment({
     const progress = await loadPillarProgress(userEmail);
     if (progress && progress.data && Object.keys(progress.data).length > 0) {
       setFormData(prev => ({ ...prev, ...progress.data }));
-      // Retake: already completed → start at Pillar 1 with answers prepopulated
-      // Resume: not completed → jump to where they left off
-      setCurrentPillar(progress.isComplete ? 1 : (progress.step > 0 ? progress.step : 1));
-      console.log(`✅ Loaded pillar progress: Pillar ${progress.step}, complete: ${progress.isComplete}`);
+      // resumePillar prop takes precedence — parent is directing us to a specific pillar
+      // after a VideoTransition. Don't override it with the DB-stored step.
+      if (!resumePillar || resumePillar <= 0) {
+        // Retake: already completed → start at Pillar 1 with answers prepopulated
+        // Resume: not completed → jump to where they left off
+        setCurrentPillar(progress.isComplete ? 1 : (progress.step > 0 ? progress.step : 1));
+      }
+      console.log(`✅ Loaded pillar progress: Pillar ${progress.step}, complete: ${progress.isComplete}, resumePillar: ${resumePillar}`);
     }
   };
 
