@@ -14,23 +14,71 @@ interface ProfileConfirmationProps {
 }
 
 interface ProfileData {
-  name: string;
-  pronouns: string;
-  location: string;
-  timezone: string;
-  industry: string;
-  role: string;
-  experience_level: string;
-  business_stage: string;
-  primary_challenge: string;
+  business_models: string[];
+  elevator_pitch: string;
+  team_size: string;
+  working_style: string;
   monthly_revenue: string;
+  hours_per_week: string;
+  monthly_budget: string;
+  platforms: string[];
+  biggest_constraint: string;
+  primary_goal: string;
 }
 
-export default function ProfileConfirmation({ 
-  userEmail, 
-  onConfirm, 
+const LABEL_MAP: Record<string, string> = {
+  // team_size
+  'solo': 'Solo (just me)',
+  'small': 'Small team (2–5 people)',
+  'growing': 'Growing team (6–15 people)',
+  'established': 'Established company (16+ people)',
+  // working_style
+  'hands-on': 'Hands-on doer (I execute everything)',
+  'delegator': 'Strategic delegator (I outsource/hire)',
+  'mix': 'Mix of both',
+  // monthly_revenue
+  '0-1k': '$0–1K',
+  '1k-5k': '$1K–5K',
+  '5k-10k': '$5K–10K',
+  '10k-25k': '$10K–25K',
+  '25k-50k': '$25K–50K',
+  '50k+': '$50K+',
+  // hours_per_week
+  '5': '0–5 hours/week',
+  '10': '5–10 hours/week',
+  '20': '10–20 hours/week',
+  '30': '20–30 hours/week',
+  '40': '30+ hours/week',
+  // monthly_budget
+  '0': '$0',
+  '1-500': '$1–500',
+  '500-1k': '$500–1K',
+  '1k-2.5k': '$1K–2.5K',
+  '2.5k-5k': '$2.5K–5K',
+  '5k+': '$5K+',
+  // biggest_constraint
+  'time': 'Time (can\'t keep up)',
+  'money': 'Money (can\'t invest)',
+  'skills': 'Skills (don\'t know how)',
+  'ideas': 'Ideas (don\'t know what to do)',
+  'consistency': 'Consistency (can\'t stick with it)',
+  'team': 'Team (need help but can\'t hire)',
+  // primary_goal
+  'grow-audience': 'Grow audience',
+  'increase-revenue': 'Increase revenue',
+  'launch-offer': 'Launch new offer',
+  'build-authority': 'Build authority/credibility',
+  'improve-systems': 'Improve systems/operations',
+  'scale-team': 'Scale team',
+};
+
+const fmt = (value: string): string => LABEL_MAP[value] || value || '—';
+
+export default function ProfileConfirmation({
+  userEmail,
+  onConfirm,
   onEdit,
-  onSaveAndExit 
+  onSaveAndExit
 }: ProfileConfirmationProps) {
   const [profileData, setProfileData] = useState<ProfileData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -44,7 +92,7 @@ export default function ProfileConfirmation({
     try {
       const { data, error } = await supabase
         .from('user_profiles')
-        .select('*')
+        .select('business_models, elevator_pitch, team_size, working_style, monthly_revenue, hours_per_week, monthly_budget, platforms, biggest_constraint, primary_goal')
         .eq('email', userEmail)
         .single();
 
@@ -52,16 +100,16 @@ export default function ProfileConfirmation({
 
       if (data) {
         setProfileData({
-          name: data.name || '',
-          pronouns: data.pronouns || '',
-          location: data.location || '',
-          timezone: data.timezone || '',
-          industry: data.industry || '',
-          role: data.role || '',
-          experience_level: data.experience_level || '',
-          business_stage: data.business_stage || '',
-          primary_challenge: data.primary_challenge || '',
-          monthly_revenue: data.monthly_revenue || ''
+          business_models: data.business_models || [],
+          elevator_pitch: data.elevator_pitch || '',
+          team_size: data.team_size || '',
+          working_style: data.working_style || '',
+          monthly_revenue: data.monthly_revenue || '',
+          hours_per_week: data.hours_per_week?.toString() || '',
+          monthly_budget: data.monthly_budget || '',
+          platforms: data.platforms || [],
+          biggest_constraint: data.biggest_constraint || '',
+          primary_goal: data.primary_goal || '',
         });
       }
     } catch (err) {
@@ -72,7 +120,7 @@ export default function ProfileConfirmation({
     }
   };
 
-  // Styles matching the design system
+  // Styles
   const pageStyle: React.CSSProperties = {
     minHeight: '100vh',
     background: '#0a0a0a',
@@ -228,29 +276,17 @@ export default function ProfileConfirmation({
     transition: 'all 0.2s'
   };
 
-  const loadingStyle: React.CSSProperties = {
-    textAlign: 'center' as const,
-    padding: '60px 20px',
-    fontSize: '16px',
-    color: '#666'
-  };
-
-  const errorStyle: React.CSSProperties = {
-    textAlign: 'center' as const,
-    padding: '60px 20px',
-    fontSize: '16px',
-    color: '#ff4444'
-  };
-
   if (loading) {
     return (
       <div style={pageStyle}>
         <div style={grainStyle} />
         <div style={glowStyle} />
         <div style={contentStyle}>
-          <div style={{ ...cardStyle }}>
+          <div style={cardStyle}>
             <div style={gradientBorderStyle} />
-            <div style={loadingStyle}>Loading your profile...</div>
+            <div style={{ textAlign: 'center', padding: '60px 20px', fontSize: '16px', color: '#666' }}>
+              Loading your profile...
+            </div>
           </div>
         </div>
       </div>
@@ -263,9 +299,9 @@ export default function ProfileConfirmation({
         <div style={grainStyle} />
         <div style={glowStyle} />
         <div style={contentStyle}>
-          <div style={{ ...cardStyle }}>
+          <div style={cardStyle}>
             <div style={gradientBorderStyle} />
-            <div style={errorStyle}>
+            <div style={{ textAlign: 'center', padding: '60px 20px', fontSize: '16px', color: '#ff4444' }}>
               {error || 'Profile not found'}
               <div style={{ marginTop: '24px' }}>
                 <button onClick={onEdit} style={buttonStyle}>
@@ -279,24 +315,15 @@ export default function ProfileConfirmation({
     );
   }
 
-  const formatValue = (value: string): string => {
-    if (!value) return '—';
-    // Convert snake_case to Title Case
-    return value
-      .split('_')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ');
-  };
-
   return (
     <div style={pageStyle}>
       <div style={grainStyle} />
       <div style={glowStyle} />
-      
+
       <div style={contentStyle}>
-        <div style={{ ...cardStyle }}>
+        <div style={cardStyle}>
           <div style={gradientBorderStyle} />
-          
+
           {/* Save & Exit Button */}
           <button
             onClick={onSaveAndExit}
@@ -321,58 +348,80 @@ export default function ProfileConfirmation({
             </p>
           </div>
 
-          {/* Basic Information */}
+          {/* Your Business */}
           <div style={sectionStyle}>
-            <div style={sectionTitleStyle}>Basic Information</div>
+            <div style={sectionTitleStyle}>Your Business</div>
             <div style={fieldRowStyle}>
-              <div style={labelStyle}>Name</div>
-              <div style={valueStyle}>{profileData.name || '—'}</div>
+              <div style={labelStyle}>What you do</div>
+              <div style={{ ...valueStyle, textAlign: 'right' }}>
+                {profileData.business_models.length > 0
+                  ? profileData.business_models.join(', ')
+                  : '—'}
+              </div>
             </div>
             <div style={fieldRowStyle}>
-              <div style={labelStyle}>Pronouns</div>
-              <div style={valueStyle}>{formatValue(profileData.pronouns)}</div>
-            </div>
-            <div style={fieldRowStyle}>
-              <div style={labelStyle}>Location</div>
-              <div style={valueStyle}>{profileData.location || '—'}</div>
-            </div>
-            <div style={fieldRowStyle}>
-              <div style={labelStyle}>Timezone</div>
-              <div style={valueStyle}>{profileData.timezone || '—'}</div>
+              <div style={labelStyle}>Elevator pitch</div>
+              <div style={{ ...valueStyle, fontStyle: profileData.elevator_pitch ? 'normal' : 'italic' }}>
+                {profileData.elevator_pitch || '—'}
+              </div>
             </div>
           </div>
 
-          {/* Professional Background */}
+          {/* Team & Style */}
           <div style={sectionStyle}>
-            <div style={sectionTitleStyle}>Professional Background</div>
+            <div style={sectionTitleStyle}>Team & Working Style</div>
             <div style={fieldRowStyle}>
-              <div style={labelStyle}>Industry</div>
-              <div style={valueStyle}>{formatValue(profileData.industry)}</div>
+              <div style={labelStyle}>Team size</div>
+              <div style={valueStyle}>{fmt(profileData.team_size)}</div>
             </div>
             <div style={fieldRowStyle}>
-              <div style={labelStyle}>Role</div>
-              <div style={valueStyle}>{formatValue(profileData.role)}</div>
-            </div>
-            <div style={fieldRowStyle}>
-              <div style={labelStyle}>Experience Level</div>
-              <div style={valueStyle}>{formatValue(profileData.experience_level)}</div>
+              <div style={labelStyle}>Working style</div>
+              <div style={valueStyle}>{fmt(profileData.working_style)}</div>
             </div>
           </div>
 
-          {/* Business Information */}
+          {/* Business Metrics */}
+          <div style={sectionStyle}>
+            <div style={sectionTitleStyle}>Business Metrics</div>
+            <div style={fieldRowStyle}>
+              <div style={labelStyle}>Monthly revenue</div>
+              <div style={valueStyle}>{fmt(profileData.monthly_revenue)}</div>
+            </div>
+            <div style={fieldRowStyle}>
+              <div style={labelStyle}>Hours/week for growth</div>
+              <div style={valueStyle}>{fmt(profileData.hours_per_week)}</div>
+            </div>
+            <div style={fieldRowStyle}>
+              <div style={labelStyle}>Monthly marketing budget</div>
+              <div style={valueStyle}>{fmt(profileData.monthly_budget)}</div>
+            </div>
+          </div>
+
+          {/* Top Platforms */}
+          <div style={sectionStyle}>
+            <div style={sectionTitleStyle}>Top Platforms (ranked)</div>
+            {profileData.platforms.length > 0 ? (
+              profileData.platforms.slice(0, 5).map((platform, i) => (
+                <div key={platform} style={fieldRowStyle}>
+                  <div style={labelStyle}>#{i + 1}</div>
+                  <div style={valueStyle}>{platform}</div>
+                </div>
+              ))
+            ) : (
+              <div style={{ ...valueStyle, textAlign: 'left' }}>—</div>
+            )}
+          </div>
+
+          {/* Your Focus */}
           <div style={{ ...sectionStyle, borderBottom: 'none', marginBottom: '48px' }}>
-            <div style={sectionTitleStyle}>Business Information</div>
+            <div style={sectionTitleStyle}>Your Focus</div>
             <div style={fieldRowStyle}>
-              <div style={labelStyle}>Business Stage</div>
-              <div style={valueStyle}>{formatValue(profileData.business_stage)}</div>
+              <div style={labelStyle}>Biggest constraint</div>
+              <div style={valueStyle}>{fmt(profileData.biggest_constraint)}</div>
             </div>
             <div style={fieldRowStyle}>
-              <div style={labelStyle}>Primary Challenge</div>
-              <div style={valueStyle}>{formatValue(profileData.primary_challenge)}</div>
-            </div>
-            <div style={fieldRowStyle}>
-              <div style={labelStyle}>Monthly Revenue</div>
-              <div style={valueStyle}>{formatValue(profileData.monthly_revenue)}</div>
+              <div style={labelStyle}>Primary 90-day goal</div>
+              <div style={valueStyle}>{fmt(profileData.primary_goal)}</div>
             </div>
           </div>
 
@@ -395,12 +444,8 @@ export default function ProfileConfirmation({
             <button
               onClick={onConfirm}
               style={buttonStyle}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.opacity = '0.9';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.opacity = '1';
-              }}
+              onMouseEnter={(e) => { e.currentTarget.style.opacity = '0.9'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.opacity = '1'; }}
             >
               This looks good, continue →
             </button>

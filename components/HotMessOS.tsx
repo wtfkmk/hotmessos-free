@@ -2743,25 +2743,10 @@ if (showVideoTransition) {
 }
 
 if (screen === "paid_diagnostic_profile") return (
-    <div style={pageStyle}>
-      <div style={grainStyle} />
-      <div style={glowStyle} />
-      <SiteNav />
-      <div style={{ ...contentStyle, padding: "6rem 1.5rem 4rem", minHeight: "100vh" }}>
-        <div style={{ maxWidth: "700px", margin: "0 auto", textAlign: "center" as const }}>
-          <h1 style={{ fontSize: "2rem", marginBottom: "2rem" }}>Payment Successful!</h1>
-          <div style={{ ...card }}>
-            <p style={{ fontSize: "1.1rem", color: "#666", marginBottom: "2rem" }}>
-              Profile setup form coming in Phase 2...
-            </p>
-            <button onClick={() => setScreen("entry")} style={gradBtn}>
-              Back to Dashboard
-            </button>
-          </div>
-        </div>
-      </div>
-      <SiteFooter />
-    </div>
+    <ProfileSetup
+      email={user?.email || ''}
+      onComplete={() => setScreen('paid_diagnostic_profile_confirm')}
+    />
   );
 
   // Profile Confirmation — review saved profile before Business Deep Dive
