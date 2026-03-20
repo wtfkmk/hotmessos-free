@@ -701,21 +701,35 @@ export default function BusinessDeepDive({
 
                       {/* File Upload */}
                       <div>
-                        <input
-                          type="file"
-                          accept=".pdf,.jpg,.jpeg,.png,.webp,.docx,.txt"
-                          disabled={uploadingIndex === index}
-                          onChange={(e) => {
-                            const file = e.target.files?.[0] || null;
-                            updateContentSampleFile(index, file);
-                          }}
-                          style={{
-                            fontSize: '14px',
-                            fontFamily: '"DM Mono", monospace',
-                            cursor: uploadingIndex === index ? 'wait' : 'pointer'
-                          }}
-                        />
-                        <div style={{ fontSize: '11px', color: '#999', marginTop: '4px' }}>
+                        <label style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                          padding: '10px 20px',
+                          background: uploadingIndex === index
+                            ? '#e0e0e0'
+                            : 'linear-gradient(135deg, #44AAFF 0%, #44FF88 100%)',
+                          borderRadius: '6px',
+                          fontSize: '13px',
+                          fontWeight: 600,
+                          fontFamily: '"DM Mono", monospace',
+                          color: uploadingIndex === index ? '#999' : '#0a0a0a',
+                          cursor: uploadingIndex === index ? 'wait' : 'pointer',
+                          userSelect: 'none'
+                        }}>
+                          ↑ Choose File
+                          <input
+                            type="file"
+                            accept=".pdf,.jpg,.jpeg,.png,.webp,.docx,.txt"
+                            disabled={uploadingIndex === index}
+                            onChange={(e) => {
+                              const file = e.target.files?.[0] || null;
+                              updateContentSampleFile(index, file);
+                            }}
+                            style={{ display: 'none' }}
+                          />
+                        </label>
+                        <div style={{ fontSize: '11px', color: '#999', marginTop: '6px' }}>
                           PDF, JPG, PNG, WEBP, DOCX, TXT
                         </div>
 
