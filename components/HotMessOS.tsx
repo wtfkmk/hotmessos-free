@@ -508,8 +508,17 @@ const [resumePillar, setResumePillar] = useState(0);
 
       if (error) {
         // Check for unverified email
-        if (error.message.includes('Email not confirmed')) {
+        if (
+          error.message.includes('Email not confirmed') ||
+          (error as any).code === 'email_not_confirmed'
+        ) {
           setAuthMessage('⚠️ Please verify your email first. Check your inbox for the verification link.');
+        } else if (
+          error.message.includes('Invalid login credentials') ||
+          error.message.includes('invalid_credentials') ||
+          (error as any).code === 'invalid_credentials'
+        ) {
+          setAuthMessage('Incorrect email or password. Please try again.');
         } else {
           setAuthMessage(error.message || 'Login failed. Please check your credentials.');
         }
