@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
+import { loadBusinessProgress } from '@/lib/resumeLogic';
 
 interface BusinessDeepDiveProps {
   userEmail: string;
@@ -74,14 +75,12 @@ export default function BusinessDeepDive({
     if (!userEmail) return;
 
     try {
-      const response = await fetch(`/api/diagnostic/load-business?email=${encodeURIComponent(userEmail)}`);
-      
-      if (response.ok) {
-        const result = await response.json();
-        
-        if (result.data && result.data.business_deep_dive) {
-          console.log('✅ Loading existing business deep dive data');
-          setFormData(result.data.business_deep_dive);
+      const progress = await loadBusinessProgress(userEmail);
+      if (progress && progress.data && Object.keys(progress.data).length > 0) {
+        console.log('✅ Loading existing business deep dive data');
+        setFormData(prev => ({ ...prev, ...progress.data }));
+        if (progress.step > 0) {
+          setStep(progress.step);
         }
       }
     } catch (error) {
