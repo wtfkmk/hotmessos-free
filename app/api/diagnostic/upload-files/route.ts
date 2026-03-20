@@ -1,12 +1,17 @@
-import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+import { supabaseAdmin } from '@/lib/supabase';
 
 export async function POST(req: NextRequest) {
+  // Verify bearer token
+  const token = req.headers.get('Authorization')?.replace('Bearer ', '');
+  if (!token) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token);
+  if (authError || !user) {
+    return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
+  }
+
   try {
     const formData = await req.formData();
     const email = formData.get('email') as string;
@@ -19,7 +24,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Get the diagnostic_id for this user
-    const { data: diagnosticData, error: diagnosticError } = await supabase
+    const { data: diagnosticData, error: diagnosticError } = await supabaseAdmin
       .from('paid_diagnostics')
       .select('id')
       .eq('email', email)
@@ -47,7 +52,7 @@ export async function POST(req: NextRequest) {
     const websiteFile = formData.get('websiteFile') as File | null;
     if (websiteFile) {
       const websiteFileName = `${email}/website-${Date.now()}-${websiteFile.name}`;
-      const { data: websiteData, error: websiteError } = await supabase.storage
+      const { data: websiteData, error: websiteError } = await supabaseAdmin.storage
         .from('diagnostic-uploads')
         .upload(websiteFileName, websiteFile, {
           contentType: websiteFile.type,
@@ -57,7 +62,7 @@ export async function POST(req: NextRequest) {
       if (websiteError) {
         console.error('Website file upload error:', websiteError);
       } else {
-        const { data: publicUrlData } = supabase.storage
+        const { data: publicUrlData } = supabaseAdmin.storage
           .from('diagnostic-uploads')
           .getPublicUrl(websiteFileName);
 
@@ -77,7 +82,7 @@ export async function POST(req: NextRequest) {
     
     while (contentSample && sampleIndex < 5) {
       const sampleFileName = `${email}/content-sample-${Date.now()}-${sampleIndex}-${contentSample.name}`;
-      const { data: sampleData, error: sampleError } = await supabase.storage
+      const { data: sampleData, error: sampleError } = await supabaseAdmin.storage
         .from('diagnostic-uploads')
         .upload(sampleFileName, contentSample, {
           contentType: contentSample.type,
@@ -87,7 +92,7 @@ export async function POST(req: NextRequest) {
       if (sampleError) {
         console.error(`Content sample ${sampleIndex} upload error:`, sampleError);
       } else {
-        const { data: publicUrlData } = supabase.storage
+        const { data: publicUrlData } = supabaseAdmin.storage
           .from('diagnostic-uploads')
           .getPublicUrl(sampleFileName);
 
@@ -106,7 +111,7 @@ export async function POST(req: NextRequest) {
 
     // Save file metadata to diagnostic_uploads table
     if (uploadedFiles.length > 0) {
-      const { error: insertError } = await supabase
+      const { error: insertError } = await supabaseAdmin
         .from('diagnostic_uploads')
         .insert(
           uploadedFiles.map(file => ({

@@ -1,12 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+import { supabaseAdmin } from "@/lib/supabase";
 
 export async function POST(req: NextRequest) {
+  // Verify bearer token
+  const token = req.headers.get("Authorization")?.replace("Bearer ", "");
+  if (!token) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token);
+  if (authError || !user) {
+    return NextResponse.json({ error: "Invalid token" }, { status: 401 });
+  }
+
   try {
     const {
       email,
@@ -23,33 +28,28 @@ export async function POST(req: NextRequest) {
     } = await req.json();
 
     if (!email) {
-      return NextResponse.json(
-        { error: "Email required" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Email required" }, { status: 400 });
     }
 
-    // Save profile
-    const { data: profile, error: profileError } = await supabase
+    const { data: profile, error: profileError } = await supabaseAdmin
       .from("user_profiles")
-.upsert(
-  {
-    email,
-    business_models: businessModels,
-    elevator_pitch: elevatorPitch,
-    team_size: teamSize,
-    working_style: workingStyle,
-    monthly_revenue: monthlyRevenue,
-    hours_per_week: hoursPerWeek,
-    monthly_budget: monthlyBudget,
-    platforms,
-    biggest_constraint: biggestConstraint,
-    primary_goal: primaryGoal,
-    updated_at: new Date().toISOString(),
-    // Skip profile_complete for now - we'll add it later
-  },
-  { onConflict: "email" }
-)
+      .upsert(
+        {
+          email,
+          business_models: businessModels,
+          elevator_pitch: elevatorPitch,
+          team_size: teamSize,
+          working_style: workingStyle,
+          monthly_revenue: monthlyRevenue,
+          hours_per_week: hoursPerWeek,
+          monthly_budget: monthlyBudget,
+          platforms,
+          biggest_constraint: biggestConstraint,
+          primary_goal: primaryGoal,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: "email" }
+      )
       .select()
       .single();
 

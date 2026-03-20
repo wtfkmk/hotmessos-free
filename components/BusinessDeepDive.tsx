@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { loadBusinessProgress } from '@/lib/resumeLogic';
+import { supabase } from '@/lib/supabase';
 
 interface BusinessDeepDiveProps {
   userEmail: string;
@@ -283,13 +284,19 @@ export default function BusinessDeepDive({
     }
   };
 
+  const getAuthHeader = async (): Promise<Record<string, string>> => {
+    const { data: { session } } = await supabase.auth.getSession();
+    return session?.access_token ? { 'Authorization': `Bearer ${session.access_token}` } : {};
+  };
+
   const handleSubmit = async () => {
     setIsSubmitting(true);
 
     try {
+      const authHeader = await getAuthHeader();
       const response = await fetch('/api/diagnostic/save-business', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...authHeader },
         body: JSON.stringify({
           email: userEmail,
           businessDeepDive: formData
@@ -310,9 +317,10 @@ export default function BusinessDeepDive({
   };
 
   const handleSaveAndExit = async () => {
+    const authHeader = await getAuthHeader();
     await fetch('/api/diagnostic/save-business', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...authHeader },
       body: JSON.stringify({
         email: userEmail,
         businessDeepDive: formData
@@ -405,12 +413,14 @@ export default function BusinessDeepDive({
 
     setUploadingIndex(index);
     try {
+      const authHeader = await getAuthHeader();
       const uploadForm = new FormData();
       uploadForm.append('email', userEmail);
       uploadForm.append(`contentSample0`, file);
 
       const response = await fetch('/api/diagnostic/upload-files', {
         method: 'POST',
+        headers: authHeader,
         body: uploadForm
       });
 

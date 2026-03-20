@@ -184,10 +184,14 @@ export default function ProfileSetup({ email, onComplete }: ProfileSetupProps) {
     setSaving(true);
     try {
       console.log("🔵 Sending request to /api/profile/save...");
-      
+
+      const { data: { session } } = await supabase.auth.getSession();
       const response = await fetch("/api/profile/save", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(session?.access_token ? { "Authorization": `Bearer ${session.access_token}` } : {}),
+        },
         body: JSON.stringify({
           email,
           businessModels,
