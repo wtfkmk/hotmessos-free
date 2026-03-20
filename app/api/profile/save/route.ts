@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 
 export async function POST(req: NextRequest) {
-  // Verify bearer token
+  // Verify bearer token and get user identity from it
   const token = req.headers.get("Authorization")?.replace("Bearer ", "");
   if (!token) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -14,7 +14,6 @@ export async function POST(req: NextRequest) {
 
   try {
     const {
-      email,
       businessModels,
       elevatorPitch,
       teamSize,
@@ -27,15 +26,12 @@ export async function POST(req: NextRequest) {
       primaryGoal,
     } = await req.json();
 
-    if (!email) {
-      return NextResponse.json({ error: "Email required" }, { status: 400 });
-    }
-
     const { data: profile, error: profileError } = await supabaseAdmin
       .from("user_profiles")
       .upsert(
         {
-          email,
+          user_id: user.id,
+          email: user.email,
           business_models: businessModels,
           elevator_pitch: elevatorPitch,
           team_size: teamSize,
@@ -48,7 +44,7 @@ export async function POST(req: NextRequest) {
           primary_goal: primaryGoal,
           updated_at: new Date().toISOString(),
         },
-        { onConflict: "email" }
+        { onConflict: "user_id" }
       )
       .select()
       .single();

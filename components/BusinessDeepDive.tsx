@@ -5,7 +5,7 @@ import { loadBusinessProgress } from '@/lib/resumeLogic';
 import { supabase } from '@/lib/supabase';
 
 interface BusinessDeepDiveProps {
-  userEmail: string;
+  userId: string;
   onComplete: (data: BusinessDeepDiveData) => void;
   onBack?: () => void;
   onSaveAndExit: () => void;
@@ -31,7 +31,7 @@ interface BusinessDeepDiveData {
 }
 
 export default function BusinessDeepDive({
-  userEmail,
+  userId,
   onComplete,
   onBack,
   onSaveAndExit
@@ -70,13 +70,13 @@ export default function BusinessDeepDive({
   // Load existing progress on mount
   useEffect(() => {
     loadProgress();
-  }, [userEmail]);
+  }, [userId]);
 
   const loadProgress = async () => {
-    if (!userEmail) return;
+    if (!userId) return;
 
     try {
-      const progress = await loadBusinessProgress(userEmail);
+      const progress = await loadBusinessProgress(userId);
       if (progress && progress.data && Object.keys(progress.data).length > 0) {
         console.log('✅ Loading existing business deep dive data');
         setFormData(prev => ({ ...prev, ...progress.data }));
@@ -298,7 +298,6 @@ export default function BusinessDeepDive({
         method: 'POST',
         headers: { 'Content-Type': 'application/json', ...authHeader },
         body: JSON.stringify({
-          email: userEmail,
           businessDeepDive: formData
         })
       });
@@ -322,7 +321,6 @@ export default function BusinessDeepDive({
       method: 'POST',
       headers: { 'Content-Type': 'application/json', ...authHeader },
       body: JSON.stringify({
-        email: userEmail,
         businessDeepDive: formData
       })
     });
@@ -415,7 +413,6 @@ export default function BusinessDeepDive({
     try {
       const authHeader = await getAuthHeader();
       const uploadForm = new FormData();
-      uploadForm.append('email', userEmail);
       uploadForm.append(`contentSample0`, file);
 
       const response = await fetch('/api/diagnostic/upload-files', {

@@ -1,13 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { createClient } from '@supabase/supabase-js';
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+import { supabase } from '@/lib/supabase';
 
 interface ProfileConfirmationProps {
-  userEmail: string;
+  userId: string;
   onConfirm: () => void;
   onEdit: () => void;
   onSaveAndExit: () => void;
@@ -75,7 +70,7 @@ const LABEL_MAP: Record<string, string> = {
 const fmt = (value: string): string => LABEL_MAP[value] || value || '—';
 
 export default function ProfileConfirmation({
-  userEmail,
+  userId,
   onConfirm,
   onEdit,
   onSaveAndExit
@@ -86,14 +81,14 @@ export default function ProfileConfirmation({
 
   useEffect(() => {
     loadProfile();
-  }, [userEmail]);
+  }, [userId]);
 
   const loadProfile = async () => {
     try {
       const { data, error } = await supabase
         .from('user_profiles')
         .select('business_models, elevator_pitch, team_size, working_style, monthly_revenue, hours_per_week, monthly_budget, platforms, biggest_constraint, primary_goal')
-        .eq('email', userEmail)
+        .eq('user_id', userId)
         .single();
 
       if (error) throw error;

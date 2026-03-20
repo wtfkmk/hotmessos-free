@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 
 export async function POST(req: NextRequest) {
-  // Verify bearer token
+  // Verify bearer token and get user identity from it
   const token = req.headers.get('Authorization')?.replace('Bearer ', '');
   if (!token) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -14,20 +14,12 @@ export async function POST(req: NextRequest) {
 
   try {
     const formData = await req.formData();
-    const email = formData.get('email') as string;
 
-    if (!email) {
-      return NextResponse.json(
-        { error: 'Email is required' },
-        { status: 400 }
-      );
-    }
-
-    // Get the diagnostic_id for this user
+    // Look up the diagnostic record by user_id (not email)
     const { data: diagnosticData, error: diagnosticError } = await supabaseAdmin
       .from('paid_diagnostics')
       .select('id')
-      .eq('email', email)
+      .eq('user_id', user.id)
       .single();
 
     if (diagnosticError || !diagnosticData) {
@@ -39,6 +31,8 @@ export async function POST(req: NextRequest) {
     }
 
     const diagnosticId = diagnosticData.id;
+    // Use user_id as the storage path prefix (stable, not PII in path)
+    const storagePrefix = user.id;
 
     const uploadedFiles: Array<{
       fileName: string;
@@ -51,8 +45,8 @@ export async function POST(req: NextRequest) {
     // Process website file
     const websiteFile = formData.get('websiteFile') as File | null;
     if (websiteFile) {
-      const websiteFileName = `${email}/website-${Date.now()}-${websiteFile.name}`;
-      const { data: websiteData, error: websiteError } = await supabaseAdmin.storage
+      const websiteFileName = `${storagePrefix}/website-${Date.now()}-${websiteFile.name}`;
+      const { error: websiteError } = await supabaseAdmin.storage
         .from('diagnostic-uploads')
         .upload(websiteFileName, websiteFile, {
           contentType: websiteFile.type,
@@ -79,10 +73,10 @@ export async function POST(req: NextRequest) {
     // Process content sample files
     let sampleIndex = 0;
     let contentSample = formData.get(`contentSample${sampleIndex}`) as File | null;
-    
+
     while (contentSample && sampleIndex < 5) {
-      const sampleFileName = `${email}/content-sample-${Date.now()}-${sampleIndex}-${contentSample.name}`;
-      const { data: sampleData, error: sampleError } = await supabaseAdmin.storage
+      const sampleFileName = `${storagePrefix}/content-sample-${Date.now()}-${sampleIndex}-${contentSample.name}`;
+      const { error: sampleError } = await supabaseAdmin.storage
         .from('diagnostic-uploads')
         .upload(sampleFileName, contentSample, {
           contentType: contentSample.type,
@@ -145,6 +139,4 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// Increase body size limit for file uploads
-export const maxDuration = 60; // optional: max execution time in seconds
-// Body size limit is handled differently in App Router - remove the config export
+export const maxDuration = 60;

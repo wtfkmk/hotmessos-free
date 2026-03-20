@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 
 export async function POST(req: NextRequest) {
-  // Verify bearer token
+  // Verify bearer token and get user identity from it
   const token = req.headers.get("Authorization")?.replace("Bearer ", "");
   if (!token) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -13,17 +13,13 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { email, businessDeepDive, markComplete } = await req.json();
+    const { businessDeepDive, markComplete } = await req.json();
 
-    if (!email) {
-      return NextResponse.json({ error: "Email is required" }, { status: 400 });
-    }
-
-    // Check if record exists
+    // Check if record exists for this user
     const { data: existing } = await supabaseAdmin
       .from("paid_diagnostics")
       .select("id")
-      .eq("email", email)
+      .eq("user_id", user.id)
       .maybeSingle();
 
     let data, error;
@@ -36,7 +32,7 @@ export async function POST(req: NextRequest) {
           business_completed: markComplete === true,
           updated_at: new Date().toISOString(),
         })
-        .eq("email", email)
+        .eq("user_id", user.id)
         .select()
         .single();
       data = result.data;
@@ -45,7 +41,8 @@ export async function POST(req: NextRequest) {
       const result = await supabaseAdmin
         .from("paid_diagnostics")
         .insert({
-          email,
+          user_id: user.id,
+          email: user.email,
           business_deep_dive: businessDeepDive,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),

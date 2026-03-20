@@ -1,12 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { createClient } from '@supabase/supabase-js';
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+import { supabase } from '@/lib/supabase';
 
 interface ProfileSetupProps {
   email: string;
@@ -47,12 +42,16 @@ export default function ProfileSetup({ email, onComplete }: ProfileSetupProps) {
 
   const loadExistingProfile = async () => {
     if (!email) return;
-    
+
     try {
+      // Look up by user_id from the current session
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user?.id) return;
+
       const { data, error } = await supabase
         .from('user_profiles')
         .select('*')
-        .eq('email', email)
+        .eq('user_id', session.user.id)
         .single();
 
       if (error) {

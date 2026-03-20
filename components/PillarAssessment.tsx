@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { savePillarProgress, loadPillarProgress } from '@/lib/resumeLogic';
 
 interface PillarAssessmentProps {
-  userEmail: string;
+  userId: string;
   onComplete: (data: PillarData) => void;
   onBack?: () => void;
   onSaveAndExit: () => void;
@@ -85,7 +85,7 @@ interface PillarData {
 }
 
 export default function PillarAssessment({
-  userEmail,
+  userId,
   onComplete,
   onBack,
   onSaveAndExit,
@@ -171,7 +171,7 @@ export default function PillarAssessment({
   // Load existing progress
   useEffect(() => {
     loadProgress();
-  }, [userEmail]);
+  }, [userId]);
 
   // Advance to a specific pillar when parent signals (used for inter-pillar transitions)
   useEffect(() => {
@@ -182,7 +182,7 @@ export default function PillarAssessment({
   }, [resumePillar]);
 
   const loadProgress = async () => {
-    const progress = await loadPillarProgress(userEmail);
+    const progress = await loadPillarProgress(userId);
     if (progress && progress.data && Object.keys(progress.data).length > 0) {
       setFormData(prev => ({ ...prev, ...progress.data }));
       // resumePillar prop takes precedence — parent is directing us to a specific pillar
@@ -515,7 +515,7 @@ const validate = (): boolean => {
 
     // Auto-save progress
     const saved = await savePillarProgress(
-      userEmail,
+      userId,
       currentPillar,
       formData,
       false
@@ -551,7 +551,7 @@ const validate = (): boolean => {
 
     try {
       const saved = await savePillarProgress(
-        userEmail,
+        userId,
         4,
         formData,
         true
@@ -610,7 +610,7 @@ const validate = (): boolean => {
           {/* Save & Exit Button */}
           <button
             onClick={async () => {
-              await savePillarProgress(userEmail, currentPillar, formData, false);
+              await savePillarProgress(userId, currentPillar, formData, false);
               onSaveAndExit();
             }}
             style={saveExitButtonStyle}

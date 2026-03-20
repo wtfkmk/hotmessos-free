@@ -316,7 +316,7 @@ const [resumePillar, setResumePillar] = useState(0);
           supabase
             .from("user_profiles")
             .select("*")
-            .eq("email", session.user.email)
+            .eq("user_id", session.user.id)
             .maybeSingle()
             .then(({ data: profile }) => {
               if (!profile) {
@@ -376,7 +376,7 @@ const [resumePillar, setResumePillar] = useState(0);
     
     setCheckoutLoading(true);
     try {
-      const resumeScreen = await getResumePath(user.email);
+      const resumeScreen = await getResumePath(user.id);
       setScreen(resumeScreen);
     } catch (error) {
       console.error('Resume error:', error);
@@ -2785,7 +2785,7 @@ if (screen === "paid_diagnostic_profile") return (
 if (screen === 'paid_diagnostic_profile_confirm') {
   return (
     <ProfileConfirmation
-      userEmail={user?.email || ''}
+      userId={user?.id || ''}
       onConfirm={() => {
         setVideoTransitionConfig({
           title: "Let's dive into your business",
@@ -2809,7 +2809,7 @@ if (screen === 'paid_diagnostic_profile_confirm') {
 if (screen === 'paid_diagnostic_business') {
   return (
 <BusinessDeepDive
-  userEmail={user?.email || ''}
+  userId={user?.id || ''}
 onComplete={(data) => {
   setBusinessDeepDiveData(data);
   
@@ -2852,7 +2852,7 @@ if (screen === "paid_diagnostic_pillars") {
 
   return (
     <PillarAssessment
-      userEmail={user?.email || ''}
+      userId={user?.id || ''}
       resumePillar={resumePillar}
       onPillarTransition={(nextPillar) => {
         const config = pillarTransitionTitles[nextPillar];

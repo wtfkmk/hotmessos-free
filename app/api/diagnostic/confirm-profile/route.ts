@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 
 export async function POST(req: NextRequest) {
-  // Verify bearer token
+  // Verify bearer token and get user identity from it
   const token = req.headers.get("Authorization")?.replace("Bearer ", "");
   if (!token) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -13,19 +13,13 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { email } = await req.json();
-
-    if (!email) {
-      return NextResponse.json({ error: "Email is required" }, { status: 400 });
-    }
-
     const { data, error } = await supabaseAdmin
       .from("paid_diagnostics")
       .update({
         profile_confirmed: true,
         updated_at: new Date().toISOString(),
       })
-      .eq("email", email)
+      .eq("user_id", user.id)
       .select()
       .single();
 
@@ -40,12 +34,13 @@ export async function POST(req: NextRequest) {
         profile_confirmed_at: new Date().toISOString(),
         last_activity_at: new Date().toISOString(),
       })
-      .eq("email", email);
+      .eq("user_id", user.id);
 
     await supabaseAdmin
       .from("activity_log")
       .insert({
-        email,
+        user_id: user.id,
+        email: user.email,
         activity_type: "profile_confirmed",
         activity_title: "Profile Confirmed",
         activity_description: "Confirmed profile information before starting diagnostic",
