@@ -42,8 +42,7 @@ interface PillarData {
   ds_q16_failure_recovery: string;
   ds_q17_content_leverage: string;
 
-  // RELATIONSHIPS (20 questions)
-  r_q1_inner_voice: string;
+  // RELATIONSHIPS (19 questions)
   r_q2_emotional_awareness: string;
   r_q3_regulation_stress: string;
   r_q4_deep_work: number;
@@ -123,7 +122,6 @@ export default function PillarAssessment({
     ds_q17_content_leverage: '',
 
     // RELATIONSHIPS
-    r_q1_inner_voice: '',
     r_q2_emotional_awareness: '',
     r_q3_regulation_stress: '',
     r_q4_deep_work: 0,
@@ -451,7 +449,6 @@ const validate = (): boolean => {
   }
 
   if (currentPillar === 3) {
-    if (!formData.r_q1_inner_voice) newErrors.r_q1 = 'Required';
     if (!formData.r_q2_emotional_awareness) newErrors.r_q2 = 'Required';
     if (!formData.r_q3_regulation_stress) newErrors.r_q3 = 'Required';
     if (formData.r_q4_deep_work === 0) newErrors.r_q4 = 'Required';
@@ -1623,46 +1620,6 @@ const validate = (): boolean => {
 {/* PILLAR 3: RELATIONSHIPS (18 questions) */}
 {currentPillar === 3 && (
   <div>
-    {/* R Q1: Inner Voice */}
-    <div style={questionStyle}>
-      <div style={questionTextStyle}>
-        The voice in my head sounds like…
-      </div>
-      <div style={radioGroupStyle}>
-        {['A', 'B', 'C', 'D'].map((option) => (
-          <label
-            key={option}
-            style={formData.r_q1_inner_voice === option ? radioLabelSelectedStyle : radioLabelStyle}
-            onMouseEnter={(e) => {
-              if (formData.r_q1_inner_voice !== option) {
-                e.currentTarget.style.borderColor = '#44AAFF';
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (formData.r_q1_inner_voice !== option) {
-                e.currentTarget.style.borderColor = '#e0e0e0';
-              }
-            }}
-          >
-            <input
-              type="radio"
-              name="r_q1"
-              value={option}
-              checked={formData.r_q1_inner_voice === option}
-              onChange={(e) => setFormData({ ...formData, r_q1_inner_voice: e.target.value })}
-              style={{ marginTop: '2px' }}
-            />
-            <span>
-              {option === 'A' && "A harsh critic — never good enough"}
-              {option === 'B' && "Mixed — sometimes supportive, often critical"}
-              {option === 'C' && "Mostly encouraging with occasional tough love"}
-              {option === 'D' && "A wise, compassionate ally"}
-            </span>
-          </label>
-        ))}
-      </div>
-    </div>
-
     {/* R Q2: Emotional Awareness */}
     <div style={questionStyle}>
       <div style={questionTextStyle}>
