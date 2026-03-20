@@ -8,6 +8,8 @@ interface PillarAssessmentProps {
   onComplete: (data: PillarData) => void;
   onBack?: () => void;
   onSaveAndExit: () => void;
+  onPillarTransition?: (nextPillar: number) => void;
+  resumePillar?: number;
 }
 
 interface PillarData {
@@ -86,7 +88,9 @@ export default function PillarAssessment({
   userEmail,
   onComplete,
   onBack,
-  onSaveAndExit
+  onSaveAndExit,
+  onPillarTransition,
+  resumePillar,
 }: PillarAssessmentProps) {
   const [currentPillar, setCurrentPillar] = useState(1); // 1=Presence, 2=Digital, 3=Relationships, 4=Creative
   const [formData, setFormData] = useState<PillarData>({
@@ -168,6 +172,14 @@ export default function PillarAssessment({
   useEffect(() => {
     loadProgress();
   }, [userEmail]);
+
+  // Advance to a specific pillar when parent signals (used for inter-pillar transitions)
+  useEffect(() => {
+    if (resumePillar && resumePillar > 0) {
+      setCurrentPillar(resumePillar);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [resumePillar]);
 
   const loadProgress = async () => {
     const progress = await loadPillarProgress(userEmail);
@@ -510,8 +522,12 @@ const validate = (): boolean => {
     }
 
     if (currentPillar < 4) {
-      setCurrentPillar(currentPillar + 1);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (onPillarTransition) {
+        onPillarTransition(currentPillar + 1);
+      } else {
+        setCurrentPillar(currentPillar + 1);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
     } else {
       handleSubmit();
     }

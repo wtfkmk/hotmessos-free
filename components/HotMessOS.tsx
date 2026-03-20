@@ -241,11 +241,17 @@ const [screen, setScreen] = useState<Screen>("entry");
 const [chatMode, setChatMode] = useState<string | null>(null);
 const [businessDeepDiveData, setBusinessDeepDiveData] = useState<any>(null);
 const [showVideoTransition, setShowVideoTransition] = useState(false);
-const [videoTransitionConfig, setVideoTransitionConfig] = useState({
+const [videoTransitionConfig, setVideoTransitionConfig] = useState<{
+  title: string;
+  description: string;
+  nextScreen: Screen;
+  afterTransition?: () => void;
+}>({
   title: '',
   description: '',
   nextScreen: '' as Screen
 });
+const [resumePillar, setResumePillar] = useState(0);
   const [messages, setMessages] = useState<Message[]>([]);
   const [userInput, setUserInput] = useState("");
   const [chatLoading, setChatLoading] = useState(false);
@@ -2730,6 +2736,7 @@ if (showVideoTransition) {
       onContinue={() => {
         setShowVideoTransition(false);
         setScreen(videoTransitionConfig.nextScreen);
+        videoTransitionConfig.afterTransition?.();
       }}
     />
   );
@@ -2763,7 +2770,12 @@ if (screen === 'paid_diagnostic_profile_confirm') {
     <ProfileConfirmation
       userEmail={user?.email || ''}
       onConfirm={() => {
-        setScreen('paid_diagnostic_business');
+        setVideoTransitionConfig({
+          title: "Let's dive into your business",
+          description: "We'll go deep on your client journey, content, competitors, and what makes you uniquely valuable.",
+          nextScreen: 'paid_diagnostic_business',
+        });
+        setShowVideoTransition(true);
       }}
       onEdit={() => {
         sessionStorage.setItem('editProfile', 'true');
@@ -2785,10 +2797,12 @@ onComplete={(data) => {
   setBusinessDeepDiveData(data);
   
   // Show video transition before pillars
+  setResumePillar(1);
   setVideoTransitionConfig({
-    title: 'Ready for Your Pillar Assessment?',
-    description: 'Next, we\'ll dive into 4 key areas that determine your creator readiness: Presence, Digital Self, Relationships, and Creative Flow. This will take about 15 minutes.',
-    nextScreen: 'paid_diagnostic_pillars'
+    title: 'Time to assess your foundations',
+    description: "Next up: 4 pillars that reveal how you show up — Presence, Digital Self, Relationships, and Creative Flow. This takes about 15 minutes.",
+    nextScreen: 'paid_diagnostic_pillars',
+    afterTransition: () => setResumePillar(1),
   });
   setShowVideoTransition(true);
 }}
@@ -2804,12 +2818,43 @@ onSaveAndExit={() => {
 
 // Pillar Assessment
 if (screen === "paid_diagnostic_pillars") {
+  const pillarTransitionTitles: Record<number, { title: string; description: string }> = {
+    2: {
+      title: 'Moving to your digital presence',
+      description: 'Pillar 2: Digital Self — technology mastery, AI fluency, and systems aligned with your strengths.',
+    },
+    3: {
+      title: 'Now let\'s explore your relationships',
+      description: 'Pillar 3: Relationships — self-relationship foundation, communication maturity, and network quality.',
+    },
+    4: {
+      title: 'Final pillar: your creative flow',
+      description: 'Pillar 4: Creative Flow — your creative process, energy, and sustainable output.',
+    },
+  };
+
   return (
     <PillarAssessment
       userEmail={user?.email || ''}
+      resumePillar={resumePillar}
+      onPillarTransition={(nextPillar) => {
+        const config = pillarTransitionTitles[nextPillar];
+        setVideoTransitionConfig({
+          title: config.title,
+          description: config.description,
+          nextScreen: 'paid_diagnostic_pillars',
+          afterTransition: () => setResumePillar(nextPillar),
+        });
+        setShowVideoTransition(true);
+      }}
       onComplete={(data) => {
         console.log('✅ Pillar assessment complete:', data);
-        setScreen('paid_diagnostic_loading');
+        setVideoTransitionConfig({
+          title: 'Generating your transformation report...',
+          description: 'Sit tight — we\'re analyzing your answers across all 4 pillars and building your personalized diagnostic.',
+          nextScreen: 'paid_diagnostic_loading',
+        });
+        setShowVideoTransition(true);
       }}
       onBack={() => {
         setScreen('paid_diagnostic_business');
